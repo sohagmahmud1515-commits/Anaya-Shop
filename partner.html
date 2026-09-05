@@ -1,1 +1,384 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>পার্টনার হিসাব</title>
 
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f3f8f8;
+  color:#12383b;
+}
+.app{
+  max-width:480px;
+  margin:auto;
+  padding:18px 16px 100px;
+}
+.top{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:20px;
+}
+.back{
+  width:45px;height:45px;
+  border:0;border-radius:14px;
+  background:#fff;
+  box-shadow:0 5px 15px #00000012;
+  font-size:22px;
+}
+h1{font-size:25px;margin:0}
+.sub{color:#788889;font-size:14px;margin-top:4px}
+
+.total{
+  background:linear-gradient(135deg,#087985,#075d66);
+  color:white;
+  border-radius:22px;
+  padding:20px;
+  margin-bottom:18px;
+}
+.total small{opacity:.85}
+.total h2{font-size:30px;margin:7px 0 0}
+
+.partners{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.card{
+  background:#fff;
+  border-radius:20px;
+  padding:16px;
+  box-shadow:0 7px 20px #0000000d;
+}
+.avatar{
+  width:48px;height:48px;
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#def5f1;
+  font-size:24px;
+}
+.name{font-weight:800;margin-top:10px}
+.balance{font-size:22px;font-weight:800;margin-top:8px}
+.label{font-size:12px;color:#788788;margin-top:3px}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+  margin-top:15px;
+}
+.stat{
+  background:#fff;
+  border-radius:15px;
+  padding:12px 8px;
+  text-align:center;
+  box-shadow:0 5px 15px #0000000b;
+}
+.stat b{display:block;font-size:15px}
+.stat span{font-size:11px;color:#788788}
+
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:18px 0;
+}
+.btn{
+  border:0;
+  padding:14px 8px;
+  border-radius:14px;
+  font-size:14px;
+  font-weight:700;
+}
+.primary{background:#087985;color:#fff}
+.light{background:#fff;color:#087985;border:1px solid #dce8e8}
+
+.section-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:22px 0 12px;
+}
+.section-title h2{font-size:20px;margin:0}
+
+.entry{
+  background:#fff;
+  border-radius:17px;
+  padding:14px;
+  margin-bottom:10px;
+  box-shadow:0 5px 15px #0000000b;
+}
+.entry-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+.entry-title{font-weight:700}
+.amount{font-weight:800}
+.in{color:#07956f}
+.out{color:#e34c58}
+.meta{
+  color:#819091;
+  font-size:12px;
+  margin-top:7px;
+}
+.status{
+  display:inline-block;
+  font-size:11px;
+  background:#fff2cc;
+  color:#886700;
+  padding:5px 8px;
+  border-radius:20px;
+  margin-top:8px;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#0008;
+  align-items:flex-end;
+  justify-content:center;
+  z-index:100;
+}
+.sheet{
+  width:100%;
+  max-width:480px;
+  background:white;
+  border-radius:24px 24px 0 0;
+  padding:20px;
+}
+.sheet h2{margin-top:0}
+input,select,textarea{
+  width:100%;
+  padding:13px;
+  margin:6px 0;
+  border:1px solid #d7e1e1;
+  border-radius:12px;
+  font-size:15px;
+}
+.save{
+  width:100%;
+  margin-top:10px;
+  background:#087985;
+  color:#fff;
+  border:0;
+  padding:15px;
+  border-radius:13px;
+  font-weight:800;
+}
+.cancel{
+  width:100%;
+  margin-top:8px;
+  background:#eee;
+  border:0;
+  padding:13px;
+  border-radius:13px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="top">
+  <button class="back" onclick="location.href='index.html'">←</button>
+  <div>
+    <h1>পার্টনার হিসাব</h1>
+    <div class="sub">দুই পার্টনারের ব্যবসায়িক হিসাব</div>
+  </div>
+</div>
+
+<div class="total">
+  <small>দুই পার্টনারের মোট বর্তমান ব্যালেন্স</small>
+  <h2 id="businessTotal">৳ 0</h2>
+</div>
+
+<div class="partners">
+
+  <div class="card">
+    <div class="avatar">👤</div>
+    <div class="name">পার্টনার ১</div>
+    <div class="balance" id="p1Balance">৳ 0</div>
+    <div class="label">বর্তমান ব্যালেন্স</div>
+  </div>
+
+  <div class="card">
+    <div class="avatar">👤</div>
+    <div class="name">পার্টনার ২</div>
+    <div class="balance" id="p2Balance">৳ 0</div>
+    <div class="label">বর্তমান ব্যালেন্স</div>
+  </div>
+
+</div>
+
+<div class="stats">
+ <div class="stat"><b id="investment">৳0</b><span>মোট জমা</span></div>
+ <div class="stat"><b id="withdraw">৳0</b><span>মোট উত্তোলন</span></div>
+ <div class="stat"><b id="pending">0</b><span>Pending</span></div>
+</div>
+
+<div class="actions">
+ <button class="btn primary" onclick="openEntry()">＋ নতুন হিসাব যোগ</button>
+ <button class="btn light" onclick="alert('Approval Request এখানে দেখাবে')">🔔 Approval</button>
+</div>
+
+<div class="section-title">
+ <h2>সাম্প্রতিক লেনদেন</h2>
+ <span>সব হিসাব</span>
+</div>
+
+<div id="entries"></div>
+
+</div>
+
+<div class="modal" id="entryModal">
+<div class="sheet">
+
+<h2>নতুন হিসাব যোগ করুন</h2>
+
+<select id="partner">
+ <option value="p1">পার্টনার ১</option>
+ <option value="p2">পার্টনার ২</option>
+</select>
+
+<select id="type">
+ <option value="in">টাকা জমা / ইনভেস্ট</option>
+ <option value="out">টাকা উত্তোলন</option>
+</select>
+
+<input id="amount" type="number" placeholder="টাকার পরিমাণ">
+
+<input id="date" type="date">
+
+<textarea id="note" placeholder="বিবরণ / কী কারণে"></textarea>
+
+<button class="save" onclick="saveEntry()">হিসাব সেভ করুন</button>
+<button class="cancel" onclick="closeEntry()">বাতিল</button>
+
+</div>
+</div>
+
+<script>
+
+let data = JSON.parse(localStorage.getItem("partnerAccounts") || "[]");
+
+function openEntry(){
+ document.getElementById("entryModal").style.display="flex";
+ document.getElementById("date").value =
+ new Date().toISOString().split("T")[0];
+}
+
+function closeEntry(){
+ document.getElementById("entryModal").style.display="none";
+}
+
+function saveEntry(){
+
+ const partner=document.getElementById("partner").value;
+ const type=document.getElementById("type").value;
+ const amount=Number(document.getElementById("amount").value);
+ const date=document.getElementById("date").value;
+ const note=document.getElementById("note").value;
+
+ if(!amount || amount<=0){
+   alert("টাকার পরিমাণ লিখুন");
+   return;
+ }
+
+ data.unshift({
+   id:Date.now(),
+   partner,
+   type,
+   amount,
+   date,
+   note,
+   createdAt:new Date().toISOString()
+ });
+
+ localStorage.setItem("partnerAccounts",JSON.stringify(data));
+
+ document.getElementById("amount").value="";
+ document.getElementById("note").value="";
+
+ closeEntry();
+ render();
+}
+
+function money(n){
+ return "৳ "+Number(n).toLocaleString("en-US");
+}
+
+function render(){
+
+ let p1=0,p2=0,totalIn=0,totalOut=0;
+
+ data.forEach(x=>{
+
+   if(x.type==="in"){
+     totalIn+=x.amount;
+     if(x.partner==="p1") p1+=x.amount;
+     else p2+=x.amount;
+   }else{
+     totalOut+=x.amount;
+     if(x.partner==="p1") p1-=x.amount;
+     else p2-=x.amount;
+   }
+
+ });
+
+ document.getElementById("p1Balance").innerText=money(p1);
+ document.getElementById("p2Balance").innerText=money(p2);
+ document.getElementById("businessTotal").innerText=money(p1+p2);
+ document.getElementById("investment").innerText=money(totalIn);
+ document.getElementById("withdraw").innerText=money(totalOut);
+
+ const box=document.getElementById("entries");
+
+ if(data.length===0){
+   box.innerHTML=
+   '<div class="card" style="text-align:center;color:#819091">এখনও কোনো হিসাব যোগ করা হয়নি</div>';
+   return;
+ }
+
+ box.innerHTML=data.map(x=>`
+
+ <div class="entry">
+
+   <div class="entry-top">
+
+     <div>
+       <div class="entry-title">
+       ${x.partner==="p1"?"পার্টনার ১":"পার্টনার ২"}
+       </div>
+
+       <div class="meta">
+       ${x.date || ""} • ${x.note || "কোনো বিবরণ নেই"}
+       </div>
+     </div>
+
+     <div class="amount ${x.type}">
+       ${x.type==="in"?"+":"−"} ${money(x.amount)}
+     </div>
+
+   </div>
+
+ </div>
+
+ `).join("");
+}
+
+render();
+
+</script>
+
+</body>
+</html>
