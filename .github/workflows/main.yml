@@ -1,7 +1,6 @@
 name: Build Android APK
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
@@ -23,30 +22,24 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 17
+
+      - name: Create package.json
+        run: npm init -y
+
+      - name: Install Capacitor
+        run: |
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npm install --save-dev typescript
 
       - name: Create Capacitor project
-        run: |
-          npm init -y
-          npm install @capacitor/core @capacitor/cli @capacitor/android
-          
-          cat > capacitor.config.ts <<'EOF'
-          import type { CapacitorConfig } from '@capacitor/cli';
+        run: npx cap init "Anaya Shop" "com.anaya.shop" --web-dir=.
 
-          const config: CapacitorConfig = {
-            appId: 'com.anayashop.app',
-            appName: 'Anaya Shop',
-            webDir: 'www'
-          };
+      - name: Add Android
+        run: npx cap add android
 
-          export default config;
-          EOF
-
-          mkdir -p www
-          cp index.html www/index.html
-
-          npx cap add android
-          npx cap sync android
+      - name: Copy web files
+        run: npx cap copy android
 
       - name: Build APK
         run: |
