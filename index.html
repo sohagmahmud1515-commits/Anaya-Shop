@@ -2,456 +2,216 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Anaya Shop</title>
-
 <style>
 *{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f5f7fb;
-  color:#222;
-}
-header{
-  background:#111827;
-  color:white;
-  padding:18px;
-  text-align:center;
-}
-header h1{margin:0;font-size:25px}
-header p{margin:6px 0 0;color:#d1d5db}
-
-.container{
-  padding:15px;
-  max-width:700px;
-  margin:auto;
-}
-
-.card{
-  background:white;
-  padding:18px;
-  margin-bottom:15px;
-  border-radius:15px;
-  box-shadow:0 3px 12px #00000012;
-}
-
-.card h2{
-  margin-top:0;
-  font-size:19px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-button{
-  border:0;
-  border-radius:10px;
-  padding:13px;
-  font-size:15px;
-  cursor:pointer;
-  background:#111827;
-  color:white;
-}
-
-input,select{
-  width:100%;
-  padding:12px;
-  margin:7px 0 12px;
-  border:1px solid #ddd;
-  border-radius:9px;
-  font-size:15px;
-}
-
-.stat{
-  padding:15px;
-  border-radius:12px;
-  background:#f1f5f9;
-  text-align:center;
-}
-
-.stat b{
-  display:block;
-  font-size:24px;
-  margin-top:5px;
-}
-
-.menu{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.menu button{
-  background:white;
-  color:#222;
-  border:1px solid #ddd;
-  min-height:80px;
-}
-
-.result{
-  background:#f8fafc;
-  padding:12px;
-  border-radius:10px;
-  margin-top:10px;
-}
-
-.danger{background:#dc2626}
-.success{background:#16a34a}
-.blue{background:#2563eb}
-
-footer{
-  text-align:center;
-  padding:25px;
-  color:#777;
-}
+body{margin:0;background:#f5f7fb;color:#17202a;font-family:Arial,"Noto Sans Bengali",sans-serif}
+header{background:#101827;color:white;text-align:center;padding:22px 10px}
+header h1{margin:0;font-size:28px}
+header p{margin:7px 0 0;color:#d5d9e0;font-size:16px}
+.container{max-width:900px;margin:auto;padding:15px}
+.card{background:white;border-radius:20px;padding:18px;margin-bottom:16px;box-shadow:0 3px 15px #00000012}
+.title{font-size:22px;font-weight:bold;margin-bottom:15px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stats{background:#f0f3f8;border-radius:18px;padding:18px;text-align:center}
+.stats .num{font-size:30px;font-weight:bold;margin:7px 0}
+.stats small{font-size:16px}
+.menu{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+button{width:100%;border:1px solid #ddd;background:white;border-radius:15px;padding:18px 8px;font-size:17px;cursor:pointer}
+button:active{transform:scale(.98)}
+.icon{font-size:28px;display:block;margin-bottom:8px}
+input,select{width:100%;padding:12px;margin:7px 0;border:1px solid #ddd;border-radius:10px;font-size:16px}
+.action{background:#0b7285;color:white;border:0}
+.hidden{display:none}
+.back{margin-bottom:12px;background:#101827;color:white}
+table{width:100%;border-collapse:collapse}
+th,td{border-bottom:1px solid #eee;padding:10px;text-align:left}
+.bottom{position:sticky;bottom:0;background:white;border-radius:18px;padding:8px;display:grid;grid-template-columns:repeat(4,1fr);box-shadow:0 -2px 12px #0002}
+.bottom button{border:0;padding:8px;font-size:12px}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>🛍️ Anaya-Shop</h1>
-  <p>Factory & Business Management</p>
+<h1>🛍️ Anaya-Shop</h1>
+<p>ফ্যাক্টরি ও ব্যবসা ব্যবস্থাপনা</p>
 </header>
 
 <div class="container">
 
-<!-- Dashboard -->
+<!-- DASHBOARD -->
+<section id="home">
 <div class="card">
-<h2>📊 Dashboard</h2>
-
+<div class="title">📊 Dashboard</div>
 <div class="grid">
-<div class="stat">
-কাপড়ের স্টক
-<b id="fabricStock">0</b>
-মিটার
-</div>
-
-<div class="stat">
-মোট কাটিং
-<b id="cuttingTotal">0</b>
-পিস
-</div>
-
-<div class="stat">
-সেলাই সম্পন্ন
-<b id="sewingTotal">0</b>
-পিস
-</div>
-
-<div class="stat">
-বাকি সেলাই
-<b id="pendingTotal">0</b>
-পিস
-</div>
+<div class="stats">কাপড় স্টক<div class="num" id="stock">0.00</div><small>মিটার</small></div>
+<div class="stats">মোট কাটিং<div class="num" id="cutTotal">0</div><small>পিস</small></div>
+<div class="stats">সেলাই সম্পন্ন<div class="num" id="sewTotal">0</div><small>পিস</small></div>
+<div class="stats">বাকি সেলাই<div class="num" id="pending">0</div><small>পিস</small></div>
 </div>
 </div>
 
-<!-- Main Menu -->
 <div class="card">
-<h2>⚙️ ম্যানেজমেন্ট</h2>
-
+<div class="title">⚙️ ম্যানেজমেন্ট</div>
 <div class="menu">
-<button onclick="show('fabric')">🧵<br>কাপড় স্টক</button>
-<button onclick="show('cutting')">✂️<br>কাটিং</button>
-<button onclick="show('sewing')">🪡<br>সেলাই</button>
-<button onclick="show('workers')">👷<br>কারিগর</button>
+<button onclick="openPage('stockPage')"><span class="icon">🧵</span>কাপড় স্টক</button>
+<button onclick="openPage('cutPage')"><span class="icon">✂️</span>কাটিং</button>
+<button onclick="openPage('sewPage')"><span class="icon">🪡</span>সেলাই</button>
+<button onclick="openPage('workerPage')"><span class="icon">👷</span>কারিগর</button>
+<button onclick="openPage('staffPage')"><span class="icon">👥</span>স্টাফ</button>
+<button onclick="openPage('partnerPage')"><span class="icon">🤝</span>পার্টনার</button>
+<button onclick="openPage('productPage')"><span class="icon">📦</span>প্রোডাকশন</button>
+<button onclick="openPage('expensePage')"><span class="icon">💰</span>খরচ</button>
 </div>
 </div>
 
-<!-- Fabric -->
-<div class="card" id="fabric" style="display:none">
-<h2>🧵 কাপড় কেনা / স্টক</h2>
-
-<label>কাপড়ের নাম</label>
-<input id="fabricName" placeholder="যেমন: Velvet">
-
-<label>কত মিটার</label>
-<input id="fabricMeter" type="number" placeholder="যেমন: 500">
-
-<button class="success" onclick="addFabric()">
-স্টকে যোগ করুন
-</button>
-
-<div class="result">
-বর্তমান কাপড়ের স্টক:
-<b id="fabricStock2">0</b> মিটার
+<div class="card">
+<div class="title">⚡ Quick Actions</div>
+<div class="menu">
+<button onclick="openPage('orderPage')">🛍️<br>অর্ডার</button>
+<button onclick="openPage('attendancePage')">📅<br>হাজিরা</button>
+<button onclick="openPage('reportPage')">📊<br>রিপোর্ট</button>
+<button onclick="openPage('paymentPage')">💵<br>পেমেন্ট</button>
 </div>
 </div>
+</section>
 
-<!-- Cutting -->
-<div class="card" id="cutting" style="display:none">
-<h2>✂️ কাটিং রেকর্ড</h2>
-
-<label>প্রোডাক্ট / কাপড়</label>
-<input id="cutName" placeholder="যেমন: Velvet Burqa">
-
-<label>কত পিস কাটিং</label>
-<input id="cutQty" type="number" placeholder="যেমন: 100">
-
-<label>প্রতি পিস কত মিটার</label>
-<input id="meterPerPiece" type="number" step="0.01" placeholder="যেমন: 2.5">
-
-<button class="blue" onclick="addCutting()">
-কাটিং যোগ করুন
-</button>
-
-<div class="result">
-মোট কাটিং:
-<b id="cuttingTotal2">0</b> পিস
-<br><br>
-ব্যবহৃত কাপড়:
-<b id="usedFabric">0</b> মিটার
+<!-- STOCK -->
+<section id="stockPage" class="hidden">
+<button class="back" onclick="goHome()">← ফিরে যান</button>
+<div class="card">
+<div class="title">🧵 কাপড় স্টক</div>
+<input id="fabricName" placeholder="কাপড়ের নাম">
+<input id="fabricMeter" type="number" placeholder="কত মিটার">
+<button class="action" onclick="addStock()">স্টকে যোগ করুন</button>
 </div>
+<div class="card">
+<div class="title">বর্তমান স্টক</div>
+<table><tbody id="stockList"></tbody></table>
 </div>
+</section>
 
-<!-- Sewing -->
-<div class="card" id="sewing" style="display:none">
-<h2>🪡 সেলাই রেকর্ড</h2>
-
-<label>কারিগরের নাম</label>
-<input id="workerName" placeholder="যেমন: রহিম">
-
-<label>দেওয়া হয়েছে</label>
-<input id="sewingGiven" type="number" placeholder="পিস">
-
-<label>সম্পন্ন হয়েছে</label>
-<input id="sewingDone" type="number" placeholder="পিস">
-
-<button class="success" onclick="addSewing()">
-সেলাই রেকর্ড যোগ করুন
-</button>
-
-<div class="result">
-মোট দেওয়া:
-<b id="givenTotal">0</b> পিস
-<br><br>
-মোট সম্পন্ন:
-<b id="doneTotal">0</b> পিস
-<br><br>
-বাকি:
-<b id="pendingTotal2">0</b> পিস
+<!-- CUTTING -->
+<section id="cutPage" class="hidden">
+<button class="back" onclick="goHome()">← ফিরে যান</button>
+<div class="card">
+<div class="title">✂️ কাটিং হিসাব</div>
+<input id="cutProduct" placeholder="প্রোডাক্টের নাম">
+<input id="cutQty" type="number" placeholder="কত পিস">
+<input id="cutMeter" type="number" placeholder="কত মিটার কাপড় ব্যবহার">
+<button class="action" onclick="addCut()">কাটিং সংরক্ষণ</button>
 </div>
+</section>
+
+<!-- SEWING -->
+<section id="sewPage" class="hidden">
+<button class="back" onclick="goHome()">← ফিরে যান</button>
+<div class="card">
+<div class="title">🪡 সেলাই হিসাব</div>
+<input id="sewWorker" placeholder="কারিগরের নাম">
+<input id="sewQty" type="number" placeholder="সম্পন্ন পিস">
+<button class="action" onclick="addSew()">সেলাই সংরক্ষণ</button>
 </div>
+</section>
 
-<!-- Workers -->
-<div class="card" id="workers" style="display:none">
-<h2>👷 কারিগর রিপোর্ট</h2>
-
-<div id="workerReport">
-কোনো রেকর্ড নেই।
+<!-- WORKER -->
+<section id="workerPage" class="hidden">
+<button class="back" onclick="goHome()">← ফিরে যান</button>
+<div class="card">
+<div class="title">👷 কারিগর</div>
+<input id="workerName" placeholder="কারিগরের নাম">
+<input id="workerRate" type="number" placeholder="প্রতি পিস মজুরি">
+<button class="action" onclick="addWorker()">কারিগর যোগ করুন</button>
 </div>
+<div class="card"><div id="workerList"></div></div>
+</section>
+
+<!-- STAFF -->
+<section id="staffPage" class="hidden">
+<button class="back" onclick="goHome()">← ফিরে যান</button>
+<div class="card">
+<div class="title">👥 স্টাফ</div>
+<input id="staffName" placeholder="স্টাফের নাম">
+<input id="staffSalary" type="number" placeholder="বেতন">
+<button class="action" onclick="addStaff()">স্টাফ যোগ করুন</button>
 </div>
+</section>
 
+<!-- PARTNER -->
+<section id="partnerPage" class="hidden">
+<button class="back" onclick="goHome()">← ফিরে যান</button>
+<div class="card">
+<div class="title">🤝 পার্টনার / পাইকার</div>
+<input id="partnerName" placeholder="পার্টনারের নাম">
+<input id="partnerPhone" placeholder="মোবাইল নম্বর">
+<button class="action" onclick="addPartner()">পার্টনার যোগ করুন</button>
 </div>
+</section>
 
-<footer>
-Anaya-Shop © 2026
-</footer>
+<!-- PRODUCTION -->
+<section id="productPage" class="hidden">
+<button class="back" onclick="goHome()">← ফিরে যান</button>
+<div class="card">
+<div class="title">📦 প্রোডাকশন</div>
+<input id="readyQty" type="number" placeholder="রেডি পিস">
+<button class="action" onclick="addReady()">প্রোডাকশন সংরক্ষণ</button>
+</div>
+</section>
 
-<script>
+<!-- EXPENSE -->
+<section id="expensePage" class="hidden">
+<button class="back" onclick="goHome()">← ফিরে যান</button>
+<div class="card">
+<div class="title">💰 খরচ</div>
+<input id="expenseName" placeholder="খরচের বিবরণ">
+<input id="expenseAmount" type="number" placeholder="টাকার পরিমাণ">
+<button class="action" onclick="addExpense()">খরচ সংরক্ষণ</button>
+</div>
+</section>
 
-let fabricStock = Number(localStorage.getItem("fabricStock") || 0);
-let cuttingTotal = Number(localStorage.getItem("cuttingTotal") || 0);
-let sewingGiven = Number(localStorage.getItem("sewingGiven") || 0);
-let sewingDone = Number(localStorage.getItem("sewingDone") || 0);
-let usedFabric = Number(localStorage.getItem("usedFabric") || 0);
+<!-- ORDER -->
+<section id="orderPage" class="hidden">
+<button class="back" onclick="goHome()">← ফিরে যান</button>
+<div class="card">
+<div class="title">🛍️ অর্ডার</div>
+<input id="orderCustomer" placeholder="কাস্টমারের নাম">
+<input id="orderProduct" placeholder="প্রোডাক্ট">
+<input id="orderAmount" type="number" placeholder="মূল্য">
+<button class="action" onclick="addOrder()">অর্ডার সংরক্ষণ</button>
+</div>
+</section>
 
-let workers =
-JSON.parse(localStorage.getItem("workers") || "[]");
+<!-- ATTENDANCE -->
+<section id="attendancePage" class="hidden">
+<button class="back" onclick="goHome()">← ফিরে যান</button>
+<div class="card">
+<div class="title">📅 হাজিরা</div>
+<input id="attName" placeholder="নাম">
+<select id="attStatus">
+<option>উপস্থিত</option>
+<option>অনুপস্থিত</option>
+</select>
+<button class="action" onclick="addAttendance()">হাজিরা সংরক্ষণ</button>
+</div>
+</section>
 
-function save(){
-localStorage.setItem("fabricStock",fabricStock);
-localStorage.setItem("cuttingTotal",cuttingTotal);
-localStorage.setItem("sewingGiven",sewingGiven);
-localStorage.setItem("sewingDone",sewingDone);
-localStorage.setItem("usedFabric",usedFabric);
-localStorage.setItem("workers",JSON.stringify(workers));
-update();
-}
+<!-- REPORT -->
+<section id="reportPage" class="hidden">
+<button class="back" onclick="goHome()">← ফিরে যান</button>
+<div class="card">
+<div class="title">📊 রিপোর্ট</div>
+<p>মোট কাপড়: <b id="rStock">0</b> মিটার</p>
+<p>মোট কাটিং: <b id="rCut">0</b> পিস</p>
+<p>মোট সেলাই: <b id="rSew">0</b> পিস</p>
+<p>বাকি সেলাই: <b id="rPending">0</b> পিস</p>
+</div>
+</section>
 
-function update(){
-
-document.getElementById("fabricStock").innerText=
-fabricStock.toFixed(2);
-
-document.getElementById("fabricStock2").innerText=
-fabricStock.toFixed(2);
-
-document.getElementById("cuttingTotal").innerText=
-cuttingTotal;
-
-document.getElementById("cuttingTotal2").innerText=
-cuttingTotal;
-
-document.getElementById("sewingTotal").innerText=
-sewingDone;
-
-document.getElementById("doneTotal").innerText=
-sewingDone;
-
-document.getElementById("givenTotal").innerText=
-sewingGiven;
-
-let pending=sewingGiven-sewingDone;
-
-document.getElementById("pendingTotal").innerText=
-pending;
-
-document.getElementById("pendingTotal2").innerText=
-pending;
-
-document.getElementById("usedFabric").innerText=
-usedFabric.toFixed(2);
-
-showWorkers();
-}
-
-function show(id){
-
-["fabric","cutting","sewing","workers"]
-.forEach(x=>{
-document.getElementById(x).style.display="none";
-});
-
-document.getElementById(id).style.display="block";
-
-window.scrollTo({
-top:document.getElementById(id).offsetTop-20,
-behavior:"smooth"
-});
-}
-
-function addFabric(){
-
-let meter=Number(
-document.getElementById("fabricMeter").value
-);
-
-if(!meter || meter<=0){
-alert("মিটারের পরিমাণ দিন");
-return;
-}
-
-fabricStock+=meter;
-
-document.getElementById("fabricMeter").value="";
-
-save();
-
-alert("কাপড় স্টকে যোগ হয়েছে ✅");
-}
-
-function addCutting(){
-
-let qty=Number(
-document.getElementById("cutQty").value
-);
-
-let meter=Number(
-document.getElementById("meterPerPiece").value
-);
-
-if(!qty || !meter){
-alert("সব তথ্য দিন");
-return;
-}
-
-let totalMeter=qty*meter;
-
-if(totalMeter>fabricStock){
-alert("পর্যাপ্ত কাপড় স্টকে নেই ❌");
-return;
-}
-
-cuttingTotal+=qty;
-usedFabric+=totalMeter;
-fabricStock-=totalMeter;
-
-document.getElementById("cutQty").value="";
-document.getElementById("meterPerPiece").value="";
-
-save();
-
-alert("কাটিং সফলভাবে যোগ হয়েছে ✅");
-}
-
-function addSewing(){
-
-let name=
-document.getElementById("workerName").value.trim();
-
-let given=
-Number(document.getElementById("sewingGiven").value);
-
-let done=
-Number(document.getElementById("sewingDone").value);
-
-if(!name || !given || done<0){
-alert("সব তথ্য সঠিকভাবে দিন");
-return;
-}
-
-if(done>given){
-alert("সম্পন্ন পিস দেওয়া পিসের চেয়ে বেশি হতে পারে না");
-return;
-}
-
-sewingGiven+=given;
-sewingDone+=done;
-
-workers.push({
-name:name,
-given:given,
-done:done,
-date:new Date().toLocaleDateString("bn-BD")
-});
-
-document.getElementById("workerName").value="";
-document.getElementById("sewingGiven").value="";
-document.getElementById("sewingDone").value="";
-
-save();
-
-alert("সেলাই রেকর্ড সংরক্ষণ হয়েছে ✅");
-}
-
-function showWorkers(){
-
-let box=document.getElementById("workerReport");
-
-if(workers.length===0){
-box.innerText="কোনো রেকর্ড নেই।";
-return;
-}
-
-box.innerHTML="";
-
-workers.forEach((w,i)=>{
-
-let div=document.createElement("div");
-
-div.className="result";
-
-div.innerHTML=
-"<b>"+w.name+"</b><br>"+
-"তারিখ: "+w.date+"<br>"+
-"দেওয়া: "+w.given+" পিস<br>"+
-"সম্পন্ন: "+w.done+" পিস<br>"+
-"বাকি: "+(w.given-w.done)+" পিস";
-
-box.appendChild(div);
-
-});
-}
-
-update();
-
-</script>
-
-</body>
-</html>
+<!-- PAYMENT -->
+<section id="paymentPage" class="hidden">
+<button class="back" onclick="goHome()">← ফিরে যান</button>
+<div class="card">
+<div class="title">💵 পেমেন্ট</div>
+<input id="payName" placeholder
