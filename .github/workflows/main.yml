@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build-apk:
@@ -22,24 +23,30 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
-
-      - name: Create package.json
-        run: npm init -y
+          java-version: 21
 
       - name: Install Capacitor
         run: |
+          npm init -y
           npm install @capacitor/core @capacitor/cli @capacitor/android
-          npm install --save-dev typescript
 
-      - name: Create Capacitor project
-        run: npx cap init "Anaya Shop" "com.anaya.shop" --web-dir=.
+      - name: Prepare web files
+        run: |
+          mkdir -p www
+          cp index.html www/index.html
+
+      - name: Create Capacitor config
+        run: |
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.anaya.shop",
+            "appName": "Anaya Shop",
+            "webDir": "www"
+          }
+          EOF
 
       - name: Add Android
         run: npx cap add android
-
-      - name: Copy web files
-        run: npx cap copy android
 
       - name: Build APK
         run: |
