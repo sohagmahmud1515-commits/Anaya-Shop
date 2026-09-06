@@ -1,1 +1,513 @@
 
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Management</title>
+
+  <style>
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+      background:#f4f8f7;
+      color:#1d2433;
+    }
+
+    .header{
+      background:#0f6b73;
+      color:white;
+      padding:18px 16px;
+      font-size:22px;
+      font-weight:700;
+    }
+
+    .container{
+      padding:16px;
+      padding-bottom:90px;
+    }
+
+    .group-card{
+      background:white;
+      border-radius:18px;
+      padding:18px;
+      margin-bottom:14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      box-shadow:0 5px 16px rgba(0,0,0,.08);
+      cursor:pointer;
+    }
+
+    .left{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .icon{
+      width:55px;
+      height:55px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:26px;
+    }
+
+    .blue{background:#e2edff;}
+    .yellow{background:#fff1c7;}
+    .red{background:#ffe1e1;}
+
+    .group-card h3{
+      font-size:18px;
+      margin-bottom:5px;
+    }
+
+    .group-card p{
+      font-size:13px;
+      color:#8b909b;
+    }
+
+    .badge{
+      min-width:42px;
+      height:42px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-weight:700;
+    }
+
+    .badge-blue{background:#2f72e8;}
+    .badge-yellow{background:#e58b00;}
+    .badge-red{background:#f04444;}
+
+    .section{
+      display:none;
+      margin-top:18px;
+    }
+
+    .section.active{
+      display:block;
+    }
+
+    .back{
+      margin-bottom:14px;
+      color:#0f6b73;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .form-card,
+    .order-card{
+      background:white;
+      padding:16px;
+      border-radius:16px;
+      margin-bottom:12px;
+      box-shadow:0 4px 12px rgba(0,0,0,.06);
+    }
+
+    .form-card input,
+    .form-card select,
+    .form-card textarea{
+      width:100%;
+      padding:12px;
+      margin-top:8px;
+      margin-bottom:12px;
+      border:1px solid #d8dfe3;
+      border-radius:10px;
+      font-size:15px;
+    }
+
+    .btn{
+      width:100%;
+      border:none;
+      background:#0f8f83;
+      color:white;
+      padding:14px;
+      border-radius:11px;
+      font-size:16px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .btn-emergency{
+      background:#f04444;
+      margin-top:8px;
+    }
+
+    .order-card h4{
+      margin-bottom:6px;
+    }
+
+    .order-card p{
+      margin:4px 0;
+      font-size:14px;
+      color:#555;
+    }
+
+    .status{
+      display:inline-block;
+      padding:5px 10px;
+      border-radius:20px;
+      font-size:12px;
+      font-weight:700;
+      margin-top:7px;
+    }
+
+    .pending{
+      background:#fff0c5;
+      color:#b46c00;
+    }
+
+    .emergency{
+      background:#ffe3e3;
+      color:#d72727;
+    }
+
+    .empty{
+      text-align:center;
+      padding:25px;
+      color:#999;
+    }
+
+    .bottom-nav{
+      position:fixed;
+      bottom:0;
+      left:0;
+      right:0;
+      background:white;
+      border-top:1px solid #e7e7e7;
+      display:flex;
+      justify-content:space-around;
+      padding:10px 0;
+    }
+
+    .bottom-nav div{
+      font-size:13px;
+      text-align:center;
+      color:#7c8490;
+    }
+
+    .bottom-nav .active-nav{
+      color:#0f6b73;
+      font-weight:700;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">Order Management</div>
+
+  <div class="container">
+
+    <div id="groupsPage">
+
+      <div class="group-card" onclick="openAllOrders()">
+        <div class="left">
+          <div class="icon blue">📦</div>
+          <div>
+            <h3>All Order Group</h3>
+            <p>Submit new orders here</p>
+          </div>
+        </div>
+        <div class="badge badge-blue" id="allCount">0</div>
+      </div>
+
+      <div class="group-card" onclick="openPending()">
+        <div class="left">
+          <div class="icon yellow">🕒</div>
+          <div>
+            <h3>Pending Group</h3>
+            <p>Submitted orders automatically appear here</p>
+          </div>
+        </div>
+        <div class="badge badge-yellow" id="pendingCount">0</div>
+      </div>
+
+      <div class="group-card" onclick="openEmergency()">
+        <div class="left">
+          <div class="icon red">🔔</div>
+          <div>
+            <h3>Emergency Group</h3>
+            <p>High priority orders</p>
+          </div>
+        </div>
+        <div class="badge badge-red" id="emergencyCount">0</div>
+      </div>
+
+    </div>
+
+    <div id="allOrdersSection" class="section">
+
+      <div class="back" onclick="goBack()">← Back</div>
+
+      <div class="form-card">
+        <h3>Create New Order</h3>
+
+        <input id="customerName" type="text" placeholder="Customer Name">
+
+        <input id="phone" type="text" placeholder="Phone Number">
+
+        <textarea id="address" placeholder="Customer Address"></textarea>
+
+        <input id="product" type="text" placeholder="Product Name">
+
+        <input id="quantity" type="number" placeholder="Quantity">
+
+        <input id="amount" type="number" placeholder="Total Amount">
+
+        <select id="priority">
+          <option value="normal">Normal Order</option>
+          <option value="emergency">Emergency Order</option>
+        </select>
+
+        <button class="btn" onclick="submitOrder()">Submit Order</button>
+      </div>
+
+      <h3 style="margin:18px 0 10px;">All Orders</h3>
+
+      <div id="allOrdersList"></div>
+
+    </div>
+
+    <div id="pendingSection" class="section">
+
+      <div class="back" onclick="goBack()">← Back</div>
+
+      <h3>Pending Group</h3>
+
+      <p style="margin:8px 0 15px;color:#777;">
+        নতুন অর্ডার এখানে Submit করা যাবে না। All Order Group থেকে Submit করা অর্ডার এখানে অটোমেটিক আসবে।
+      </p>
+
+      <div id="pendingList"></div>
+
+    </div>
+
+    <div id="emergencySection" class="section">
+
+      <div class="back" onclick="goBack()">← Back</div>
+
+      <h3>Emergency Group</h3>
+
+      <p style="margin:8px 0 15px;color:#777;">
+        Emergency হিসেবে Mark করা অর্ডার এখানে দেখাবে।
+      </p>
+
+      <div id="emergencyList"></div>
+
+    </div>
+
+  </div>
+
+  <div class="bottom-nav">
+    <div>🏠<br>Home</div>
+    <div class="active-nav">📦<br>Orders</div>
+    <div>🏭<br>Production</div>
+    <div>👤<br>Employee</div>
+    <div>☰<br>More</div>
+  </div>
+
+  <script>
+
+    let orders = JSON.parse(localStorage.getItem("mayaOrders")) || [];
+
+    function saveOrders(){
+      localStorage.setItem("mayaOrders", JSON.stringify(orders));
+      updateCounts();
+    }
+
+    function submitOrder(){
+
+      const name = document.getElementById("customerName").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const product = document.getElementById("product").value.trim();
+      const quantity = document.getElementById("quantity").value;
+      const amount = document.getElementById("amount").value;
+      const priority = document.getElementById("priority").value;
+
+      if(!name || !phone || !product){
+        alert("Customer Name, Phone Number এবং Product Name দিন");
+        return;
+      }
+
+      const newOrder = {
+        id: "MG-" + Date.now(),
+        name: name,
+        phone: phone,
+        address: address,
+        product: product,
+        quantity: quantity || 1,
+        amount: amount || 0,
+
+        status: "pending",
+
+        emergency: priority === "emergency",
+
+        date: new Date().toLocaleString()
+      };
+
+      orders.unshift(newOrder);
+
+      saveOrders();
+
+      clearForm();
+
+      renderAllOrders();
+
+      alert("Order submitted successfully. Pending Group-এ চলে গেছে।");
+    }
+
+    function clearForm(){
+      document.getElementById("customerName").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("address").value = "";
+      document.getElementById("product").value = "";
+      document.getElementById("quantity").value = "";
+      document.getElementById("amount").value = "";
+      document.getElementById("priority").value = "normal";
+    }
+
+    function orderHTML(order){
+
+      return `
+        <div class="order-card">
+          <h4>${order.name}</h4>
+
+          <p><b>Order ID:</b> ${order.id}</p>
+          <p><b>Phone:</b> ${order.phone}</p>
+          <p><b>Product:</b> ${order.product}</p>
+          <p><b>Quantity:</b> ${order.quantity}</p>
+          <p><b>Total:</b> ৳${order.amount}</p>
+
+          <span class="status pending">Pending</span>
+
+          ${
+            order.emergency
+            ? '<span class="status emergency">Emergency</span>'
+            : ''
+          }
+        </div>
+      `;
+    }
+
+    function renderAllOrders(){
+
+      const list = document.getElementById("allOrdersList");
+
+      if(orders.length === 0){
+        list.innerHTML = '<div class="empty">No orders yet</div>';
+        return;
+      }
+
+      list.innerHTML = orders.map(orderHTML).join("");
+    }
+
+    function renderPending(){
+
+      const pendingOrders = orders.filter(
+        order => order.status === "pending"
+      );
+
+      const list = document.getElementById("pendingList");
+
+      if(pendingOrders.length === 0){
+        list.innerHTML = '<div class="empty">No pending orders</div>';
+        return;
+      }
+
+      list.innerHTML = pendingOrders.map(orderHTML).join("");
+    }
+
+    function renderEmergency(){
+
+      const emergencyOrders = orders.filter(
+        order => order.emergency === true
+      );
+
+      const list = document.getElementById("emergencyList");
+
+      if(emergencyOrders.length === 0){
+        list.innerHTML = '<div class="empty">No emergency orders</div>';
+        return;
+      }
+
+      list.innerHTML = emergencyOrders.map(orderHTML).join("");
+    }
+
+    function updateCounts(){
+
+      document.getElementById("allCount").innerText =
+        orders.length;
+
+      document.getElementById("pendingCount").innerText =
+        orders.filter(order => order.status === "pending").length;
+
+      document.getElementById("emergencyCount").innerText =
+        orders.filter(order => order.emergency === true).length;
+    }
+
+    function hideAll(){
+
+      document.getElementById("groupsPage").style.display = "none";
+
+      document.getElementById("allOrdersSection").classList.remove("active");
+      document.getElementById("pendingSection").classList.remove("active");
+      document.getElementById("emergencySection").classList.remove("active");
+    }
+
+    function openAllOrders(){
+
+      hideAll();
+
+      document.getElementById("allOrdersSection").classList.add("active");
+
+      renderAllOrders();
+    }
+
+    function openPending(){
+
+      hideAll();
+
+      document.getElementById("pendingSection").classList.add("active");
+
+      renderPending();
+    }
+
+    function openEmergency(){
+
+      hideAll();
+
+      document.getElementById("emergencySection").classList.add("active");
+
+      renderEmergency();
+    }
+
+    function goBack(){
+
+      document.getElementById("groupsPage").style.display = "block";
+
+      document.getElementById("allOrdersSection").classList.remove("active");
+      document.getElementById("pendingSection").classList.remove("active");
+      document.getElementById("emergencySection").classList.remove("active");
+
+      updateCounts();
+    }
+
+    updateCounts();
+    renderAllOrders();
+
+  </script>
+
+</body>
+</html>
