@@ -498,7 +498,7 @@
 
       <div class="summary-card">
         <div class="summary-icon">👥</div>
-        <strong>19</strong>
+        <strong id="totalEmployees">0</strong>
         <small>মোট এমপ্লয়ি</small>
       </div>
 
@@ -680,7 +680,23 @@
 </div>
 
 <script>
+function updateEmployeeCount(){
+  let employees = [];
 
+  try{
+    employees = JSON.parse(localStorage.getItem("mayaEmployees")) || [];
+  }catch(e){
+    employees = [];
+  }
+
+  const total = document.getElementById("totalEmployees");
+
+  if(total){
+    total.innerText = employees.length;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", updateEmployeeCount);
   let balanceVisible = false;
 
   function toggleBalance(){
