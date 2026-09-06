@@ -75,7 +75,7 @@ body{
 
 label{
   display:block;
-  font-size:13px;
+  font-size:13px; 
   font-weight:bold;
   margin-bottom:7px;
 }
@@ -280,31 +280,53 @@ input:focus, select:focus{
 
   <div class="card">
 
-    <div class="section-title">🕐 ডিউটি তথ্য</div>
+  <div class="section-title">🕐 ডিউটি তথ্য</div>
 
-    <div class="row">
+  <div class="row">
 
-      <div class="form-group">
-        <label>ডিউটি শুরু</label>
-        <input id="dutyStart" type="time">
-      </div>
-
-      <div class="form-group">
-        <label>ডিউটি শেষ</label>
-        <input id="dutyEnd" type="time">
-      </div>
-
+    <div class="form-group">
+      <label>ডিউটি শুরু</label>
+      <input id="dutyStart" type="time">
     </div>
 
     <div class="form-group">
-      <label>ওভারটাইম রেট (প্রতি ঘণ্টা)</label>
-      <input id="overtimeRate" type="number" min="0"
-             placeholder="৳">
+      <label>ডিউটি শেষ</label>
+      <input id="dutyEnd" type="time">
     </div>
 
   </div>
 
+  <div class="row">
 
+    <div class="form-group">
+      <label>লাঞ্চ শুরু</label>
+      <input id="lunchStart" type="time">
+    </div>
+
+    <div class="form-group">
+      <label>লাঞ্চ শেষ</label>
+      <input id="lunchEnd" type="time">
+    </div>
+
+  </div>
+
+  <div class="form-group">
+    <label>Grace Time (মিনিট)</label>
+    <input id="graceMinutes" type="number" min="0"
+           placeholder="যেমন: 15">
+  </div>
+
+  <div class="note">
+    উদাহরণ: ডিউটি 10:00 AM এবং Grace Time 15 মিনিট হলে
+    10:15 পর্যন্ত On Time। 10:16 হলে Late 1 মিনিট ধরা হবে।
+  </div>
+
+  <div class="form-group" style="margin-top:15px;">
+    <label>ওভারটাইম</label>
+    <input value="বেতন অনুযায়ী অটো হিসাব হবে" readonly>
+  </div>
+
+</div>
   <div class="card">
 
     <div class="section-title">👆 Fingerprint & Login</div>
@@ -460,15 +482,21 @@ function saveEmployee(){
       : 0,
 
     dutyStart:
-      document.getElementById("dutyStart").value,
+    document.getElementById("dutyStart").value,
 
-    dutyEnd:
-      document.getElementById("dutyEnd").value,
+dutyEnd:
+    document.getElementById("dutyEnd").value,
 
-    overtimeRate:
-      Number(
-        document.getElementById("overtimeRate").value || 0
-      ),
+lunchStart:
+    document.getElementById("lunchStart").value,
+
+lunchEnd:
+    document.getElementById("lunchEnd").value,
+
+graceMinutes:
+    Number(
+        document.getElementById("graceMinutes").value || 0
+    ),
 
     fingerprintId:
       document.getElementById("fingerprintId").value.trim(),
