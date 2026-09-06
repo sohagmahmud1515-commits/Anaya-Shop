@@ -1,1 +1,482 @@
 
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Garments Management</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f3f8f8;
+  color:#15383b;
+  padding-bottom:90px;
+}
+
+.app{
+  max-width:480px;
+  margin:auto;
+  padding:18px;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:22px;
+}
+
+.welcome{
+  font-size:17px;
+  color:#748486;
+}
+
+.app-name{
+  font-size:34px;
+  font-weight:800;
+  margin-top:5px;
+}
+
+.subtitle{
+  color:#7a898a;
+  margin-top:5px;
+}
+
+.header-right{
+  display:flex;
+  gap:10px;
+}
+
+.circle{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 6px 18px #00000012;
+  font-size:23px;
+}
+
+.profile{
+  background:#087985;
+  color:white;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.card{
+  background:white;
+  border-radius:20px;
+  box-shadow:0 7px 20px #00000010;
+}
+
+.partner-box{
+  padding:18px;
+  margin-bottom:25px;
+}
+
+.partner-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+.partner-info{
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+
+.partner-icon{
+  width:62px;
+  height:62px;
+  border-radius:17px;
+  background:#ddf5f0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:29px;
+}
+
+.partner-info small{
+  color:#758486;
+}
+
+.partner-info b{
+  display:block;
+  margin-top:5px;
+  font-size:17px;
+}
+
+.partner-btn{
+  border:0;
+  background:#087985;
+  color:#fff;
+  padding:14px;
+  border-radius:14px;
+  font-weight:bold;
+}
+
+.section{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.section h2{
+  font-size:24px;
+}
+
+.section span{
+  font-size:12px;
+  color:#819091;
+}
+
+.summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:11px;
+}
+
+.summary-card{
+  padding:14px;
+  min-height:140px;
+}
+
+.icon-box{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  background:#e8f7f4;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:23px;
+}
+
+.number{
+  font-size:28px;
+  font-weight:800;
+  margin-top:11px;
+}
+
+.label{
+  font-size:13px;
+  color:#718082;
+  margin-top:4px;
+}
+
+.money{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:11px;
+  margin-top:12px;
+}
+
+.money-card{
+  padding:13px;
+}
+
+.money-card small{
+  color:#718082;
+}
+
+.money-card b{
+  display:block;
+  font-size:18px;
+  margin-top:7px;
+}
+
+.quick-title{
+  font-size:24px;
+  font-weight:800;
+  margin:28px 0 17px;
+}
+
+.quick-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:18px 8px;
+}
+
+.quick{
+  text-align:center;
+  font-size:12px;
+  color:#405658;
+  text-decoration:none;
+}
+
+.quick-icon{
+  width:55px;
+  height:55px;
+  border-radius:16px;
+  background:white;
+  margin:0 auto 8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  box-shadow:0 6px 17px #00000012;
+}
+
+.bottom{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:480px;
+  background:#fff;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  padding:12px;
+  border-radius:22px 22px 0 0;
+  box-shadow:0 -5px 20px #00000012;
+}
+
+.nav{
+  text-align:center;
+  color:#7c898a;
+  font-size:12px;
+}
+
+.nav div{
+  font-size:24px;
+  margin-bottom:4px;
+}
+
+.nav.active{
+  color:#087985;
+  font-weight:bold;
+}
+
+@media(max-width:400px){
+  .app-name{font-size:29px}
+  .quick-grid{grid-template-columns:repeat(4,1fr)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="header">
+  <div>
+    <div class="welcome">আসসালামু আলাইকুম ✨</div>
+    <div class="app-name">Garments</div>
+    <div class="subtitle">ফ্যাক্টরি ড্যাশবোর্ডে স্বাগতম</div>
+  </div>
+
+  <div class="header-right">
+    <div class="circle">🔔</div>
+    <div class="circle profile">Welcome</div>
+  </div>
+</div>
+
+<div class="card partner-box">
+
+  <div class="partner-top">
+
+    <div class="partner-info">
+      <div class="partner-icon">👥</div>
+
+      <div>
+        <small>ব্যবসায়িক পার্টনার</small>
+        <b>দুই পার্টনারের হিসাব</b>
+      </div>
+    </div>
+
+    <button class="partner-btn"
+      onclick="location.href='partner.html'">
+      পার্টনার দেখুন
+    </button>
+
+  </div>
+
+</div>
+
+<div class="section">
+  <h2>সারসংক্ষেপ</h2>
+  <span>সর্বশেষ আপডেট 🟢</span>
+</div>
+
+<div class="summary">
+
+  <div class="card summary-card">
+    <div class="icon-box">👥</div>
+    <div class="number">19</div>
+    <div class="label">মোট কর্মচারী</div>
+  </div>
+
+  <div class="card summary-card">
+    <div class="icon-box">✅</div>
+    <div class="number">16</div>
+    <div class="label">আজ উপস্থিত</div>
+  </div>
+
+  <div class="card summary-card">
+    <div class="icon-box">❌</div>
+    <div class="number">3</div>
+    <div class="label">আজ অনুপস্থিত</div>
+  </div>
+
+  <div class="card summary-card">
+    <div class="icon-box">✂️</div>
+    <div class="number">620</div>
+    <div class="label">আজ কাটিং</div>
+  </div>
+
+  <div class="card summary-card">
+    <div class="icon-box">🧵</div>
+    <div class="number">458</div>
+    <div class="label">আজ সেলাই</div>
+  </div>
+
+  <div class="card summary-card">
+    <div class="icon-box">📦</div>
+    <div class="number">385</div>
+    <div class="label">আজ রেডি</div>
+  </div>
+
+</div>
+
+<div class="money">
+
+  <div class="card money-card">
+    <small>কারিগরদের পাওনা</small>
+    <b>৳ 0</b>
+  </div>
+
+  <div class="card money-card">
+    <small>স্টকের মূল্য</small>
+    <b>৳ 0</b>
+  </div>
+
+  <div class="card money-card">
+    <small>আজকের খরচ</small>
+    <b>৳ 0</b>
+  </div>
+
+</div>
+
+<div class="quick-title">Quick actions</div>
+
+<div class="quick-grid">
+
+<a class="quick" href="partner.html">
+  <div class="quick-icon">🔄</div>
+  পার্টনার হিসাব
+</a>
+
+<a class="quick" href="staff-bill.html">
+  <div class="quick-icon">💳</div>
+  স্টাফ বিল
+</a>
+
+<a class="quick" href="worker.html">
+  <div class="quick-icon">👥</div>
+  কারিগর হিসাব
+</a>
+
+<a class="quick" href="wholesale.html">
+  <div class="quick-icon">👜</div>
+  পাইকারি হিসাব
+</a>
+
+<a class="quick" href="production.html">
+  <div class="quick-icon">📦</div>
+  প্রোডাকশন
+</a>
+
+<a class="quick" href="cutting.html">
+  <div class="quick-icon">✂️</div>
+  কাটিং হিসাব
+</a>
+
+<a class="quick" href="sewing.html">
+  <div class="quick-icon">🧵</div>
+  সেলাই হিসাব
+</a>
+
+<a class="quick" href="finishing.html">
+  <div class="quick-icon">📋</div>
+  ফিনিশিং
+</a>
+
+<a class="quick" href="product.html">
+  <div class="quick-icon">➕</div>
+  নতুন প্রোডাক্ট
+</a>
+
+<a class="quick" href="expense.html">
+  <div class="quick-icon">🧾</div>
+  খরচ
+</a>
+
+<a class="quick" href="staff.html">
+  <div class="quick-icon">👤</div>
+  স্টাফ
+</a>
+
+<a class="quick" href="duty.html">
+  <div class="quick-icon">📅</div>
+  ডিউটি টাইম
+</a>
+
+<a class="quick" href="overtime.html">
+  <div class="quick-icon">⏱️</div>
+  ওভারটাইম
+</a>
+
+<a class="quick" href="payment.html">
+  <div class="quick-icon">💸</div>
+  পাওনা/পেমেন্ট
+</a>
+
+<a class="quick" href="report.html">
+  <div class="quick-icon">📊</div>
+  রিপোর্ট
+</a>
+
+</div>
+
+</div>
+
+<div class="bottom">
+
+<div class="nav active">
+  <div>🏠</div>
+  হোম
+</div>
+
+<div class="nav">
+  <div>📦</div>
+  প্রোডাকশন
+</div>
+
+<div class="nav">
+  <div>🔔</div>
+  অ্যালার্ট
+</div>
+
+<div class="nav">
+  <div>👤</div>
+  প্রোফাইল
+</div>
+
+</div>
+
+</body>
+</html>
