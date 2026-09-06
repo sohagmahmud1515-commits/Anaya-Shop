@@ -1,560 +1,442 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Maya Garments</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      background: #f5fbfa;
-      color: #123b3d;
-      min-height: 100vh;
-    }
-
-    .app {
-      max-width: 480px;
-      margin: auto;
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at top left, #dff7ef 0, transparent 28%),
-        #f7fbfb;
-      padding-bottom: 95px;
-    }
-
-    .topbar {
-      padding: 18px 18px 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .menu-btn,
-    .icon-btn {
-      border: none;
-      background: transparent;
-      font-size: 25px;
-      cursor: pointer;
-      color: #153f42;
-    }
-
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .bell {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,.08);
-      position: relative;
-    }
-
-    .badge {
-      position: absolute;
-      top: -3px;
-      right: -2px;
-      background: #f23b4e;
-      color: white;
-      border-radius: 20px;
-      min-width: 20px;
-      height: 20px;
-      font-size: 11px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+      background:#f4fbfa;
+      color:#143d40;
     }
 
-    .avatar {
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      background: linear-gradient(135deg,#12b89c,#087b81);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 20px;
+    .app{
+      max-width:480px;
+      margin:auto;
+      min-height:100vh;
+      padding-bottom:88px;
+      background:#f7fbfb;
     }
-
-    .title-wrap {
-      padding: 0 20px 15px;
-    }
-
-    .title-wrap .hello {
-      color: #758a8d;
-      font-size: 17px;
-      margin-bottom: 2px;
-    }
-
-    .title-wrap h1 {
-      font-size: 33px;
-      line-height: 1.05;
-      color: #0e3f42;
-      margin-bottom: 5px;
-    }
-
-    .title-wrap p {
-      color: #73878a;
-      font-size: 16px;
-    }
-
-    .hero {
-      margin: 0 18px 20px;
-      background: linear-gradient(120deg,#dff9f1,#eefbf8);
-      border-radius: 24px;
-      padding: 18px;
-      min-height: 145px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 7px 18px rgba(17,93,87,.07);
-    }
-
-    .hero::after {
-      content: "🌿";
-      font-size: 76px;
-      position: absolute;
-      right: 10px;
-      bottom: -10px;
-      opacity: .35;
-    }
-
-    .hero h2 {
-      font-size: 25px;
-      max-width: 250px;
-      line-height: 1.3;
-      margin-bottom: 8px;
-      color: #133f42;
-    }
 
-    .hero p {
-      max-width: 260px;
-      color: #597477;
-      line-height: 1.5;
-      font-size: 15px;
+    .top{
+      padding:20px 18px 12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
     }
 
-    .section {
-      padding: 0 18px;
-      margin-bottom: 22px;
-    }
-
-    .section-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .section-title h3 {
-      font-size: 23px;
-      color: #143d40;
-    }
+    .menu{
+      font-size:29px;
+      border:none;
+      background:transparent;
+      color:#123b3e;
+    }
+
+    .top-right{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
 
-    .section-title span {
-      font-size: 13px;
-      color: #829194;
+    .bell{
+      width:46px;
+      height:46px;
+      background:white;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 5px 15px rgba(0,0,0,.07);
+      position:relative;
+      font-size:22px;
     }
 
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(4,1fr);
-      gap: 10px;
+    .badge{
+      position:absolute;
+      top:-4px;
+      right:-3px;
+      background:#f33b4c;
+      color:#fff;
+      width:20px;
+      height:20px;
+      border-radius:50%;
+      font-size:11px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:bold;
     }
 
-    .summary-card {
-      background: white;
-      border-radius: 20px;
-      padding: 13px 9px;
-      min-height: 145px;
-      box-shadow: 0 7px 18px rgba(0,0,0,.06);
+    .avatar{
+      width:48px;
+      height:48px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#13b69c,#087b80);
+      color:white;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-size:21px;
+      font-weight:bold;
     }
 
-    .summary-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: #e4f7f3;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      margin-bottom: 10px;
+    .brand{
+      padding:0 18px 14px;
     }
 
-    .summary-card strong {
-      display: block;
-      font-size: 27px;
-      color: #0f3140;
-      margin-bottom: 3px;
+    .brand small{
+      color:#72888b;
+      font-size:15px;
     }
 
-    .summary-card small {
-      color: #708287;
-      font-size: 12px;
-      line-height: 1.35;
+    .brand h1{
+      font-size:32px;
+      margin:4px 0 4px;
+      color:#103a3d;
     }
 
-    .money-card {
-      background: white;
-      border-radius: 22px;
-      padding: 17px 14px;
-      box-shadow: 0 7px 18px rgba(0,0,0,.06);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+    .brand p{
+      color:#72888b;
+      font-size:15px;
     }
 
-    .money-item {
-      display: flex;
-      gap: 10px;
-      align-items: center;
+    .balance-card{
+      margin:0 18px 20px;
+      background:white;
+      border-radius:24px;
+      padding:18px;
+      box-shadow:0 7px 20px rgba(0,0,0,.06);
     }
 
-    .money-item:first-child {
-      border-right: 1px solid #e5eeee;
-      padding-right: 10px;
+    .balance-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
     }
 
-    .money-icon {
-      width: 50px;
-      height: 50px;
-      border-radius: 15px;
-      background: #fff3c9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 25px;
-      flex-shrink: 0;
+    .balance-left{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      flex:1;
     }
 
-    .money-item:nth-child(2) .money-icon {
-      background: #e5efff;
+    .money-icon{
+      width:58px;
+      height:58px;
+      border-radius:18px;
+      background:#dcf9ee;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:30px;
     }
 
-    .money-item small {
-      display: block;
-      color: #718489;
-      font-size: 12px;
-      margin-bottom: 4px;
+    .balance-text small{
+      color:#6f8588;
+      font-size:13px;
     }
 
-    .money-item strong {
-      font-size: 19px;
-      color: #10383d;
+    .amount-row{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-top:6px;
     }
 
-    .quick-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
+    .amount{
+      font-size:26px;
+      font-weight:bold;
+      color:#10363b;
     }
 
-    .quick-title h3 {
-      font-size: 24px;
+    .eye-btn{
+      border:none;
+      background:transparent;
+      font-size:24px;
+      cursor:pointer;
     }
 
-    .more-link {
-      color: #08a78e;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      background: transparent;
+    .details-btn{
+      width:100%;
+      margin-top:14px;
+      border:none;
+      background:#e8faf5;
+      color:#0a8f79;
+      padding:13px;
+      border-radius:16px;
+      font-size:14px;
+      font-weight:bold;
+      cursor:pointer;
     }
 
-    .quick-grid {
-      display: grid;
-      grid-template-columns: repeat(4,1fr);
-      gap: 10px;
+    .section{
+      padding:0 18px;
+      margin-bottom:22px;
     }
 
-    .quick-item {
-      background: white;
-      border: none;
-      border-radius: 20px;
-      padding: 14px 5px 12px;
-      min-height: 105px;
-      box-shadow: 0 6px 15px rgba(0,0,0,.06);
-      cursor: pointer;
-      color: #173d40;
-      font-size: 12px;
-      font-weight: 600;
+    .section-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:12px;
     }
 
-    .quick-icon {
-      width: 48px;
-      height: 48px;
-      margin: 0 auto 10px;
-      border-radius: 14px;
-      background: #dff9f1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
+    .section-head h2{
+      font-size:23px;
     }
 
-    .progress-card {
-      background: white;
-      border-radius: 22px;
-      box-shadow: 0 7px 18px rgba(0,0,0,.06);
-      padding: 17px;
+    .section-head span{
+      font-size:12px;
+      color:#7a8f92;
     }
 
-    .progress-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      font-size: 14px;
+    .summary-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
     }
 
-    .progress-bg {
-      height: 11px;
-      background: #e3eeec;
-      border-radius: 20px;
-      overflow: hidden;
-      margin-bottom: 16px;
+    .summary-card{
+      background:white;
+      border-radius:20px;
+      padding:14px 8px;
+      min-height:132px;
+      box-shadow:0 6px 17px rgba(0,0,0,.05);
     }
 
-    .progress-bar {
-      width: 78%;
-      height: 100%;
-      background: linear-gradient(90deg,#12b99d,#08a887);
-      border-radius: 20px;
+    .summary-icon{
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      background:#e4f7f3;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-size:24px;
+      margin-bottom:10px;
     }
 
-    .production-numbers {
-      display: grid;
-      grid-template-columns: repeat(4,1fr);
-      text-align: center;
+    .summary-card strong{
+      display:block;
+      font-size:27px;
+      color:#103540;
+      margin-bottom:4px;
     }
 
-    .production-numbers div {
-      border-right: 1px solid #e4ecec;
+    .summary-card small{
+      color:#73868a;
+      font-size:12px;
     }
 
-    .production-numbers div:last-child {
-      border-right: none;
+    .quick-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:12px;
     }
 
-    .production-numbers strong {
-      display: block;
-      font-size: 20px;
-      color: #12383e;
+    .quick-head h2{
+      font-size:23px;
     }
 
-    .production-numbers small {
-      color: #778b8f;
-      font-size: 11px;
+    .quick-head button{
+      border:none;
+      background:transparent;
+      color:#0aa38b;
+      font-weight:bold;
+      cursor:pointer;
     }
 
-    .quote {
-      background: linear-gradient(100deg,#ffffff,#e9faf6);
-      border-radius: 22px;
-      padding: 18px;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      box-shadow: 0 7px 18px rgba(0,0,0,.05);
+    .quick-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
     }
 
-    .quote-icon {
-      font-size: 35px;
-      color: #0aa58e;
+    .quick{
+      border:none;
+      background:white;
+      border-radius:18px;
+      min-height:105px;
+      padding:12px 5px 10px;
+      box-shadow:0 6px 15px rgba(0,0,0,.05);
+      cursor:pointer;
+      color:#153d40;
+      font-weight:600;
+      font-size:12px;
     }
 
-    .quote p {
-      font-weight: 700;
-      line-height: 1.5;
+    .quick-icon{
+      width:46px;
+      height:46px;
+      margin:0 auto 11px;
+      border-radius:14px;
+      background:#e5f8f3;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:23px;
     }
 
-    .quote small {
-      display: block;
-      margin-top: 5px;
-      color: #74888a;
+    .progress-card{
+      background:white;
+      border-radius:20px;
+      padding:16px 12px;
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:0;
+      box-shadow:0 6px 16px rgba(0,0,0,.05);
     }
 
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(480px,100%);
-      background: white;
-      display: grid;
-      grid-template-columns: repeat(5,1fr);
-      padding: 10px 4px 14px;
-      box-shadow: 0 -5px 20px rgba(0,0,0,.07);
-      z-index: 30;
+    .progress-item{
+      text-align:center;
+      border-right:1px solid #e3ecec;
     }
 
-    .nav-item {
-      border: none;
-      background: transparent;
-      color: #87979a;
-      font-size: 11px;
-      cursor: pointer;
+    .progress-item:last-child{
+      border-right:none;
     }
 
-    .nav-item span {
-      display: block;
-      font-size: 24px;
-      margin-bottom: 4px;
+    .progress-item strong{
+      display:block;
+      font-size:23px;
+      margin-top:4px;
+      color:#123a3d;
     }
 
-    .nav-item.active {
-      color: #0ab298;
-      font-weight: 700;
+    .progress-item small{
+      color:#72878a;
+      font-size:12px;
     }
 
-    .nav-add {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: linear-gradient(135deg,#12b99c,#07888c);
-      color: white !important;
-      margin: -22px auto 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px !important;
-      box-shadow: 0 5px 15px rgba(0,140,125,.25);
+    .bottom-nav{
+      position:fixed;
+      left:50%;
+      bottom:0;
+      transform:translateX(-50%);
+      width:min(480px,100%);
+      background:white;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      padding:9px 4px 13px;
+      box-shadow:0 -5px 18px rgba(0,0,0,.07);
+      z-index:20;
     }
 
-    .drawer-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(5,37,39,.35);
-      display: none;
-      z-index: 99;
+    .nav{
+      border:none;
+      background:transparent;
+      color:#809296;
+      font-size:11px;
+      cursor:pointer;
+      position:relative;
     }
 
-    .drawer-overlay.show {
-      display: block;
+    .nav span{
+      display:block;
+      font-size:23px;
+      margin-bottom:3px;
     }
 
-    .drawer {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 88%;
-      max-width: 390px;
-      height: 100%;
-      background: #fff;
-      padding: 20px 16px 30px;
-      overflow-y: auto;
-      border-radius: 25px 0 0 25px;
-      animation: slideIn .25s ease;
+    .nav.active{
+      color:#08a78f;
+      font-weight:bold;
     }
 
-    @keyframes slideIn {
-      from { transform: translateX(100%); }
-      to { transform: translateX(0); }
+    .nav-badge{
+      position:absolute;
+      top:-4px;
+      left:58%;
+      background:#f23b4c;
+      color:white;
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      font-size:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
-    .drawer-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
+    .drawer-bg{
+      position:fixed;
+      inset:0;
+      background:rgba(0,30,32,.35);
+      display:none;
+      z-index:50;
     }
 
-    .drawer-head h2 {
-      font-size: 25px;
+    .drawer-bg.show{
+      display:block;
     }
 
-    .close-btn {
-      border: none;
-      background: transparent;
-      font-size: 28px;
-      cursor: pointer;
+    .drawer{
+      width:86%;
+      max-width:390px;
+      height:100%;
+      background:white;
+      margin-left:auto;
+      padding:18px;
+      overflow:auto;
+      border-radius:24px 0 0 24px;
     }
 
-    .search-box {
-      width: 100%;
-      padding: 14px 15px;
-      border: 1px solid #e1e8e8;
-      border-radius: 18px;
-      outline: none;
-      margin-bottom: 15px;
-      font-size: 14px;
+    .drawer-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:15px;
     }
 
-    .more-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    .drawer-head h2{
+      font-size:24px;
     }
 
-    .more-item {
-      border: 1px solid #edf0f0;
-      background: #fff;
-      border-radius: 17px;
-      padding: 12px 13px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,.04);
+    .close{
+      border:none;
+      background:transparent;
+      font-size:28px;
     }
 
-    .more-item .mi {
-      width: 42px;
-      height: 42px;
-      border-radius: 13px;
-      background: #e3f8f3;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 21px;
+    .more-item{
+      background:white;
+      border:1px solid #edf1f1;
+      border-radius:16px;
+      padding:13px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+      box-shadow:0 4px 12px rgba(0,0,0,.04);
+      cursor:pointer;
     }
 
-    .more-item span:nth-child(2) {
-      flex: 1;
-      font-size: 14px;
-      font-weight: 600;
+    .more-item .mi{
+      width:42px;
+      height:42px;
+      border-radius:13px;
+      background:#e5f8f3;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:20px;
     }
 
-    .arrow {
-      color: #90a0a3;
-      font-size: 20px;
+    .more-item b{
+      flex:1;
+      font-size:14px;
     }
-
-    @media (max-width: 390px) {
-      .summary-grid,
-      .quick-grid {
-        gap: 7px;
-      }
 
-      .summary-card {
-        padding: 10px 6px;
-      }
-
-      .quick-item {
-        padding-left: 3px;
-        padding-right: 3px;
-      }
-
-      .title-wrap h1 {
-        font-size: 29px;
-      }
-    }
   </style>
 </head>
 
@@ -562,27 +444,53 @@
 
 <div class="app">
 
-  <div class="topbar">
-    <button class="menu-btn" onclick="openMore()">☰</button>
+  <div class="top">
+    <button class="menu" onclick="openMore()">☰</button>
 
-    <div class="top-actions">
+    <div class="top-right">
       <div class="bell">
         🔔
         <span class="badge">3</span>
       </div>
-
       <div class="avatar">M</div>
     </div>
   </div>
 
-  <div class="title-wrap">
-    <div class="hello">আসসালামু আলাইকুম ✨</div>
+  <div class="brand">
+    <small>আসসালামু আলাইকুম 👋</small>
     <h1>Maya Garments</h1>
-    <p>ফ্যাক্টরি ম্যানেজমেন্ট সিস্টেম</p>
+    <p>আপনার ব্যবসার সহজ সমাধান</p>
   </div>
 
-  <div class="hero">
-      <h3>আজকের সারসংক্ষেপ</h3>
+  <div class="balance-card">
+
+    <div class="balance-top">
+
+      <div class="balance-left">
+        <div class="money-icon">💰</div>
+
+        <div class="balance-text">
+          <small>স্টাফদের মোট পাওনা</small>
+
+          <div class="amount-row">
+            <div class="amount" id="balanceAmount">৳ ••••••</div>
+            <button class="eye-btn" onclick="toggleBalance()">👁</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="details-btn" onclick="go('staff-dues.html')">
+      বিস্তারিত কে কত পায় দেখুন →
+    </button>
+
+  </div>
+
+  <div class="section">
+
+    <div class="section-head">
+      <h2>সারসংক্ষেপ</h2>
       <span>সর্বশেষ আপডেট</span>
     </div>
 
@@ -591,341 +499,215 @@
       <div class="summary-card">
         <div class="summary-icon">👥</div>
         <strong>19</strong>
-        <small>মোট কর্মচারী</small>
+        <small>মোট এমপ্লয়ি</small>
       </div>
 
       <div class="summary-card">
         <div class="summary-icon">✅</div>
         <strong>16</strong>
-        <small>আজ উপস্থিত</small>
+        <small>মোট উপস্থিত</small>
       </div>
 
       <div class="summary-card">
         <div class="summary-icon">❌</div>
         <strong>3</strong>
-        <small>আজ অনুপস্থিত</small>
-      </div>
-
-      <div class="summary-card">
-        <div class="summary-icon">✂️</div>
-        <strong>620</strong>
-        <small>আজ কাটিং<br>(পিস)</small>
+        <small>মোট অনুপস্থিত</small>
       </div>
 
     </div>
-  </div>
 
-  <div class="section">
-    <div class="money-card">
-
-      <div class="money-item">
-        <div class="money-icon">💰</div>
-        <div>
-          <small>কারিগরদের মোট পাওনা</small>
-          <strong>৳ 1,85,600</strong>
-        </div>
-      </div>
-
-      <div class="money-item">
-        <div class="money-icon">🪙</div>
-        <div>
-          <small>স্টকের মোট মূল্য</small>
-          <strong>৳ 3,75,450</strong>
-        </div>
-      </div>
-
-    </div>
   </div>
 
   <div class="section">
 
-    <div class="quick-title">
-      <h3>Quick actions</h3>
-      <button class="more-link" onclick="openMore()">আরো দেখুন →</button>
+    <div class="quick-head">
+      <h2>দ্রুত অ্যাকশন</h2>
+      <button onclick="openMore()">সব দেখুন →</button>
     </div>
 
     <div class="quick-grid">
 
-      <button class="quick-item" onclick="go('partner.html')">
+      <button class="quick" onclick="go('partner.html')">
         <div class="quick-icon">👥</div>
         পার্টনার হিসাব
       </button>
 
-      <button class="quick-item" onclick="go('fabric.html')">
-        <div class="quick-icon">🧵</div>
-        স্টক / কাপড়
+      <button class="quick" onclick="go('staff-bill.html')">
+        <div class="quick-icon">💵</div>
+        স্টাফ বিল
       </button>
 
-      <button class="quick-item" onclick="go('cutting.html')">
-        <div class="quick-icon">✂️</div>
-        কাটিং হিসাব
-      </button>
-
-      <button class="quick-item" onclick="go('sewing.html')">
-        <div class="quick-icon">🪡</div>
-        সেলাই হিসাব
-      </button>
-
-      <button class="quick-item" onclick="go('worker.html')">
+      <button class="quick" onclick="go('worker.html')">
         <div class="quick-icon">👷</div>
         কারিগর হিসাব
       </button>
 
-      <button class="quick-item" onclick="go('wholesale.html')">
-        <div class="quick-icon">🛍️</div>
+      <button class="quick" onclick="go('wholesale.html')">
+        <div class="quick-icon">📦</div>
         পাইকারি হিসাব
       </button>
 
-      <button class="quick-item" onclick="go('report.html')">
+      <button class="quick" onclick="go('sale-summary.html')">
         <div class="quick-icon">📊</div>
-        রিপোর্ট
+        সেল সামারি
       </button>
 
-      <button class="quick-item" onclick="openMore()">
+      <button class="quick" onclick="go('attendance.html')">
+        <div class="quick-icon">✅</div>
+        উপস্থিত/অনুপস্থিত
+      </button>
+
+      <button class="quick" onclick="openMore()">
         <div class="quick-icon">•••</div>
-        আরো দেখুন
+        More
       </button>
 
     </div>
+
   </div>
 
   <div class="section">
-    <div class="section-title">
-      <h3>আজকের কাজের অবস্থা</h3>
+
+    <div class="section-head">
+      <h2>আজকের কাজের অগ্রগতি</h2>
       <span>বিস্তারিত দেখুন →</span>
     </div>
 
     <div class="progress-card">
 
-      <div class="progress-row">
-        <span>আজকের উৎপাদন অগ্রগতি</span>
-        <strong>78%</strong>
+      <div class="progress-item">
+        <small>মোট অর্ডার</small>
+        <strong>12</strong>
       </div>
 
-      <div class="progress-bg">
-        <div class="progress-bar"></div>
+      <div class="progress-item">
+        <small>সম্পন্ন হয়েছে</small>
+        <strong>8</strong>
       </div>
 
-      <div class="production-numbers">
-
-        <div>
-          <strong>620</strong>
-          <small>কাটিং</small>
-        </div>
-
-        <div>
-          <strong>458</strong>
-          <small>সেলাই</small>
-        </div>
-
-        <div>
-          <strong>385</strong>
-          <small>রেডি</small>
-        </div>
-
-        <div>
-          <strong>120</strong>
-          <small>প্যাকিং</small>
-        </div>
-
+      <div class="progress-item">
+        <small>ডেলিভারিতে</small>
+        <strong>4</strong>
       </div>
 
     </div>
-  </div>
 
-  <div class="section">
-    <div class="quote">
-      <div class="quote-icon">“</div>
-      <div>
-        <p>ছোট ছোট হিসাব, বড় সফলতার ভিত্তি</p>
-        <small>— Maya Garments</small>
-      </div>
-    </div>
   </div>
 
 </div>
 
-
 <div class="bottom-nav">
 
-  <button class="nav-item active" onclick="go('index.html')">
+  <button class="nav active" onclick="go('index.html')">
     <span>🏠</span>
     হোম
   </button>
 
-  <button class="nav-item" onclick="go('fabric.html')">
-    <span>📦</span>
-    স্টক
+  <button class="nav" onclick="go('order.html')">
+    <span>📋</span>
+    অর্ডার
   </button>
 
-  <button class="nav-item" onclick="go('new-entry.html')">
-    <span class="nav-add">+</span>
-    নতুন এন্ট্রি
+  <button class="nav" onclick="go('notification.html')">
+    <span>🔔</span>
+    <i class="nav-badge">3</i>
+    নোটিফিকেশন
   </button>
 
-  <button class="nav-item" onclick="go('report.html')">
-    <span>📊</span>
-    রিপোর্ট
-  </button>
-
-  <button class="nav-item" onclick="go('profile.html')">
+  <button class="nav" onclick="go('profile.html')">
     <span>👤</span>
     প্রোফাইল
   </button>
 
 </div>
 
-
-<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawerOutside(event)">
+<div class="drawer-bg" id="drawerBg" onclick="closeOutside(event)">
 
   <div class="drawer">
 
     <div class="drawer-head">
-      <h2>আরো অপশন</h2>
-      <button class="close-btn" onclick="closeMore()">×</button>
+      <h2>More Options</h2>
+      <button class="close" onclick="closeMore()">×</button>
     </div>
 
-    <input
-      id="moduleSearch"
-      class="search-box"
-      type="text"
-      placeholder="এখানে খুঁজুন..."
-      oninput="searchModules()"
-    >
+    <div class="more-item" onclick="go('partner.html')">
+      <span class="mi">👥</span>
+      <b>পার্টনার হিসাব</b>
+      <span>›</span>
+    </div>
 
-    <div class="more-list" id="moreList">
+    <div class="more-item" onclick="go('staff-bill.html')">
+      <span class="mi">💵</span>
+      <b>স্টাফ বিল</b>
+      <span>›</span>
+    </div>
 
-      <div class="more-item" onclick="go('attendance.html')">
-        <span class="mi">🕒</span>
-        <span>ডিউটি টাইম / হাজিরা</span>
-        <span class="arrow">›</span>
-      </div>
+    <div class="more-item" onclick="go('worker.html')">
+      <span class="mi">👷</span>
+      <b>কারিগর হিসাব</b>
+      <span>›</span>
+    </div>
 
-      <div class="more-item" onclick="go('finishing.html')">
-        <span class="mi">🏷️</span>
-        <span>ফিনিশিং</span>
-        <span class="arrow">›</span>
-      </div>
+    <div class="more-item" onclick="go('wholesale.html')">
+      <span class="mi">📦</span>
+      <b>পাইকারি হিসাব</b>
+      <span>›</span>
+    </div>
 
-      <div class="more-item" onclick="go('product.html')">
-        <span class="mi">➕</span>
-        <span>নতুন প্রোডাক্ট</span>
-        <span class="arrow">›</span>
-      </div>
+    <div class="more-item" onclick="go('sale-summary.html')">
+      <span class="mi">📊</span>
+      <b>সেল সামারি</b>
+      <span>›</span>
+    </div>
 
-      <div class="more-item" onclick="go('expense.html')">
-        <span class="mi">🧾</span>
-        <span>খরচ হিসাব</span>
-        <span class="arrow">›</span>
-      </div>
+    <div class="more-item" onclick="go('attendance.html')">
+      <span class="mi">✅</span>
+      <b>উপস্থিত / অনুপস্থিত</b>
+      <span>›</span>
+    </div>
 
-      <div class="more-item" onclick="go('payment.html')">
-        <span class="mi">💳</span>
-        <span>পাওনা / পেমেন্ট</span>
-        <span class="arrow">›</span>
-      </div>
-
-      <div class="more-item" onclick="go('fabric.html')">
-        <span class="mi">🧵</span>
-        <span>স্টক / কাপড়</span>
-        <span class="arrow">›</span>
-      </div>
-
-      <div class="more-item" onclick="go('qc.html')">
-        <span class="mi">🛡️</span>
-        <span>গুণগত মান (QC)</span>
-        <span class="arrow">›</span>
-      </div>
-
-      <div class="more-item" onclick="go('order.html')">
-        <span class="mi">🛒</span>
-        <span>অর্ডার ম্যানেজমেন্ট</span>
-        <span class="arrow">›</span>
-      </div>
-
-      <div class="more-item" onclick="go('delivery.html')">
-        <span class="mi">🚚</span>
-        <span>ডেলিভারি</span>
-        <span class="arrow">›</span>
-      </div>
-
-      <div class="more-item" onclick="go('return.html')">
-        <span class="mi">↩️</span>
-        <span>রিটার্ন / সমস্যা</span>
-        <span class="arrow">›</span>
-      </div>
-
-      <div class="more-item" onclick="go('settings.html')">
-        <span class="mi">⚙️</span>
-        <span>সেটিংস</span>
-        <span class="arrow">›</span>
-      </div>
-
-      <div class="more-item" onclick="go('backup.html')">
-        <span class="mi">☁️</span>
-        <span>ডেটা ব্যাকআপ</span>
-        <span class="arrow">›</span>
-      </div>
-
-      <div class="more-item" onclick="go('support.html')">
-        <span class="mi">🎧</span>
-        <span>হেল্প ও সাপোর্ট</span>
-        <span class="arrow">›</span>
-      </div>
-
-      <div class="more-item" onclick="alert('Logout module পরে যুক্ত করবো')">
-        <span class="mi">🚪</span>
-        <span>লগআউট</span>
-        <span class="arrow">›</span>
-      </div>
-
+    <div class="more-item" onclick="go('report.html')">
+      <span class="mi">📈</span>
+      <b>রিপোর্ট</b>
+      <span>›</span>
     </div>
 
   </div>
-</div>
 
+</div>
 
 <script>
 
-  function go(file) {
-    window.location.href = file;
-  }
+  let balanceVisible = false;
 
-  function openMore() {
-    document.getElementById("drawerOverlay").classList.add("show");
-  }
+  function toggleBalance(){
+    balanceVisible = !balanceVisible;
 
-  function closeMore() {
-    document.getElementById("drawerOverlay").classList.remove("show");
-  }
+    const amount = document.getElementById("balanceAmount");
 
-  function closeDrawerOutside(event) {
-    if (event.target.id === "drawerOverlay") {
-      closeMore();
+    if(balanceVisible){
+      amount.innerText = "৳ ১,৮৫,৬০০";
+    }else{
+      amount.innerText = "৳ ••••••";
     }
   }
 
-  function searchModules() {
+  function go(file){
+    window.location.href = file;
+  }
 
-    const input =
-      document.getElementById("moduleSearch").value.toLowerCase();
+  function openMore(){
+    document.getElementById("drawerBg").classList.add("show");
+  }
 
-    const modules =
-      document.querySelectorAll(".more-item");
+  function closeMore(){
+    document.getElementById("drawerBg").classList.remove("show");
+  }
 
-    modules.forEach(function(item) {
-
-      const text =
-        item.innerText.toLowerCase();
-
-      if (text.includes(input)) {
-        item.style.display = "flex";
-      } else {
-        item.style.display = "none";
-      }
-
-    });
-
+  function closeOutside(e){
+    if(e.target.id === "drawerBg"){
+      closeMore();
+    }
   }
 
 </script>
