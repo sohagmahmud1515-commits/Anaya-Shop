@@ -1,1 +1,560 @@
 
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>এমপ্লয়ি যুক্ত করুন - Maya Garments</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial, sans-serif;
+}
+
+body{
+  background:#f4f7f7;
+  color:#1f2937;
+  padding-bottom:40px;
+}
+
+.header{
+  background:#087f78;
+  color:white;
+  padding:18px 16px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.back{
+  font-size:25px;
+  cursor:pointer;
+}
+
+.header-title{
+  font-size:19px;
+  font-weight:bold;
+}
+
+.header-sub{
+  font-size:12px;
+  opacity:.85;
+  margin-top:3px;
+}
+
+.container{
+  max-width:600px;
+  margin:auto;
+  padding:16px;
+}
+
+.card{
+  background:white;
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:15px;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.section-title{
+  font-size:16px;
+  font-weight:bold;
+  margin-bottom:16px;
+  color:#087f78;
+}
+
+.form-group{
+  margin-bottom:15px;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:7px;
+}
+
+input, select{
+  width:100%;
+  height:48px;
+  border:1px solid #d8e0e0;
+  border-radius:11px;
+  padding:0 13px;
+  font-size:15px;
+  outline:none;
+  background:white;
+}
+
+input:focus, select:focus{
+  border-color:#087f78;
+}
+
+.employee-id{
+  background:#eef8f7;
+  color:#087f78;
+  font-weight:bold;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.payment-options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.payment-box{
+  border:2px solid #e4eaea;
+  border-radius:12px;
+  padding:14px 8px;
+  text-align:center;
+  cursor:pointer;
+  font-weight:bold;
+  background:white;
+}
+
+.payment-box.active{
+  border-color:#087f78;
+  background:#e9f7f6;
+  color:#087f78;
+}
+
+.payment-box input{
+  display:none;
+}
+
+.note{
+  background:#f0f8ff;
+  padding:11px;
+  border-radius:10px;
+  font-size:12px;
+  line-height:1.5;
+  color:#52606d;
+}
+
+.save-btn{
+  width:100%;
+  border:0;
+  border-radius:12px;
+  background:#087f78;
+  color:white;
+  height:52px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.save-btn:active{
+  transform:scale(.98);
+}
+
+.success{
+  display:none;
+  background:#e8f7ef;
+  color:#137547;
+  border-radius:11px;
+  padding:13px;
+  margin-bottom:15px;
+  text-align:center;
+  font-weight:bold;
+}
+
+.hidden{
+  display:none;
+}
+
+@media(max-width:400px){
+  .row{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="back" onclick="goHome()">‹</div>
+  <div>
+    <div class="header-title">এমপ্লয়ি যুক্ত করুন</div>
+    <div class="header-sub">Maya Garments</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div id="successMessage" class="success">
+    ✓ এমপ্লয়ি সফলভাবে যুক্ত হয়েছে
+  </div>
+
+  <div class="card">
+
+    <div class="section-title">👤 ব্যক্তিগত তথ্য</div>
+
+    <div class="form-group">
+      <label>Employee ID</label>
+      <input id="employeeId" class="employee-id" readonly>
+    </div>
+
+    <div class="form-group">
+      <label>এমপ্লয়ির নাম *</label>
+      <input id="employeeName" type="text" placeholder="সম্পূর্ণ নাম লিখুন">
+    </div>
+
+    <div class="form-group">
+      <label>মোবাইল নম্বর</label>
+      <input id="mobile" type="tel" placeholder="01XXXXXXXXX">
+    </div>
+
+    <div class="form-group">
+      <label>পদ / বিভাগ *</label>
+      <input id="role" type="text" placeholder="যেমন: কারিগর, কাটিং মাস্টার, স্টাফ">
+    </div>
+
+    <div class="form-group">
+      <label>যোগদানের তারিখ</label>
+      <input id="joiningDate" type="date">
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="section-title">💰 পেমেন্ট সিস্টেম</div>
+
+    <div class="payment-options">
+
+      <label id="monthlyBox" class="payment-box active">
+        <input
+          type="radio"
+          name="paymentType"
+          value="monthly"
+          checked
+          onchange="changePayment('monthly')">
+        মাসিক
+      </label>
+
+      <label id="productionBox" class="payment-box">
+        <input
+          type="radio"
+          name="paymentType"
+          value="production"
+          onchange="changePayment('production')">
+        প্রোডাকশন
+      </label>
+
+    </div>
+
+    <div id="monthlySection" style="margin-top:15px;">
+
+      <div class="form-group">
+        <label>মাসিক বেতন (৳)</label>
+        <input id="monthlySalary" type="number" min="0"
+               placeholder="যেমন: 15000">
+      </div>
+
+    </div>
+
+    <div id="productionSection" class="hidden" style="margin-top:15px;">
+
+      <div class="note">
+        প্রোডাকশন এমপ্লয়ির পাওনা পরে তার কাজ/পিসের হিসাব
+        অনুযায়ী Production হিসাব থেকে গণনা হবে।
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="section-title">🕐 ডিউটি তথ্য</div>
+
+    <div class="row">
+
+      <div class="form-group">
+        <label>ডিউটি শুরু</label>
+        <input id="dutyStart" type="time">
+      </div>
+
+      <div class="form-group">
+        <label>ডিউটি শেষ</label>
+        <input id="dutyEnd" type="time">
+      </div>
+
+    </div>
+
+    <div class="form-group">
+      <label>ওভারটাইম রেট (প্রতি ঘণ্টা)</label>
+      <input id="overtimeRate" type="number" min="0"
+             placeholder="৳">
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="section-title">👆 Fingerprint & Login</div>
+
+    <div class="form-group">
+      <label>Fingerprint / Device User ID</label>
+      <input id="fingerprintId" type="text"
+             placeholder="পরে যুক্ত করা যাবে">
+    </div>
+
+    <div class="note">
+      Employee ID পরিবর্তন হবে না। পরে Fingerprint মেশিনের
+      Device User ID এই Employee-এর সাথে যুক্ত করা যাবে।
+    </div>
+
+    <div class="form-group" style="margin-top:15px;">
+      <label>Employee Login</label>
+
+      <select id="loginAccess">
+        <option value="yes">চালু থাকবে</option>
+        <option value="no">বন্ধ থাকবে</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>স্ট্যাটাস</label>
+
+      <select id="status">
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+    </div>
+
+  </div>
+
+
+  <button class="save-btn" onclick="saveEmployee()">
+    ✓ এমপ্লয়ি সেভ করুন
+  </button>
+
+</div>
+
+
+<script>
+
+function getEmployees(){
+  try{
+    return JSON.parse(localStorage.getItem("mayaEmployees")) || [];
+  }catch(e){
+    return [];
+  }
+}
+
+
+function getNextEmployeeId(){
+
+  let next = parseInt(
+    localStorage.getItem("mayaEmployeeNextId") || "1"
+  );
+
+  return "MG-" + String(next).padStart(4,"0");
+}
+
+
+function setEmployeeId(){
+  document.getElementById("employeeId").value =
+    getNextEmployeeId();
+}
+
+
+function changePayment(type){
+
+  const monthlyBox =
+    document.getElementById("monthlyBox");
+
+  const productionBox =
+    document.getElementById("productionBox");
+
+  const monthlySection =
+    document.getElementById("monthlySection");
+
+  const productionSection =
+    document.getElementById("productionSection");
+
+
+  if(type === "monthly"){
+
+    monthlyBox.classList.add("active");
+    productionBox.classList.remove("active");
+
+    monthlySection.classList.remove("hidden");
+    productionSection.classList.add("hidden");
+
+  }else{
+
+    productionBox.classList.add("active");
+    monthlyBox.classList.remove("active");
+
+    productionSection.classList.remove("hidden");
+    monthlySection.classList.add("hidden");
+  }
+}
+
+
+function saveEmployee(){
+
+  const name =
+    document.getElementById("employeeName").value.trim();
+
+  const role =
+    document.getElementById("role").value.trim();
+
+
+  if(name === ""){
+    alert("এমপ্লয়ির নাম লিখুন");
+    return;
+  }
+
+  if(role === ""){
+    alert("পদ / বিভাগ লিখুন");
+    return;
+  }
+
+
+  const paymentType =
+    document.querySelector(
+      'input[name="paymentType"]:checked'
+    ).value;
+
+
+  const employee = {
+
+    id:
+      document.getElementById("employeeId").value,
+
+    name:name,
+
+    mobile:
+      document.getElementById("mobile").value.trim(),
+
+    role:role,
+
+    joiningDate:
+      document.getElementById("joiningDate").value,
+
+    paymentType:paymentType,
+
+    monthlySalary:
+      paymentType === "monthly"
+      ? Number(
+          document.getElementById("monthlySalary").value || 0
+        )
+      : 0,
+
+    dutyStart:
+      document.getElementById("dutyStart").value,
+
+    dutyEnd:
+      document.getElementById("dutyEnd").value,
+
+    overtimeRate:
+      Number(
+        document.getElementById("overtimeRate").value || 0
+      ),
+
+    fingerprintId:
+      document.getElementById("fingerprintId").value.trim(),
+
+    loginAccess:
+      document.getElementById("loginAccess").value,
+
+    status:
+      document.getElementById("status").value,
+
+    attendanceStatus:"not-marked",
+
+    createdAt:new Date().toISOString()
+  };
+
+
+  const employees = getEmployees();
+
+  employees.push(employee);
+
+  localStorage.setItem(
+    "mayaEmployees",
+    JSON.stringify(employees)
+  );
+
+
+  let next =
+    parseInt(
+      localStorage.getItem("mayaEmployeeNextId") || "1"
+    );
+
+  localStorage.setItem(
+    "mayaEmployeeNextId",
+    String(next + 1)
+  );
+
+
+  document.getElementById("successMessage").style.display =
+    "block";
+
+
+  document.getElementById("employeeName").value = "";
+  document.getElementById("mobile").value = "";
+  document.getElementById("role").value = "";
+  document.getElementById("monthlySalary").value = "";
+  document.getElementById("overtimeRate").value = "";
+  document.getElementById("fingerprintId").value = "";
+
+  setEmployeeId();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+
+  setTimeout(function(){
+    document.getElementById("successMessage").style.display =
+      "none";
+  },3000);
+}
+
+
+function goHome(){
+  window.location.href = "index.html";
+}
+
+
+document.addEventListener("DOMContentLoaded",function(){
+
+  setEmployeeId();
+
+  const today = new Date();
+
+  const year = today.getFullYear();
+  const month =
+    String(today.getMonth()+1).padStart(2,"0");
+  const day =
+    String(today.getDate()).padStart(2,"0");
+
+  document.getElementById("joiningDate").value =
+    year + "-" + month + "-" + day;
+
+});
+
+</script>
+
+</body>
+</html>
