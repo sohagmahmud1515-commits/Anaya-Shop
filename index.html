@@ -1,481 +1,940 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Garments Management</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maya Garments</title>
 
-<style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Arial,sans-serif;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
 
-body{
-  background:#f3f8f8;
-  color:#15383b;
-  padding-bottom:90px;
-}
+    body {
+      background: #f5fbfa;
+      color: #123b3d;
+      min-height: 100vh;
+    }
 
-.app{
-  max-width:480px;
-  margin:auto;
-  padding:18px;
-}
+    .app {
+      max-width: 480px;
+      margin: auto;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, #dff7ef 0, transparent 28%),
+        #f7fbfb;
+      padding-bottom: 95px;
+    }
 
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  margin-bottom:22px;
-}
+    .topbar {
+      padding: 18px 18px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-.welcome{
-  font-size:17px;
-  color:#748486;
-}
+    .menu-btn,
+    .icon-btn {
+      border: none;
+      background: transparent;
+      font-size: 25px;
+      cursor: pointer;
+      color: #153f42;
+    }
 
-.app-name{
-  font-size:34px;
-  font-weight:800;
-  margin-top:5px;
-}
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-.subtitle{
-  color:#7a898a;
-  margin-top:5px;
-}
+    .bell {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,.08);
+      position: relative;
+    }
 
-.header-right{
-  display:flex;
-  gap:10px;
-}
+    .badge {
+      position: absolute;
+      top: -3px;
+      right: -2px;
+      background: #f23b4e;
+      color: white;
+      border-radius: 20px;
+      min-width: 20px;
+      height: 20px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
 
-.circle{
-  width:52px;
-  height:52px;
-  border-radius:50%;
-  background:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-shadow:0 6px 18px #00000012;
-  font-size:23px;
-}
+    .avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg,#12b89c,#087b81);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 20px;
+    }
 
-.profile{
-  background:#087985;
-  color:white;
-  font-size:12px;
-  font-weight:bold;
-}
+    .title-wrap {
+      padding: 0 20px 15px;
+    }
 
-.card{
-  background:white;
-  border-radius:20px;
-  box-shadow:0 7px 20px #00000010;
-}
+    .title-wrap .hello {
+      color: #758a8d;
+      font-size: 17px;
+      margin-bottom: 2px;
+    }
 
-.partner-box{
-  padding:18px;
-  margin-bottom:25px;
-}
+    .title-wrap h1 {
+      font-size: 33px;
+      line-height: 1.05;
+      color: #0e3f42;
+      margin-bottom: 5px;
+    }
 
-.partner-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-}
+    .title-wrap p {
+      color: #73878a;
+      font-size: 16px;
+    }
 
-.partner-info{
-  display:flex;
-  align-items:center;
-  gap:13px;
-}
+    .hero {
+      margin: 0 18px 20px;
+      background: linear-gradient(120deg,#dff9f1,#eefbf8);
+      border-radius: 24px;
+      padding: 18px;
+      min-height: 145px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 7px 18px rgba(17,93,87,.07);
+    }
 
-.partner-icon{
-  width:62px;
-  height:62px;
-  border-radius:17px;
-  background:#ddf5f0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:29px;
-}
+    .hero::after {
+      content: "🌿";
+      font-size: 76px;
+      position: absolute;
+      right: 10px;
+      bottom: -10px;
+      opacity: .35;
+    }
 
-.partner-info small{
-  color:#758486;
-}
+    .hero h2 {
+      font-size: 25px;
+      max-width: 250px;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      color: #133f42;
+    }
 
-.partner-info b{
-  display:block;
-  margin-top:5px;
-  font-size:17px;
-}
+    .hero p {
+      max-width: 260px;
+      color: #597477;
+      line-height: 1.5;
+      font-size: 15px;
+    }
 
-.partner-btn{
-  border:0;
-  background:#087985;
-  color:#fff;
-  padding:14px;
-  border-radius:14px;
-  font-weight:bold;
-}
+    .section {
+      padding: 0 18px;
+      margin-bottom: 22px;
+    }
 
-.section{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:14px;
-}
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
 
-.section h2{
-  font-size:24px;
-}
+    .section-title h3 {
+      font-size: 23px;
+      color: #143d40;
+    }
 
-.section span{
-  font-size:12px;
-  color:#819091;
-}
+    .section-title span {
+      font-size: 13px;
+      color: #829194;
+    }
 
-.summary{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:11px;
-}
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 10px;
+    }
 
-.summary-card{
-  padding:14px;
-  min-height:140px;
-}
+    .summary-card {
+      background: white;
+      border-radius: 20px;
+      padding: 13px 9px;
+      min-height: 145px;
+      box-shadow: 0 7px 18px rgba(0,0,0,.06);
+    }
 
-.icon-box{
-  width:48px;
-  height:48px;
-  border-radius:14px;
-  background:#e8f7f4;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:23px;
-}
+    .summary-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: #e4f7f3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
 
-.number{
-  font-size:28px;
-  font-weight:800;
-  margin-top:11px;
-}
+    .summary-card strong {
+      display: block;
+      font-size: 27px;
+      color: #0f3140;
+      margin-bottom: 3px;
+    }
 
-.label{
-  font-size:13px;
-  color:#718082;
-  margin-top:4px;
-}
+    .summary-card small {
+      color: #708287;
+      font-size: 12px;
+      line-height: 1.35;
+    }
 
-.money{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:11px;
-  margin-top:12px;
-}
+    .money-card {
+      background: white;
+      border-radius: 22px;
+      padding: 17px 14px;
+      box-shadow: 0 7px 18px rgba(0,0,0,.06);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
 
-.money-card{
-  padding:13px;
-}
+    .money-item {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
 
-.money-card small{
-  color:#718082;
-}
+    .money-item:first-child {
+      border-right: 1px solid #e5eeee;
+      padding-right: 10px;
+    }
 
-.money-card b{
-  display:block;
-  font-size:18px;
-  margin-top:7px;
-}
+    .money-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 15px;
+      background: #fff3c9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 25px;
+      flex-shrink: 0;
+    }
 
-.quick-title{
-  font-size:24px;
-  font-weight:800;
-  margin:28px 0 17px;
-}
+    .money-item:nth-child(2) .money-icon {
+      background: #e5efff;
+    }
 
-.quick-grid{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:18px 8px;
-}
+    .money-item small {
+      display: block;
+      color: #718489;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
 
-.quick{
-  text-align:center;
-  font-size:12px;
-  color:#405658;
-  text-decoration:none;
-}
+    .money-item strong {
+      font-size: 19px;
+      color: #10383d;
+    }
 
-.quick-icon{
-  width:55px;
-  height:55px;
-  border-radius:16px;
-  background:white;
-  margin:0 auto 8px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:24px;
-  box-shadow:0 6px 17px #00000012;
-}
+    .quick-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
 
-.bottom{
-  position:fixed;
-  bottom:0;
-  left:50%;
-  transform:translateX(-50%);
-  width:100%;
-  max-width:480px;
-  background:#fff;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  padding:12px;
-  border-radius:22px 22px 0 0;
-  box-shadow:0 -5px 20px #00000012;
-}
+    .quick-title h3 {
+      font-size: 24px;
+    }
 
-.nav{
-  text-align:center;
-  color:#7c898a;
-  font-size:12px;
-}
+    .more-link {
+      color: #08a78e;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+    }
 
-.nav div{
-  font-size:24px;
-  margin-bottom:4px;
-}
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 10px;
+    }
 
-.nav.active{
-  color:#087985;
-  font-weight:bold;
-}
+    .quick-item {
+      background: white;
+      border: none;
+      border-radius: 20px;
+      padding: 14px 5px 12px;
+      min-height: 105px;
+      box-shadow: 0 6px 15px rgba(0,0,0,.06);
+      cursor: pointer;
+      color: #173d40;
+      font-size: 12px;
+      font-weight: 600;
+    }
 
-@media(max-width:400px){
-  .app-name{font-size:29px}
-  .quick-grid{grid-template-columns:repeat(4,1fr)}
-}
-</style>
+    .quick-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 10px;
+      border-radius: 14px;
+      background: #dff9f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .progress-card {
+      background: white;
+      border-radius: 22px;
+      box-shadow: 0 7px 18px rgba(0,0,0,.06);
+      padding: 17px;
+    }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .progress-bg {
+      height: 11px;
+      background: #e3eeec;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .progress-bar {
+      width: 78%;
+      height: 100%;
+      background: linear-gradient(90deg,#12b99d,#08a887);
+      border-radius: 20px;
+    }
+
+    .production-numbers {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      text-align: center;
+    }
+
+    .production-numbers div {
+      border-right: 1px solid #e4ecec;
+    }
+
+    .production-numbers div:last-child {
+      border-right: none;
+    }
+
+    .production-numbers strong {
+      display: block;
+      font-size: 20px;
+      color: #12383e;
+    }
+
+    .production-numbers small {
+      color: #778b8f;
+      font-size: 11px;
+    }
+
+    .quote {
+      background: linear-gradient(100deg,#ffffff,#e9faf6);
+      border-radius: 22px;
+      padding: 18px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      box-shadow: 0 7px 18px rgba(0,0,0,.05);
+    }
+
+    .quote-icon {
+      font-size: 35px;
+      color: #0aa58e;
+    }
+
+    .quote p {
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .quote small {
+      display: block;
+      margin-top: 5px;
+      color: #74888a;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(480px,100%);
+      background: white;
+      display: grid;
+      grid-template-columns: repeat(5,1fr);
+      padding: 10px 4px 14px;
+      box-shadow: 0 -5px 20px rgba(0,0,0,.07);
+      z-index: 30;
+    }
+
+    .nav-item {
+      border: none;
+      background: transparent;
+      color: #87979a;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .nav-item span {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .nav-item.active {
+      color: #0ab298;
+      font-weight: 700;
+    }
+
+    .nav-add {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg,#12b99c,#07888c);
+      color: white !important;
+      margin: -22px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px !important;
+      box-shadow: 0 5px 15px rgba(0,140,125,.25);
+    }
+
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5,37,39,.35);
+      display: none;
+      z-index: 99;
+    }
+
+    .drawer-overlay.show {
+      display: block;
+    }
+
+    .drawer {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 88%;
+      max-width: 390px;
+      height: 100%;
+      background: #fff;
+      padding: 20px 16px 30px;
+      overflow-y: auto;
+      border-radius: 25px 0 0 25px;
+      animation: slideIn .25s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+
+    .drawer-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .drawer-head h2 {
+      font-size: 25px;
+    }
+
+    .close-btn {
+      border: none;
+      background: transparent;
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 14px 15px;
+      border: 1px solid #e1e8e8;
+      border-radius: 18px;
+      outline: none;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .more-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .more-item {
+      border: 1px solid #edf0f0;
+      background: #fff;
+      border-radius: 17px;
+      padding: 12px 13px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,.04);
+    }
+
+    .more-item .mi {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      background: #e3f8f3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+    }
+
+    .more-item span:nth-child(2) {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .arrow {
+      color: #90a0a3;
+      font-size: 20px;
+    }
+
+    @media (max-width: 390px) {
+      .summary-grid,
+      .quick-grid {
+        gap: 7px;
+      }
+
+      .summary-card {
+        padding: 10px 6px;
+      }
+
+      .quick-item {
+        padding-left: 3px;
+        padding-right: 3px;
+      }
+
+      .title-wrap h1 {
+        font-size: 29px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="app">
 
-<div class="header">
-  <div>
-    <div class="welcome">আসসালামু আলাইকুম ✨</div>
-    <div class="app-name">Garments</div>
-    <div class="subtitle">ফ্যাক্টরি ড্যাশবোর্ডে স্বাগতম</div>
-  </div>
+  <div class="topbar">
+    <button class="menu-btn" onclick="openMore()">☰</button>
 
-  <div class="header-right">
-    <div class="circle">🔔</div>
-    <div class="circle profile">Welcome</div>
-  </div>
-</div>
-
-<div class="card partner-box">
-
-  <div class="partner-top">
-
-    <div class="partner-info">
-      <div class="partner-icon">👥</div>
-
-      <div>
-        <small>ব্যবসায়িক পার্টনার</small>
-        <b>দুই পার্টনারের হিসাব</b>
+    <div class="top-actions">
+      <div class="bell">
+        🔔
+        <span class="badge">3</span>
       </div>
+
+      <div class="avatar">M</div>
+    </div>
+  </div>
+
+  <div class="title-wrap">
+    <div class="hello">আসসালামু আলাইকুম ✨</div>
+    <h1>Maya Garments</h1>
+    <p>ফ্যাক্টরি ম্যানেজমেন্ট সিস্টেম</p>
+  </div>
+
+  <div class="hero">
+    <h2>শৃঙ্খলা, হিসাব এবং উন্নত উৎপাদন</h2>
+    <p>Maya Garments-এর সাথে আপনার ব্যবসার সব গুরুত্বপূর্ণ হিসাব এক জায়গায় রাখুন।</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <h3>আজকের সারসংক্ষেপ</h3>
+      <span>সর্বশেষ আপডেট</span>
     </div>
 
-    <button class="partner-btn"
-      onclick="location.href='partner.html'">
-      পার্টনার দেখুন
-    </button>
+    <div class="summary-grid">
 
+      <div class="summary-card">
+        <div class="summary-icon">👥</div>
+        <strong>19</strong>
+        <small>মোট কর্মচারী</small>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-icon">✅</div>
+        <strong>16</strong>
+        <small>আজ উপস্থিত</small>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-icon">❌</div>
+        <strong>3</strong>
+        <small>আজ অনুপস্থিত</small>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-icon">✂️</div>
+        <strong>620</strong>
+        <small>আজ কাটিং<br>(পিস)</small>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="money-card">
+
+      <div class="money-item">
+        <div class="money-icon">💰</div>
+        <div>
+          <small>কারিগরদের মোট পাওনা</small>
+          <strong>৳ 1,85,600</strong>
+        </div>
+      </div>
+
+      <div class="money-item">
+        <div class="money-icon">🪙</div>
+        <div>
+          <small>স্টকের মোট মূল্য</small>
+          <strong>৳ 3,75,450</strong>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+
+    <div class="quick-title">
+      <h3>Quick actions</h3>
+      <button class="more-link" onclick="openMore()">আরো দেখুন →</button>
+    </div>
+
+    <div class="quick-grid">
+
+      <button class="quick-item" onclick="go('partner.html')">
+        <div class="quick-icon">👥</div>
+        পার্টনার হিসাব
+      </button>
+
+      <button class="quick-item" onclick="go('fabric.html')">
+        <div class="quick-icon">🧵</div>
+        স্টক / কাপড়
+      </button>
+
+      <button class="quick-item" onclick="go('cutting.html')">
+        <div class="quick-icon">✂️</div>
+        কাটিং হিসাব
+      </button>
+
+      <button class="quick-item" onclick="go('sewing.html')">
+        <div class="quick-icon">🪡</div>
+        সেলাই হিসাব
+      </button>
+
+      <button class="quick-item" onclick="go('worker.html')">
+        <div class="quick-icon">👷</div>
+        কারিগর হিসাব
+      </button>
+
+      <button class="quick-item" onclick="go('wholesale.html')">
+        <div class="quick-icon">🛍️</div>
+        পাইকারি হিসাব
+      </button>
+
+      <button class="quick-item" onclick="go('report.html')">
+        <div class="quick-icon">📊</div>
+        রিপোর্ট
+      </button>
+
+      <button class="quick-item" onclick="openMore()">
+        <div class="quick-icon">•••</div>
+        আরো দেখুন
+      </button>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      <h3>আজকের কাজের অবস্থা</h3>
+      <span>বিস্তারিত দেখুন →</span>
+    </div>
+
+    <div class="progress-card">
+
+      <div class="progress-row">
+        <span>আজকের উৎপাদন অগ্রগতি</span>
+        <strong>78%</strong>
+      </div>
+
+      <div class="progress-bg">
+        <div class="progress-bar"></div>
+      </div>
+
+      <div class="production-numbers">
+
+        <div>
+          <strong>620</strong>
+          <small>কাটিং</small>
+        </div>
+
+        <div>
+          <strong>458</strong>
+          <small>সেলাই</small>
+        </div>
+
+        <div>
+          <strong>385</strong>
+          <small>রেডি</small>
+        </div>
+
+        <div>
+          <strong>120</strong>
+          <small>প্যাকিং</small>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="quote">
+      <div class="quote-icon">“</div>
+      <div>
+        <p>ছোট ছোট হিসাব, বড় সফলতার ভিত্তি</p>
+        <small>— Maya Garments</small>
+      </div>
+    </div>
   </div>
 
 </div>
 
-<div class="section">
-  <h2>সারসংক্ষেপ</h2>
-  <span>সর্বশেষ আপডেট 🟢</span>
+
+<div class="bottom-nav">
+
+  <button class="nav-item active" onclick="go('index.html')">
+    <span>🏠</span>
+    হোম
+  </button>
+
+  <button class="nav-item" onclick="go('fabric.html')">
+    <span>📦</span>
+    স্টক
+  </button>
+
+  <button class="nav-item" onclick="go('new-entry.html')">
+    <span class="nav-add">+</span>
+    নতুন এন্ট্রি
+  </button>
+
+  <button class="nav-item" onclick="go('report.html')">
+    <span>📊</span>
+    রিপোর্ট
+  </button>
+
+  <button class="nav-item" onclick="go('profile.html')">
+    <span>👤</span>
+    প্রোফাইল
+  </button>
+
 </div>
 
-<div class="summary">
 
-  <div class="card summary-card">
-    <div class="icon-box">👥</div>
-    <div class="number">19</div>
-    <div class="label">মোট কর্মচারী</div>
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawerOutside(event)">
+
+  <div class="drawer">
+
+    <div class="drawer-head">
+      <h2>আরো অপশন</h2>
+      <button class="close-btn" onclick="closeMore()">×</button>
+    </div>
+
+    <input
+      id="moduleSearch"
+      class="search-box"
+      type="text"
+      placeholder="এখানে খুঁজুন..."
+      oninput="searchModules()"
+    >
+
+    <div class="more-list" id="moreList">
+
+      <div class="more-item" onclick="go('attendance.html')">
+        <span class="mi">🕒</span>
+        <span>ডিউটি টাইম / হাজিরা</span>
+        <span class="arrow">›</span>
+      </div>
+
+      <div class="more-item" onclick="go('finishing.html')">
+        <span class="mi">🏷️</span>
+        <span>ফিনিশিং</span>
+        <span class="arrow">›</span>
+      </div>
+
+      <div class="more-item" onclick="go('product.html')">
+        <span class="mi">➕</span>
+        <span>নতুন প্রোডাক্ট</span>
+        <span class="arrow">›</span>
+      </div>
+
+      <div class="more-item" onclick="go('expense.html')">
+        <span class="mi">🧾</span>
+        <span>খরচ হিসাব</span>
+        <span class="arrow">›</span>
+      </div>
+
+      <div class="more-item" onclick="go('payment.html')">
+        <span class="mi">💳</span>
+        <span>পাওনা / পেমেন্ট</span>
+        <span class="arrow">›</span>
+      </div>
+
+      <div class="more-item" onclick="go('fabric.html')">
+        <span class="mi">🧵</span>
+        <span>স্টক / কাপড়</span>
+        <span class="arrow">›</span>
+      </div>
+
+      <div class="more-item" onclick="go('qc.html')">
+        <span class="mi">🛡️</span>
+        <span>গুণগত মান (QC)</span>
+        <span class="arrow">›</span>
+      </div>
+
+      <div class="more-item" onclick="go('order.html')">
+        <span class="mi">🛒</span>
+        <span>অর্ডার ম্যানেজমেন্ট</span>
+        <span class="arrow">›</span>
+      </div>
+
+      <div class="more-item" onclick="go('delivery.html')">
+        <span class="mi">🚚</span>
+        <span>ডেলিভারি</span>
+        <span class="arrow">›</span>
+      </div>
+
+      <div class="more-item" onclick="go('return.html')">
+        <span class="mi">↩️</span>
+        <span>রিটার্ন / সমস্যা</span>
+        <span class="arrow">›</span>
+      </div>
+
+      <div class="more-item" onclick="go('settings.html')">
+        <span class="mi">⚙️</span>
+        <span>সেটিংস</span>
+        <span class="arrow">›</span>
+      </div>
+
+      <div class="more-item" onclick="go('backup.html')">
+        <span class="mi">☁️</span>
+        <span>ডেটা ব্যাকআপ</span>
+        <span class="arrow">›</span>
+      </div>
+
+      <div class="more-item" onclick="go('support.html')">
+        <span class="mi">🎧</span>
+        <span>হেল্প ও সাপোর্ট</span>
+        <span class="arrow">›</span>
+      </div>
+
+      <div class="more-item" onclick="alert('Logout module পরে যুক্ত করবো')">
+        <span class="mi">🚪</span>
+        <span>লগআউট</span>
+        <span class="arrow">›</span>
+      </div>
+
+    </div>
+
   </div>
-
-  <div class="card summary-card">
-    <div class="icon-box">✅</div>
-    <div class="number">16</div>
-    <div class="label">আজ উপস্থিত</div>
-  </div>
-
-  <div class="card summary-card">
-    <div class="icon-box">❌</div>
-    <div class="number">3</div>
-    <div class="label">আজ অনুপস্থিত</div>
-  </div>
-
-  <div class="card summary-card">
-    <div class="icon-box">✂️</div>
-    <div class="number">620</div>
-    <div class="label">আজ কাটিং</div>
-  </div>
-
-  <div class="card summary-card">
-    <div class="icon-box">🧵</div>
-    <div class="number">458</div>
-    <div class="label">আজ সেলাই</div>
-  </div>
-
-  <div class="card summary-card">
-    <div class="icon-box">📦</div>
-    <div class="number">385</div>
-    <div class="label">আজ রেডি</div>
-  </div>
-
 </div>
 
-<div class="money">
 
-  <div class="card money-card">
-    <small>কারিগরদের পাওনা</small>
-    <b>৳ 0</b>
-  </div>
+<script>
 
-  <div class="card money-card">
-    <small>স্টকের মূল্য</small>
-    <b>৳ 0</b>
-  </div>
+  function go(file) {
+    window.location.href = file;
+  }
 
-  <div class="card money-card">
-    <small>আজকের খরচ</small>
-    <b>৳ 0</b>
-  </div>
+  function openMore() {
+    document.getElementById("drawerOverlay").classList.add("show");
+  }
 
-</div>
+  function closeMore() {
+    document.getElementById("drawerOverlay").classList.remove("show");
+  }
 
-<div class="quick-title">Quick actions</div>
+  function closeDrawerOutside(event) {
+    if (event.target.id === "drawerOverlay") {
+      closeMore();
+    }
+  }
 
-<div class="quick-grid">
+  function searchModules() {
 
-<a class="quick" href="partner.html">
-  <div class="quick-icon">🔄</div>
-  পার্টনার হিসাব
-</a>
+    const input =
+      document.getElementById("moduleSearch").value.toLowerCase();
 
-<a class="quick" href="staff-bill.html">
-  <div class="quick-icon">💳</div>
-  স্টাফ বিল
-</a>
+    const modules =
+      document.querySelectorAll(".more-item");
 
-<a class="quick" href="worker.html">
-  <div class="quick-icon">👥</div>
-  কারিগর হিসাব
-</a>
+    modules.forEach(function(item) {
 
-<a class="quick" href="wholesale.html">
-  <div class="quick-icon">👜</div>
-  পাইকারি হিসাব
-</a>
+      const text =
+        item.innerText.toLowerCase();
 
-<a class="quick" href="production.html">
-  <div class="quick-icon">📦</div>
-  প্রোডাকশন
-</a>
+      if (text.includes(input)) {
+        item.style.display = "flex";
+      } else {
+        item.style.display = "none";
+      }
 
-<a class="quick" href="cutting.html">
-  <div class="quick-icon">✂️</div>
-  কাটিং হিসাব
-</a>
+    });
 
-<a class="quick" href="sewing.html">
-  <div class="quick-icon">🧵</div>
-  সেলাই হিসাব
-</a>
+  }
 
-<a class="quick" href="finishing.html">
-  <div class="quick-icon">📋</div>
-  ফিনিশিং
-</a>
-
-<a class="quick" href="product.html">
-  <div class="quick-icon">➕</div>
-  নতুন প্রোডাক্ট
-</a>
-
-<a class="quick" href="expense.html">
-  <div class="quick-icon">🧾</div>
-  খরচ
-</a>
-
-<a class="quick" href="staff.html">
-  <div class="quick-icon">👤</div>
-  স্টাফ
-</a>
-
-<a class="quick" href="duty.html">
-  <div class="quick-icon">📅</div>
-  ডিউটি টাইম
-</a>
-
-<a class="quick" href="overtime.html">
-  <div class="quick-icon">⏱️</div>
-  ওভারটাইম
-</a>
-
-<a class="quick" href="payment.html">
-  <div class="quick-icon">💸</div>
-  পাওনা/পেমেন্ট
-</a>
-
-<a class="quick" href="report.html">
-  <div class="quick-icon">📊</div>
-  রিপোর্ট
-</a>
-
-</div>
-
-</div>
-
-<div class="bottom">
-
-<div class="nav active">
-  <div>🏠</div>
-  হোম
-</div>
-
-<div class="nav">
-  <div>📦</div>
-  প্রোডাকশন
-</div>
-
-<div class="nav">
-  <div>🔔</div>
-  অ্যালার্ট
-</div>
-
-<div class="nav">
-  <div>👤</div>
-  প্রোফাইল
-</div>
-
-</div>
+</script>
 
 </body>
 </html>
