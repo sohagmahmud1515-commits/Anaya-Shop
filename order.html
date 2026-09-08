@@ -250,29 +250,23 @@
 
       <div class="back" onclick="goBack()">← Back</div>
 
-      <div class="form-card">
-        <h3>Create New Order</h3>
+      
+<div class="form-card">
+    <h3>Create New Order</h3>
 
-        <input id="customerName" type="text" placeholder="Customer Name">
+    <textarea
+        id="orderText"
+        placeholder="Paste full customer order here..."
+        style="min-height:180px;"
+    ></textarea>
 
-        <input id="phone" type="text" placeholder="Phone Number">
+    <select id="priority">
+        <option value="normal">Normal Order</option>
+        <option value="emergency">Emergency Order</option>
+    </select>
 
-        <textarea id="address" placeholder="Customer Address"></textarea>
-
-        <input id="product" type="text" placeholder="Product Name">
-
-        <input id="quantity" type="number" placeholder="Quantity">
-
-        <input id="amount" type="number" placeholder="Total Amount">
-
-        <select id="priority">
-          <option value="normal">Normal Order</option>
-          <option value="emergency">Emergency Order</option>
-        </select>
-
-        <button class="btn" onclick="submitOrder()">Submit Order</button>
-      </div>
-
+    <button class="btn" onclick="submitOrder()">Submit Order</button>
+</div>
       <h3 style="margin:18px 0 10px;">All Orders</h3>
 
       <div id="allOrdersList"></div>
