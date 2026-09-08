@@ -250,9 +250,20 @@
 
       <div class="back" onclick="goBack()">← Back</div>
 
-      
 <div class="form-card">
     <h3>Create New Order</h3>
+
+    <select id="pageName">
+        <option value="">Select Page</option>
+        <option value="Maya">Maya</option>
+        <option value="Sehzadi Online Shop">Sehzadi Online Shop</option>
+        <option value="Abaya House">Abaya House</option>
+        <option value="Maya Borka House">Maya Borka House</option>
+        <option value="Fashion House">Fashion House</option>
+        <option value="Mahira Fashion">Mahira Fashion</option>
+    </select>
+
+    <input id="productImage" type="file" accept="image/*">
 
     <textarea
         id="orderText"
@@ -260,15 +271,10 @@
         style="min-height:180px;"
     ></textarea>
 
-    <select id="priority">
-        <option value="normal">Normal Order</option>
-        <option value="emergency">Emergency Order</option>
-    </select>
-
     <button class="btn" onclick="submitOrder()">Submit Order</button>
 </div>
-      <h3 style="margin:18px 0 10px;">All Orders</h3>
 
+<h3 style="margin:18px 0 10px;">All Orders</h3>
       <div id="allOrdersList"></div>
 
     </div>
@@ -319,81 +325,169 @@
       localStorage.setItem("mayaOrders", JSON.stringify(orders));
       updateCounts();
     }
+function submitOrder(){
 
-    function submitOrder(){
+    const orderText = document.getElementById("orderText").value.trim();
+    const pageName = document.getElementById("pageName").value;
+    const imageInput = document.getElementById("productImage");
 
-      const name = document.getElementById("customerName").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const address = document.getElementById("address").value.trim();
-      const product = document.getElementById("product").value.trim();
-      const quantity = document.getElementById("quantity").value;
-      const amount = document.getElementById("amount").value;
-      const priority = document.getElementById("priority").value;
-
-      if(!name || !phone || !product){
-        alert("Customer Name, Phone Number এবং Product Name দিন");
+    if(!pageName){
+        alert("Please select a page");
         return;
-      }
-
-      const newOrder = {
-        id: "MG-" + Date.now(),
-        name: name,
-        phone: phone,
-        address: address,
-        product: product,
-        quantity: quantity || 1,
-        amount: amount || 0,
-
-        status: "pending",
-
-        emergency: priority === "emergency",
-
-        date: new Date().toLocaleString()
-      };
-
-      orders.unshift(newOrder);
-
-      saveOrders();
-
-      clearForm();
-
-      renderAllOrders();
-
-      alert("Order submitted successfully. Pending Group-এ চলে গেছে।");
     }
 
-    function clearForm(){
-      document.getElementById("customerName").value = "";
-      document.getElementById("phone").value = "";
-      document.getElementById("address").value = "";
-      document.getElementById("product").value = "";
-      document.getElementById("quantity").value = "";
-      document.getElementById("amount").value = "";
-      document.getElementById("priority").value = "normal";
+    if(!imageInput.files || imageInput.files.length === 0){
+        alert("Please select product picture");
+        return;
     }
 
-    function orderHTML(order){
+    if(!orderText){
+        alert("Please enter order details");
+        return;
+    }
 
-      return `
+    const file = imageInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+        let orderCounter = parseInt(
+            localStorage.getItem("orderCounter") || "0"
+        );
+
+        orderCounter++;
+
+        localStorage.setItem("orderCounter", orderCounter);
+
+        const newOrder = {
+
+            id: "MG-" + Date.now(),
+
+            serial: orderCounter,
+
+            pageName: pageName,
+
+            orderText: orderText,
+
+            image: e.target.result,
+
+            status: "pending",
+
+            emergency: false,
+
+            date: new Date().toLocaleString()
+
+        };
+
+        orders.unshift(newOrder);
+
+        saveOrders();
+
+        clearForm();
+
+        renderAllOrders();
+
+        updateCounts();
+
+        alert(
+            "Order " +
+            String(orderCounter).padStart(2,"0") +
+            " submitted successfully"
+        );
+    };
+
+    reader.readAsDataURL(file);
+}
+
+
+function clearForm(){
+
+    document.getElementById("orderText").value = "";
+
+    document.getElementById("pageName").value = "";
+
+    document.getElementById("productImage").value = "";
+
+}
+
+
+function toggleEmergency(id){
+
+    const order = orders.find(
+        order => order.id === id
+    );
+
+    if(!order) return;
+
+    order.emergency = !order.emergency;
+
+    saveOrders();
+
+    renderAllOrders();
+
+    renderPending();
+
+    renderEmergency();
+
+    updateCounts();
+}
+
+
+function orderHTML(order){
+
+    return `
         <div class="order-card">
-          <h4>${order.name}</h4>
 
-          <p><b>Order ID:</b> ${order.id}</p>
-          <p><b>Phone:</b> ${order.phone}</p>
-          <p><b>Product:</b> ${order.product}</p>
-          <p><b>Quantity:</b> ${order.quantity}</p>
-          <p><b>Total:</b> ৳${order.amount}</p>
+            <img
+                src="${order.image}"
+                style="
+                    width:100%;
+                    max-height:350px;
+                    object-fit:contain;
+                    border-radius:12px;
+                    margin-bottom:12px;
+                "
+            >
 
-          <span class="status pending">Pending</span>
+            <h4>
+                Order: ${String(order.serial).padStart(2,"0")}
+            </h4>
 
-          ${
-            order.emergency
-            ? '<span class="status emergency">Emergency</span>'
-            : ''
-          }
+            <p>
+                <b>Page:</b> ${order.pageName}
+            </p>
+
+            <p style="white-space:pre-wrap;">
+                ${order.orderText}
+            </p>
+
+            <p>
+                <b>Date:</b> ${order.date}
+            </p>
+
+            <label style="
+                display:inline-flex;
+                align-items:center;
+                gap:6px;
+                margin-top:10px;
+                font-size:14px;
+                cursor:pointer;
+            ">
+
+                <input
+                    type="checkbox"
+                    ${order.emergency ? "checked" : ""}
+                    onchange="toggleEmergency('${order.id}')"
+                >
+
+                Emergency
+
+            </label>
+
         </div>
-      `;
-    }
+    `;
+}
+    
 
     function renderAllOrders(){
 
