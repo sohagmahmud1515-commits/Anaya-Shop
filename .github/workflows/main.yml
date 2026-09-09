@@ -40,7 +40,7 @@ jobs:
           cat > capacitor.config.json <<'EOF'
           {
             "appId": "com.anaya.shop",
-            "appName": "Anaya Shop",
+            "appName": "Abaya House",
             "webDir": "www"
           }
           EOF
