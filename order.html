@@ -1,601 +1,423 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Management</title>
-
-  <style>
-    *{
-      box-sizing:border-box;
-      margin:0;
-      padding:0;
-      font-family:Arial, sans-serif;
-    }
-
-    body{
-      background:#f4f8f7;
-      color:#1d2433;
-    }
-
-    .header{
-      background:#0f6b73;
-      color:white;
-      padding:18px 16px;
-      font-size:22px;
-      font-weight:700;
-    }
-
-    .container{
-      padding:16px;
-      padding-bottom:90px;
-    }
-
-    .group-card{
-      background:white;
-      border-radius:18px;
-      padding:18px;
-      margin-bottom:14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      box-shadow:0 5px 16px rgba(0,0,0,.08);
-      cursor:pointer;
-    }
-
-    .left{
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
-
-    .icon{
-      width:55px;
-      height:55px;
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:26px;
-    }
-
-    .blue{background:#e2edff;}
-    .yellow{background:#fff1c7;}
-    .red{background:#ffe1e1;}
-
-    .group-card h3{
-      font-size:18px;
-      margin-bottom:5px;
-    }
-
-    .group-card p{
-      font-size:13px;
-      color:#8b909b;
-    }
-
-    .badge{
-      min-width:42px;
-      height:42px;
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:white;
-      font-weight:700;
-    }
-
-    .badge-blue{background:#2f72e8;}
-    .badge-yellow{background:#e58b00;}
-    .badge-red{background:#f04444;}
-
-    .section{
-      display:none;
-      margin-top:18px;
-    }
-
-    .section.active{
-      display:block;
-    }
-
-    .back{
-      margin-bottom:14px;
-      color:#0f6b73;
-      font-weight:700;
-      cursor:pointer;
-    }
-
-    .form-card,
-    .order-card{
-      background:white;
-      padding:16px;
-      border-radius:16px;
-      margin-bottom:12px;
-      box-shadow:0 4px 12px rgba(0,0,0,.06);
-    }
-
-    .form-card input,
-    .form-card select,
-    .form-card textarea{
-      width:100%;
-      padding:12px;
-      margin-top:8px;
-      margin-bottom:12px;
-      border:1px solid #d8dfe3;
-      border-radius:10px;
-      font-size:15px;
-    }
-
-    .btn{
-      width:100%;
-      border:none;
-      background:#0f8f83;
-      color:white;
-      padding:14px;
-      border-radius:11px;
-      font-size:16px;
-      font-weight:700;
-      cursor:pointer;
-    }
-
-    .btn-emergency{
-      background:#f04444;
-      margin-top:8px;
-    }
-
-    .order-card h4{
-      margin-bottom:6px;
-    }
-
-    .order-card p{
-      margin:4px 0;
-      font-size:14px;
-      color:#555;
-    }
-
-    .status{
-      display:inline-block;
-      padding:5px 10px;
-      border-radius:20px;
-      font-size:12px;
-      font-weight:700;
-      margin-top:7px;
-    }
-
-    .pending{
-      background:#fff0c5;
-      color:#b46c00;
-    }
-
-    .emergency{
-      background:#ffe3e3;
-      color:#d72727;
-    }
-
-    .empty{
-      text-align:center;
-      padding:25px;
-      color:#999;
-    }
-
-    .bottom-nav{
-      position:fixed;
-      bottom:0;
-      left:0;
-      right:0;
-      background:white;
-      border-top:1px solid #e7e7e7;
-      display:flex;
-      justify-content:space-around;
-      padding:10px 0;
-    }
-
-    .bottom-nav div{
-      font-size:13px;
-      text-align:center;
-      color:#7c8490;
-    }
-
-    .bottom-nav .active-nav{
-      color:#0f6b73;
-      font-weight:700;
-    }
-  </style>
-</head>
-
-<body>
-
-  <div class="header">Order Management</div>
-
-  <div class="container">
-
-    <div id="groupsPage">
-
-      <div class="group-card" onclick="openAllOrders()">
-        <div class="left">
-          <div class="icon blue">📦</div>
-          <div>
-            <h3>All Order Group</h3>
-            <p>Submit new orders here</p>
-          </div>
-        </div>
-        <div class="badge badge-blue" id="allCount">0</div>
-      </div>
-
-      <div class="group-card" onclick="openPending()">
-        <div class="left">
-          <div class="icon yellow">🕒</div>
-          <div>
-            <h3>Pending Group</h3>
-            <p>Submitted orders automatically appear here</p>
-          </div>
-        </div>
-        <div class="badge badge-yellow" id="pendingCount">0</div>
-      </div>
-
-      <div class="group-card" onclick="openEmergency()">
-        <div class="left">
-          <div class="icon red">🔔</div>
-          <div>
-            <h3>Emergency Group</h3>
-            <p>High priority orders</p>
-          </div>
-        </div>
-        <div class="badge badge-red" id="emergencyCount">0</div>
-      </div>
-
-    </div>
-
-    <div id="allOrdersSection" class="section">
-
-      <div class="back" onclick="goBack()">← Back</div>
-
-<div class="form-card">
-    <h3>Create New Order</h3>
-
-    <select id="pageName">
-        <option value="">Select Page</option>
-        <option value="Maya">Maya</option>
-        <option value="Sehzadi Online Shop">Sehzadi Online Shop</option>
-        <option value="Abaya House">Abaya House</option>
-        <option value="Maya Borka House">Maya Borka House</option>
-        <option value="Fashion House">Fashion House</option>
-        <option value="Mahira Fashion">Mahira Fashion</option>
-    </select>
-
-    <input id="productImage" type="file" accept="image/*">
-
-    <textarea
-        id="orderText"
-        placeholder="Paste full customer order here..."
-        style="min-height:180px;"
-    ></textarea>
-
-    <button class="btn" onclick="submitOrder()">Submit Order</button>
-</div>
-
-<h3 style="margin:18px 0 10px;">All Orders</h3>
-      <div id="allOrdersList"></div>
-
-    </div>
-
-    <div id="pendingSection" class="section">
-
-      <div class="back" onclick="goBack()">← Back</div>
-
-      <h3>Pending Group</h3>
-
-      <p style="margin:8px 0 15px;color:#777;">
-        নতুন অর্ডার এখানে Submit করা যাবে না। All Order Group থেকে Submit করা অর্ডার এখানে অটোমেটিক আসবে।
-      </p>
-
-      <div id="pendingList"></div>
-
-    </div>
-
-    <div id="emergencySection" class="section">
-
-      <div class="back" onclick="goBack()">← Back</div>
-
-      <h3>Emergency Group</h3>
-
-      <p style="margin:8px 0 15px;color:#777;">
-        Emergency হিসেবে Mark করা অর্ডার এখানে দেখাবে।
-      </p>
-
-      <div id="emergencyList"></div>
-
-    </div>
-
-  </div>
-
-  <div class="bottom-nav">
-    <div>🏠<br>Home</div>
-    <div class="active-nav">📦<br>Orders</div>
-    <div>🏭<br>Production</div>
-    <div>👤<br>Employee</div>
-    <div>☰<br>More</div>
-  </div>
-
-  <script>
-
-    let orders = JSON.parse(localStorage.getItem("mayaOrders")) || [];
-
-    function saveOrders(){
-      localStorage.setItem("mayaOrders", JSON.stringify(orders));
-      updateCounts();
-    }
-function submitOrder(){
-
-    const orderText = document.getElementById("orderText").value.trim();
-    const pageName = document.getElementById("pageName").value;
-    const imageInput = document.getElementById("productImage");
-
-    if(!pageName){
-        alert("Please select a page");
-        return;
-    }
-
-    if(!imageInput.files || imageInput.files.length === 0){
-        alert("Please select product picture");
-        return;
-    }
-
-    if(!orderText){
-        alert("Please enter order details");
-        return;
-    }
-
-    const file = imageInput.files[0];
-    const reader = new FileReader();
-
-    reader.onload = function(e){
-
-        let orderCounter = parseInt(
-            localStorage.getItem("orderCounter") || "0"
-        );
-
-        orderCounter++;
-
-        localStorage.setItem("orderCounter", orderCounter);
-
-        const newOrder = {
-
-            id: "MG-" + Date.now(),
-
-            serial: orderCounter,
-
-            pageName: pageName,
-
-            orderText: orderText,
-
-            image: e.target.result,
-
-            status: "pending",
-
-            emergency: false,
-
-            date: new Date().toLocaleString()
-
-        };
-
-        orders.unshift(newOrder);
-
-        saveOrders();
-
-        clearForm();
-
-        renderAllOrders();
-
-        updateCounts();
-
-        alert(
-            "Order " +
-            String(orderCounter).padStart(2,"0") +
-            " submitted successfully"
-        );
-    };
-
-    reader.readAsDataURL(file);
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Management</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
 }
 
-
-function clearForm(){
-
-    document.getElementById("orderText").value = "";
-
-    document.getElementById("pageName").value = "";
-
-    document.getElementById("productImage").value = "";
-
+body{
+  background:#f4f7f7;
+  color:#1d2433;
+  padding-bottom:85px;
 }
 
-
-function toggleEmergency(id){
-
-    const order = orders.find(
-        order => order.id === id
-    );
-
-    if(!order) return;
-
-    order.emergency = !order.emergency;
-
-    saveOrders();
-
-    renderAllOrders();
-
-    renderPending();
-
-    renderEmergency();
-
-    updateCounts();
+.header{
+  background:#0f7673;
+  color:#fff;
+  padding:17px 25px;
+  font-size:23px;
+  font-weight:700;
 }
 
-
-function orderHTML(order){
-
-    return `
-        <div class="order-card">
-
-            <img
-                src="${order.image}"
-                style="
-                    width:100%;
-                    max-height:350px;
-                    object-fit:contain;
-                    border-radius:12px;
-                    margin-bottom:12px;
-                "
-            >
-
-            <h4>
-                Order: ${String(order.serial).padStart(2,"0")}
-            </h4>
-
-            <p>
-                <b>Page:</b> ${order.pageName}
-            </p>
-
-            <p style="white-space:pre-wrap;">
-                ${order.orderText}
-            </p>
-
-            <p>
-                <b>Date:</b> ${order.date}
-            </p>
-
-            <label style="
-                display:inline-flex;
-                align-items:center;
-                gap:6px;
-                margin-top:10px;
-                font-size:14px;
-                cursor:pointer;
-            ">
-
-                <input
-                    type="checkbox"
-                    ${order.emergency ? "checked" : ""}
-                    onchange="toggleEmergency('${order.id}')"
-                >
-
-                Emergency
-
-            </label>
-
-        </div>
-    `;
+.container{
+  padding:18px 24px;
+  max-width:760px;
+  margin:auto;
 }
-    
 
-    function renderAllOrders(){
+.back{
+  color:#147976;
+  font-weight:700;
+  font-size:18px;
+  margin:15px 0 22px;
+  cursor:pointer;
+  display:inline-block;
+}
 
-      const list = document.getElementById("allOrdersList");
+/* =========================
+   GROUP CARDS
+========================= */
 
-      if(orders.length === 0){
-        list.innerHTML = '<div class="empty">No orders yet</div>';
-        return;
-      }
+.group-card{
+  background:#fff;
+  border-radius:26px;
+  padding:28px;
+  margin:8px 0 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  box-shadow:0 6px 18px rgba(0,0,0,.06);
+  cursor:pointer;
+}
 
-      list.innerHTML = orders.map(orderHTML).join("");
-    }
+.group-left{
+  display:flex;
+  align-items:center;
+  gap:22px;
+}
 
-    function renderPending(){
+.group-icon{
+  width:88px;
+  height:88px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:38px;
+}
 
-      const pendingOrders = orders.filter(
-        order => order.status === "pending"
-      );
+.blue-bg{background:#e5efff;}
+.yellow-bg{background:#fff0bd;}
+.red-bg{background:#ffe2e2;}
 
-      const list = document.getElementById("pendingList");
+.group-title{
+  font-size:25px;
+  font-weight:700;
+  margin-bottom:7px;
+}
 
-      if(pendingOrders.length === 0){
-        list.innerHTML = '<div class="empty">No pending orders</div>';
-        return;
-      }
+.group-sub{
+  color:#92959c;
+  font-size:17px;
+}
 
-      list.innerHTML = pendingOrders.map(orderHTML).join("");
-    }
+.count{
+  min-width:68px;
+  height:68px;
+  border-radius:50%;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+  font-weight:700;
+}
 
-    function renderEmergency(){
+.blue{background:#2f7be7;}
+.yellow{background:#ed9500;}
+.red{background:#f34747;}
 
-      const emergencyOrders = orders.filter(
-        order => order.emergency === true
-      );
+/* =========================
+   ORDER FORM
+========================= */
 
-      const list = document.getElementById("emergencyList");
+.form-card{
+  background:#fff;
+  padding:24px;
+  border-radius:25px;
+  box-shadow:0 5px 18px rgba(0,0,0,.06);
+  margin-bottom:28px;
+}
 
-      if(emergencyOrders.length === 0){
-        list.innerHTML = '<div class="empty">No emergency orders</div>';
-        return;
-      }
+.form-title{
+  font-size:23px;
+  font-weight:700;
+  margin-bottom:18px;
+}
 
-      list.innerHTML = emergencyOrders.map(orderHTML).join("");
-    }
+.form-toggle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+}
 
-    function updateCounts(){
+.form-toggle span{
+  font-size:20px;
+  font-weight:700;
+}
 
-      document.getElementById("allCount").innerText =
-        orders.length;
+#formBody{
+  margin-top:20px;
+}
 
-      document.getElementById("pendingCount").innerText =
-        orders.filter(order => order.status === "pending").length;
+.input,
+select,
+textarea{
+  width:100%;
+  border:1px solid #d4d8da;
+  background:#fff;
+  border-radius:15px;
+  padding:14px 15px;
+  font-size:16px;
+  outline:none;
+  margin-bottom:12px;
+}
 
-      document.getElementById("emergencyCount").innerText =
-        orders.filter(order => order.emergency === true).length;
-    }
+textarea{
+  min-height:115px;
+  resize:vertical;
+}
 
-    function hideAll(){
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
 
-      document.getElementById("groupsPage").style.display = "none";
+.image-box{
+  border:1px dashed #9aa5aa;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:14px;
+}
 
-      document.getElementById("allOrdersSection").classList.remove("active");
-      document.getElementById("pendingSection").classList.remove("active");
-      document.getElementById("emergencySection").classList.remove("active");
-    }
+.image-label{
+  display:block;
+  text-align:center;
+  background:#eef9f8;
+  color:#137d77;
+  padding:14px;
+  border-radius:13px;
+  font-weight:700;
+  cursor:pointer;
+}
 
-    function openAllOrders(){
+#imageInput{
+  display:none;
+}
 
-      hideAll();
+.preview-row{
+  display:flex;
+  gap:9px;
+  overflow-x:auto;
+  margin-top:12px;
+}
 
-      document.getElementById("allOrdersSection").classList.add("active");
+.preview-wrap{
+  position:relative;
+  flex:0 0 auto;
+}
 
-      renderAllOrders();
-    }
+.preview-wrap img{
+  width:75px;
+  height:75px;
+  border-radius:10px;
+  object-fit:cover;
+  border:1px solid #ddd;
+}
 
-    function openPending(){
+.remove-img{
+  position:absolute;
+  right:-5px;
+  top:-5px;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  border:0;
+  color:#fff;
+  background:#f04444;
+  cursor:pointer;
+}
 
-      hideAll();
+.tag-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-bottom:15px;
+}
 
-      document.getElementById("pendingSection").classList.add("active");
+.tag{
+  border:1px solid #d7dddd;
+  padding:8px 12px;
+  border-radius:20px;
+  background:#fff;
+  cursor:pointer;
+  font-size:14px;
+}
 
-      renderPending();
-    }
+.tag.active{
+  background:#def5f2;
+  border-color:#15978e;
+  color:#08756f;
+}
 
-    function openEmergency(){
+.submit-btn{
+  width:100%;
+  border:none;
+  background:#15978e;
+  color:#fff;
+  padding:16px;
+  border-radius:15px;
+  font-size:19px;
+  font-weight:700;
+  cursor:pointer;
+}
 
-      hideAll();
+/* =========================
+   ORDER CARDS
+========================= */
 
-      document.getElementById("emergencySection").classList.add("active");
+.section-title{
+  font-size:23px;
+  font-weight:700;
+  margin:22px 0 15px;
+}
 
-      renderEmergency();
-    }
+.order-card{
+  background:#fff;
+  border:1px solid #e3e7e7;
+  border-radius:20px;
+  padding:15px;
+  margin-bottom:15px;
+  box-shadow:0 4px 12px rgba(0,0,0,.04);
+}
 
-    function goBack(){
+.order-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:11px;
+}
 
-      document.getElementById("groupsPage").style.display = "block";
+.order-no{
+  font-size:17px;
+  font-weight:700;
+}
 
-      document.getElementById("allOrdersSection").classList.remove("active");
-      document.getElementById("pendingSection").classList.remove("active");
-      document.getElementById("emergencySection").classList.remove("active");
+.order-date{
+  font-size:12px;
+  color:#8a8d93;
+}
 
-      updateCounts();
-    }
+.badges{
+  display:flex;
+  gap:6px;
+  margin-bottom:9px;
+  flex-wrap:wrap;
+}
 
-    updateCounts();
-    renderAllOrders();
+.badge-small{
+  padding:5px 9px;
+  border-radius:15px;
+  font-size:12px;
+  background:#e6f5f4;
+  color:#08766f;
+  font-weight:700;
+}
 
-  </script>
+.emergency-badge{
+  background:#ffe7e7;
+  color:#e33c3c;
+}
 
-</body>
-</html>
+.order-images{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  margin:10px 0;
+}
+
+.order-images img{
+  width:82px;
+  height:82px;
+  object-fit:cover;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.details{
+  font-size:15px;
+  line-height:1.7;
+}
+
+.details b{
+  color:#313640;
+}
+
+.order-actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+
+.action-btn{
+  border:none;
+  border-radius:10px;
+  padding:9px 12px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.emergency-btn{
+  background:#fff0db;
+  color:#d87900;
+}
+
+.courier-btn{
+  background:#e2f5ed;
+  color:#16805b;
+}
+
+.delete-btn{
+  background:#ffe8e8;
+  color:#d93737;
+}
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottom-nav{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  height:73px;
+  background:white;
+  border-top:1px solid #ddd;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  z-index:100;
+}
+
+.nav-item{
+  text-align:center;
+  color:#898d95;
+  text-decoration:none;
+  font-size:14px;
+  width:20%;
+}
+
+.nav-icon{
+  display:block;
+  font-size:22px;
+  margin-bottom:3px;
+}
+
+.nav-item.active{
+  color:#087a76;
+  font-weight:700;
+}
+
+.hidden{
+  display:none !important;
+}
+
+.empty{
+  padding:35px 15px;
+  text-align:center;
+  color:#999;
+}
+
+@media(max-width:550px){
+  .container{
+    padding:17px 25px;
+  }
+
+  .group-card{
+    padding:26px 28px;
+  }
+
+  .group-icon{
+    width:65
