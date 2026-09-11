@@ -1829,6 +1829,208 @@
   white-space:nowrap !important;
 }
 
+
+/* ===== Page Management ===== */
+.pm-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:20000;
+  background:rgba(0,0,0,.46);
+  align-items:flex-end;
+  justify-content:center;
+}
+.pm-overlay.active{display:flex}
+.pm-sheet{
+  width:100%;
+  max-width:620px;
+  max-height:86vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:24px 24px 0 0;
+  padding:17px;
+  box-sizing:border-box;
+  box-shadow:0 -10px 35px rgba(0,0,0,.18);
+}
+.pm-small-sheet{max-height:45vh}
+.pm-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+.pm-head h3{margin:0;color:#24575b;font-size:18px}
+.pm-head small{display:block;margin-top:3px;color:#7b898d;font-size:11px}
+.pm-close{
+  width:38px;height:38px;border:0;border-radius:50%;
+  background:#edf3f3;color:#486367;font-size:22px;cursor:pointer;
+}
+.pm-menu-item{
+  width:100%;
+  border:1px solid #dce9e8;
+  background:#f8fcfb;
+  border-radius:15px;
+  padding:13px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  text-align:left;
+  cursor:pointer;
+}
+.pm-menu-icon{
+  width:42px;height:42px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  background:#dff5f1;font-size:22px;
+}
+.pm-menu-item b{display:block;color:#234f53;font-size:14px}
+.pm-menu-item small{display:block;color:#7a898c;font-size:10.5px;margin-top:3px}
+.pm-arrow{margin-left:auto;font-size:25px;color:#7b9999}
+.pm-add-box{
+  display:flex;
+  gap:8px;
+  margin-bottom:10px;
+}
+.pm-add-box input{
+  flex:1;
+  min-width:0;
+  border:1.5px solid #cddfdf;
+  border-radius:12px;
+  padding:11px 12px;
+  font-size:13px;
+  outline:none;
+}
+.pm-add-box input:focus{border-color:#159b90;box-shadow:0 0 0 3px rgba(21,155,144,.1)}
+.pm-add-box button{
+  border:0;
+  border-radius:12px;
+  background:#108e83;
+  color:#fff;
+  font-weight:800;
+  padding:0 13px;
+  cursor:pointer;
+}
+.pm-info{
+  padding:9px 10px;
+  border-radius:11px;
+  background:#eef9f7;
+  color:#557477;
+  font-size:10.5px;
+  line-height:1.45;
+  margin-bottom:14px;
+}
+.pm-list-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+  color:#355d61;
+  font-size:12px;
+}
+.pm-list-head span{
+  background:#eaf4f3;
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:10px;
+}
+.pm-list{display:flex;flex-direction:column;gap:7px}
+.pm-row{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  border:1px solid #e0e9e9;
+  background:#fff;
+  border-radius:12px;
+  padding:9px 10px;
+}
+.pm-row-index{
+  width:27px;height:27px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  background:#eef7f6;color:#28867e;font-weight:900;font-size:10px;
+}
+.pm-row-name{
+  flex:1;
+  min-width:0;
+  font-size:12px;
+  font-weight:800;
+  color:#2f5559;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.pm-icon-btn{
+  border:0;
+  min-width:34px;height:32px;
+  border-radius:9px;
+  cursor:pointer;
+  font-size:13px;
+}
+.pm-edit{background:#eaf4ff;color:#3976a8}
+.pm-delete{background:#fff0f0;color:#c15050}
+.pm-empty{
+  border:1px dashed #cfdcdc;
+  border-radius:13px;
+  padding:22px 10px;
+  text-align:center;
+  color:#819091;
+  font-size:11px;
+}
+.pm-foot-note{
+  margin-top:13px;
+  padding:9px 10px;
+  border-radius:11px;
+  background:#fff8e9;
+  color:#856b34;
+  font-size:10px;
+  line-height:1.45;
+}
+
+
+/* ===== FIX: compact call status without clipping ===== */
+.call-status-row .call-status-btn,
+.call-status-row .call-status-none,
+.call-status-row .call-status-called,
+.call-status-row .call-status-noanswer{
+  width:27% !important;
+  max-width:145px !important;
+  min-width:118px !important;
+  height:38px !important;
+  min-height:38px !important;
+  padding:4px 5px !important;
+  border-radius:10px !important;
+  box-sizing:border-box !important;
+  overflow:hidden !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  align-content:center !important;
+  flex-wrap:wrap !important;
+  column-gap:2px !important;
+  row-gap:0 !important;
+  white-space:nowrap !important;
+  font-size:9.5px !important;
+  line-height:1.05 !important;
+}
+.call-status-row .call-status-time{
+  display:inline !important;
+  margin:0 0 0 2px !important;
+  padding:0 !important;
+  font-size:8.5px !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+}
+.call-status-row .call-status-date{
+  display:block !important;
+  flex:0 0 100% !important;
+  width:100% !important;
+  margin:2px 0 0 !important;
+  padding:0 !important;
+  font-size:7px !important;
+  line-height:1 !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+}
+
 </style>
 
 <style>
@@ -2799,10 +3001,166 @@ body.external-section-open .container{
   <div class="active-nav">📦<br>Orders</div>
   <div>🏭<br>Production</div>
   <div>👤<br>Employee</div>
-  <div>☰<br>More</div>
+  <div onclick="openMoreMenu()" style="cursor:pointer">☰<br>More</div>
 </div>
 
 <script>
+
+  /* ===== Page Management ===== */
+  const DEFAULT_MANAGED_PAGES = [
+    "Maya",
+    "Sehzadi Online Shop",
+    "Abaya House",
+    "Maya Borka House",
+    "Fashion House",
+    "Mahira Fashion"
+  ];
+
+  let managedPages = loadManagedPages();
+
+  function loadManagedPages(){
+    try{
+      const saved = JSON.parse(localStorage.getItem("mayaManagedPages"));
+      if(Array.isArray(saved) && saved.length){
+        return saved
+          .map(v => String(v || "").trim())
+          .filter(Boolean)
+          .filter((v,i,a) => a.findIndex(x => x.toLowerCase() === v.toLowerCase()) === i);
+      }
+    }catch(e){}
+    return [...DEFAULT_MANAGED_PAGES];
+  }
+
+  function saveManagedPages(){
+    localStorage.setItem("mayaManagedPages", JSON.stringify(managedPages));
+    renderManagedPages();
+    refreshPageSelects();
+  }
+
+  function refreshPageSelects(){
+    document.querySelectorAll('select#pageName').forEach(select => {
+      const oldValue = select.value;
+      select.innerHTML = '<option value="" selected disabled>পেজ সিলেক্ট করুন</option>';
+
+      managedPages.forEach(page => {
+        const opt = document.createElement("option");
+        opt.value = page;
+        opt.textContent = page;
+        select.appendChild(opt);
+      });
+
+      if(managedPages.includes(oldValue)){
+        select.value = oldValue;
+      }
+    });
+  }
+
+  function renderManagedPages(){
+    const list = document.getElementById("managedPageList");
+    const count = document.getElementById("managedPageCount");
+    if(!list || !count) return;
+
+    count.textContent = managedPages.length + "টি";
+
+    if(!managedPages.length){
+      list.innerHTML = '<div class="pm-empty">কোনো Page নেই। উপরে নাম লিখে Add Page করুন।</div>';
+      return;
+    }
+
+    list.innerHTML = managedPages.map((page,index) => `
+      <div class="pm-row">
+        <span class="pm-row-index">${String(index+1).padStart(2,"0")}</span>
+        <span class="pm-row-name">${escapeHTML(page)}</span>
+        <button class="pm-icon-btn pm-edit" onclick="editManagedPage(${index})" title="Edit">✏️</button>
+        <button class="pm-icon-btn pm-delete" onclick="removeManagedPage(${index})" title="Remove">🗑️</button>
+      </div>
+    `).join("");
+  }
+
+  function openMoreMenu(){
+    document.getElementById("moreMenuOverlay")?.classList.add("active");
+  }
+
+  function closeMoreMenu(){
+    document.getElementById("moreMenuOverlay")?.classList.remove("active");
+  }
+
+  function openPageManagement(){
+    closeMoreMenu();
+    renderManagedPages();
+    document.getElementById("pageManagementOverlay")?.classList.add("active");
+    setTimeout(() => document.getElementById("newPageNameInput")?.focus(), 80);
+  }
+
+  function closePageManagement(){
+    document.getElementById("pageManagementOverlay")?.classList.remove("active");
+  }
+
+  function addManagedPage(){
+    const input = document.getElementById("newPageNameInput");
+    if(!input) return;
+
+    const name = input.value.trim();
+    if(!name){
+      alert("পেজের নাম লিখুন।");
+      input.focus();
+      return;
+    }
+
+    if(managedPages.some(p => p.toLowerCase() === name.toLowerCase())){
+      alert("এই Page আগেই যোগ করা আছে।");
+      return;
+    }
+
+    managedPages.push(name);
+    input.value = "";
+    saveManagedPages();
+  }
+
+  function editManagedPage(index){
+    const oldName = managedPages[index];
+    if(oldName == null) return;
+
+    const newName = prompt("Page-এর নতুন নাম লিখুন:", oldName);
+    if(newName === null) return;
+
+    const name = newName.trim();
+    if(!name) return alert("Page-এর নাম খালি রাখা যাবে না।");
+
+    if(managedPages.some((p,i) => i !== index && p.toLowerCase() === name.toLowerCase())){
+      return alert("এই নামে আরেকটি Page আছে।");
+    }
+
+    managedPages[index] = name;
+    saveManagedPages();
+  }
+
+  function removeManagedPage(index){
+    const page = managedPages[index];
+    if(page == null) return;
+
+    const ok = confirm(
+      '“' + page + '” Page টি Remove করবেন?\\n\\n' +
+      'পুরোনো অর্ডারে Page নাম থাকবে। শুধু নতুন Order Submit-এর Page list থেকে বাদ যাবে।'
+    );
+    if(!ok) return;
+
+    managedPages.splice(index, 1);
+    saveManagedPages();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    refreshPageSelects();
+    renderManagedPages();
+
+    const input = document.getElementById("newPageNameInput");
+    if(input){
+      input.addEventListener("keydown", e => {
+        if(e.key === "Enter") addManagedPage();
+      });
+    }
+  });
+
   let orders = JSON.parse(localStorage.getItem("mayaOrders")) || [];
 
   function saveOrders(){
@@ -3303,7 +3661,61 @@ body.external-section-open .container{
       <div class="line"><b>Customer:</b> ${escapeHTML(order.customerName || order.name || "")}</div>
       <div class="line"><b>Phone:</b> ${escapeHTML(order.phone || "")}</div>
       <div class="line"><b>Address:</b> ${escapeHTML(order.address || "")}</div>
-      </div><button onclick="window.print()" style="width:100%;margin-top:14px;padding:12px;font-weight:800">🖨️ Print Sticker</button></body></html>`);
+      </div><button onclick="window.print()" style="width:100%;margin-top:14px;padding:12px;font-weight:800">🖨️ Print Sticker</button>
+<!-- ===== More Menu / Page Management ===== -->
+<div class="pm-overlay" id="moreMenuOverlay" onclick="if(event.target===this) closeMoreMenu()">
+  <div class="pm-sheet pm-small-sheet">
+    <div class="pm-head">
+      <div>
+        <h3>☰ More</h3>
+        <small>সেটিংস ও ম্যানেজমেন্ট</small>
+      </div>
+      <button class="pm-close" onclick="closeMoreMenu()">×</button>
+    </div>
+
+    <button class="pm-menu-item" onclick="openPageManagement()">
+      <span class="pm-menu-icon">🏪</span>
+      <span>
+        <b>Page Management</b>
+        <small>নতুন পেজ যোগ করুন / পেজ রিমুভ করুন</small>
+      </span>
+      <span class="pm-arrow">›</span>
+    </button>
+  </div>
+</div>
+
+<div class="pm-overlay" id="pageManagementOverlay" onclick="if(event.target===this) closePageManagement()">
+  <div class="pm-sheet">
+    <div class="pm-head">
+      <div>
+        <h3>🏪 Page Management</h3>
+        <small>Order Submit-এর Page list এখান থেকে নিয়ন্ত্রণ করুন</small>
+      </div>
+      <button class="pm-close" onclick="closePageManagement()">×</button>
+    </div>
+
+    <div class="pm-add-box">
+      <input id="newPageNameInput" type="text" placeholder="নতুন পেজের নাম লিখুন">
+      <button onclick="addManagedPage()">＋ Add Page</button>
+    </div>
+
+    <div class="pm-info">
+      এখানে যেসব Page থাকবে, <b>নতুন অর্ডার সাবমিট</b>-এর Page Select-এ সেগুলোই দেখা যাবে।
+    </div>
+
+    <div class="pm-list-head">
+      <b>আপনার পেজসমূহ</b>
+      <span id="managedPageCount">0টি</span>
+    </div>
+    <div id="managedPageList" class="pm-list"></div>
+
+    <div class="pm-foot-note">
+      ⚠️ কোনো Page Remove করলে পুরোনো অর্ডারের Page নাম মুছে যাবে না। শুধু নতুন Order Submit-এর তালিকা থেকে বাদ যাবে।
+    </div>
+  </div>
+</div>
+
+</body></html>`);
     win.document.close();
     setTimeout(() => win.print(), 250);
   }
