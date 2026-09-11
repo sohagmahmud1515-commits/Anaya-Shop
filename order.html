@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Maya Garments - Order Management</title>
 
 <style>
@@ -20,10 +19,11 @@ body{
     padding-bottom:90px;
 }
 
+/* HEADER */
 header{
     background:#0f7673;
-    color:#fff;
-    padding:16px 18px;
+    color:white;
+    padding:16px;
     position:sticky;
     top:0;
     z-index:20;
@@ -33,8 +33,8 @@ header{
     max-width:760px;
     margin:auto;
     display:flex;
-    justify-content:space-between;
     align-items:center;
+    justify-content:space-between;
 }
 
 .header-title{
@@ -43,72 +43,1355 @@ header{
 }
 
 .back-btn{
-    color:#fff;
+    color:white;
     text-decoration:none;
-    font-size:24px;
+    font-size:25px;
 }
 
 .summary-btn{
     border:none;
-    background:#fff;
+    background:white;
     color:#0f7673;
-    padding:9px 12px;
+    padding:8px 11px;
     border-radius:10px;
-    font-weight:700;
+    font-weight:bold;
     cursor:pointer;
 }
 
+/* MAIN */
 .container{
     width:100%;
     max-width:760px;
     margin:auto;
-    padding:16px;
+    padding:14px;
 }
 
 /* GROUPS */
-
 .groups{
     display:grid;
     grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    margin-bottom:18px;
+    gap:10px;
+    margin-bottom:16px;
 }
 
 .group-card{
-    background:#fff;
-    border-radius:18px;
-    padding:18px 12px;
-    box-shadow:0 6px 18px rgba(0,0,0,.06);
+    background:white;
+    border:1px solid #e1eeee;
+    border-radius:15px;
+    padding:15px 8px;
+    text-align:center;
     cursor:pointer;
-    border:2px solid transparent;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
 }
 
 .group-card.active{
-    border-color:#0f8b83;
-    background:#effdfa;
+    background:#e3f6f3;
+    border:2px solid #0f8b83;
 }
 
 .group-icon{
-    font-size:28px;
-    margin-bottom:8px;
+    font-size:25px;
+    margin-bottom:6px;
 }
 
-.group-title{
+.group-name{
+    font-size:14px;
     font-weight:700;
-    font-size:16px;
 }
 
 .group-count{
-    margin-top:5px;
-    color:#718789;
-    font-size:13px;
+    margin-top:4px;
+    font-size:12px;
+    color:#748586;
 }
 
-/* FORM */
-
+/* SECTION */
 .section{
+    display:none;
+}
+
+.section.active{
+    display:block;
+}
+
+/* NEW ORDER */
+.new-order-toggle{
+    width:100%;
+    background:#0f8b83;
+    color:white;
+    border:none;
+    border-radius:12px;
+    padding:14px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-bottom:12px;
+}
+
+.order-form{
+    background:white;
+    border-radius:16px;
+    padding:15px;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    display:none;
+}
+
+.order-form.open{
+    display:block;
+}
+
+.form-title{
+    font-size:17px;
+    font-weight:bold;
+    margin-bottom:14px;
+}
+
+.form-group{
+    margin-bottom:12px;
+}
+
+label{
+    display:block;
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:6px;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    border:1px solid #d6e2e2;
     background:#fff;
+    border-radius:10px;
+    padding:12px;
+    outline:none;
+    font-size:14px;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#0f8b83;
+}
+
+textarea{
+    min-height:75px;
+    resize:vertical;
+}
+
+.two-column{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+/* IMAGE */
+.image-box{
+    border:2px dashed #b7cecc;
+    padding:15px;
+    border-radius:12px;
+    text-align:center;
+    background:#f9fdfd;
+}
+
+.image-box input{
+    border:none;
+    padding:5px;
+}
+
+.preview{
+    display:flex;
+    overflow-x:auto;
+    gap:8px;
+    margin-top:10px;
+}
+
+.preview-item{
+    position:relative;
+    flex:0 0 auto;
+}
+
+.preview img{
+    width:75px;
+    height:75px;
+    object-fit:cover;
+    border-radius:10px;
+    border:1px solid #ddd;
+}
+
+.remove-image{
+    position:absolute;
+    right:-4px;
+    top:-5px;
+    width:21px;
+    height:21px;
+    border:none;
+    border-radius:50%;
+    background:#d92d20;
+    color:white;
+    cursor:pointer;
+}
+
+/* TAGS */
+.tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+}
+
+.tag{
+    border:1px solid #cadcdb;
     border-radius:20px;
-    padding:18px;
-    margin-bottom:16px;
-    box-shadow:0 7
+    padding:7px 10px;
+    font-size:12px;
+    cursor:pointer;
+    background:white;
+}
+
+.tag.active{
+    background:#dff5f1;
+    border-color:#0f8b83;
+    color:#076861;
+}
+
+/* SUBMIT */
+.submit-btn{
+    width:100%;
+    background:#0f8b83;
+    border:none;
+    color:white;
+    padding:14px;
+    border-radius:11px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* ORDER CARD */
+.order-card{
+    background:white;
+    border:1px solid #dfeaea;
+    border-radius:15px;
+    padding:13px;
+    margin-bottom:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+
+.order-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:9px;
+}
+
+.order-number{
+    font-weight:bold;
+    font-size:14px;
+}
+
+.badge{
+    background:#e1f4f1;
+    color:#08736c;
+    padding:5px 8px;
+    border-radius:20px;
+    font-size:11px;
+}
+
+.order-info{
+    font-size:13px;
+    line-height:1.7;
+}
+
+.empty{
+    background:white;
+    border-radius:14px;
+    padding:30px 15px;
+    text-align:center;
+    color:#849292;
+}
+
+/* BOTTOM NAV */
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    background:white;
+    border-top:1px solid #e0e8e8;
+    display:flex;
+    justify-content:space-around;
+    padding:8px 3px 10px;
+    z-index:30;
+}
+
+.nav-item{
+    flex:1;
+    text-align:center;
+    text-decoration:none;
+    color:#718080;
+    font-size:11px;
+}
+
+.nav-icon{
+    font-size:21px;
+    display:block;
+    margin-bottom:3px;
+}
+
+.nav-item.active{
+    color:#0f8b83;
+    font-weight:bold;
+}
+
+@media(max-width:420px){
+    .container{
+        padding:11px;
+    }
+
+    .two-column{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-row">
+
+        <a href="index.html" class="back-btn">‹</a>
+
+        <div class="header-title">
+            Order Management
+        </div>
+
+        <button class="summary-btn" onclick="showSummary()">
+            Summary
+        </button>
+
+    </div>
+</header>
+
+
+<div class="container">
+
+    <!-- GROUP BUTTONS -->
+    <div class="groups">
+
+        <div class="group-card active"
+             id="allBtn"
+             onclick="openGroup('all')">
+
+            <div class="group-icon">📦</div>
+            <div class="group-name">All Order Group</div>
+            <div class="group-count" id="allCount">
+                0 Orders
+            </div>
+
+        </div>
+
+
+        <div class="group-card"
+             id="pendingBtn"
+             onclick="openGroup('pending')">
+
+            <div class="group-icon">⏳</div>
+            <div class="group-name">Pending Group</div>
+            <div class="group-count" id="pendingCount">
+                0 Orders
+            </div>
+
+        </div>
+
+
+        <div class="group-card"
+             id="emergencyBtn"
+             onclick="openGroup('emergency')">
+
+            <div class="group-icon">🚨</div>
+            <div class="group-name">Emergency Group</div>
+            <div class="group-count" id="emergencyCount">
+                0 Orders
+            </div>
+
+        </div>
+
+
+        <div class="group-card"
+             id="wholesaleBtn"
+             onclick="openGroup('wholesale')">
+
+            <div class="group-icon">🏪</div>
+            <div class="group-name">পাইকারি Group</div>
+            <div class="group-count">
+                Separate
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ALL ORDER -->
+    <section id="allSection" class="section active">
+
+        <button class="new-order-toggle"
+                onclick="toggleForm()">
+            ＋ নতুন অর্ডার সাবমিট করুন
+        </button>
+
+
+        <div class="order-form" id="orderForm">
+
+            <div class="form-title">
+                নতুন অর্ডার
+            </div>
+
+
+            <div class="form-group">
+
+                <label>পেজ সিলেক্ট করুন *</label>
+
+                <select id="page">
+
+                    <option value="">
+                        পেজ সিলেক্ট করুন
+                    </option>
+
+                    <option>Abaya House</option>
+                    <option>Maya Borka House</option>
+                    <option>Mahira Fashion</option>
+                    <option>Sehzadi Online Shop</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    অর্ডারের ছবি * (সর্বোচ্চ 7টি)
+                </label>
+
+                <div class="image-box">
+
+                    <input
+                        type="file"
+                        id="images"
+                        accept="image/*"
+                        multiple
+                        onchange="previewImages()"
+                    >
+
+                    <div class="preview"
+                         id="preview">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="two-column">
+
+                <div class="form-group">
+
+                    <label>
+                        কাস্টমারের নাম
+                    </label>
+
+                    <input
+                        type="text"
+                        id="customerName"
+                        placeholder="কাস্টমারের নাম"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        ফোন নাম্বার *
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        placeholder="01XXXXXXXXX"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    ঠিকানা
+                </label>
+
+                <textarea
+                    id="address"
+                    placeholder="সম্পূর্ণ ঠিকানা লিখুন"
+                ></textarea>
+
+            </div>
+
+
+            <div class="two-column">
+
+                <div class="form-group">
+
+                    <label>
+                        সাইজ / কালার
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sizeColor"
+                        placeholder="যেমন: 54 / Black"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        পরিমাণ
+                    </label>
+
+                    <input
+                        type="number"
+                        id="quantity"
+                        value="1"
+                        min="1"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    প্রোডাক্ট নোট
+                </label>
+
+                <textarea
+                    id="productNote"
+                    placeholder="অর্ডারের বিস্তারিত..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    অতিরিক্ত
+                </label>
+
+                <div class="tags">
+
+                    <button
+                        type="button"
+                        class="tag"
+                        onclick="toggleTag(this)">
+                        ফুল সেট
+                    </button>
+
+                    <button
+                        type="button"
+                        class="tag"
+                        onclick="toggleTag(this)">
+                        হিজাব
+                    </button>
+
+                    <button
+                        type="button"
+                        class="tag"
+                        onclick="toggleTag(this)">
+                        ইনার
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="two-column">
+
+                <div class="form-group">
+
+                    <label>
+                        Token Buyer
+                    </label>
+
+                    <input
+                        type="text"
+                        id="tokenBuyer"
+                        placeholder="নাম / তথ্য"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Payment Note
+                    </label>
+
+                    <input
+                        type="text"
+                        id="paymentNote"
+                        placeholder="COD / Paid..."
+                    >
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="submit-btn"
+                onclick="submitOrder()">
+                অর্ডার সাবমিট
+            </button>
+
+        </div>
+
+
+        <div id="allOrders"
+             style="margin-top:14px;">
+        </div>
+
+    </section>
+
+
+    <!-- PENDING -->
+    <section id="pendingSection"
+             class="section">
+
+        <div id="pendingOrders"></div>
+
+    </section>
+
+
+    <!-- EMERGENCY -->
+    <section id="emergencySection"
+             class="section">
+
+        <div id="emergencyOrders"></div>
+
+    </section>
+
+
+    <!-- WHOLESALE -->
+    <section id="wholesaleSection"
+             class="section">
+
+        <div class="empty">
+
+            <div style="font-size:35px">
+                🏪
+            </div>
+
+            <br>
+
+            পাইকারি অর্ডার সিস্টেম
+            আলাদা পেজে তৈরি হবে।
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+
+    <a href="index.html"
+       class="nav-item">
+
+        <span class="nav-icon">⌂</span>
+        Home
+
+    </a>
+
+
+    <a href="order.html"
+       class="nav-item active">
+
+        <span class="nav-icon">▣</span>
+        Order
+
+    </a>
+
+
+    <a href="notification.html"
+       class="nav-item">
+
+        <span class="nav-icon">🔔</span>
+        Notification
+
+    </a>
+
+
+    <a href="profile.html"
+       class="nav-item">
+
+        <span class="nav-icon">👤</span>
+        Profile
+
+    </a>
+
+</div>
+
+
+<script>
+
+/* =========================
+   ORDER STORAGE
+========================= */
+
+let orders =
+JSON.parse(localStorage.getItem("mayaOrders")) || [];
+
+let selectedImages = [];
+
+
+/* =========================
+   OPEN GROUP
+========================= */
+
+function openGroup(group){
+
+    document
+    .querySelectorAll(".section")
+    .forEach(section =>
+        section.classList.remove("active")
+    );
+
+    document
+    .querySelectorAll(".group-card")
+    .forEach(card =>
+        card.classList.remove("active")
+    );
+
+
+    if(group === "all"){
+
+        document
+        .getElementById("allSection")
+        .classList.add("active");
+
+        document
+        .getElementById("allBtn")
+        .classList.add("active");
+
+    }
+
+
+    if(group === "pending"){
+
+        document
+        .getElementById("pendingSection")
+        .classList.add("active");
+
+        document
+        .getElementById("pendingBtn")
+        .classList.add("active");
+
+    }
+
+
+    if(group === "emergency"){
+
+        document
+        .getElementById("emergencySection")
+        .classList.add("active");
+
+        document
+        .getElementById("emergencyBtn")
+        .classList.add("active");
+
+    }
+
+
+    if(group === "wholesale"){
+
+        document
+        .getElementById("wholesaleSection")
+        .classList.add("active");
+
+        document
+        .getElementById("wholesaleBtn")
+        .classList.add("active");
+
+    }
+
+}
+
+
+/* =========================
+   FORM
+========================= */
+
+function toggleForm(){
+
+    document
+    .getElementById("orderForm")
+    .classList.toggle("open");
+
+}
+
+
+/* =========================
+   TAG
+========================= */
+
+function toggleTag(button){
+
+    button.classList.toggle("active");
+
+}
+
+
+/* =========================
+   IMAGE PREVIEW
+========================= */
+
+function previewImages(){
+
+    const input =
+    document.getElementById("images");
+
+    const files =
+    Array.from(input.files);
+
+
+    if(files.length > 7){
+
+        alert("সর্বোচ্চ ৭টি ছবি নির্বাচন করা যাবে।");
+
+        input.value = "";
+
+        return;
+
+    }
+
+
+    selectedImages = files;
+
+    const preview =
+    document.getElementById("preview");
+
+    preview.innerHTML = "";
+
+
+    selectedImages.forEach((file,index)=>{
+
+        const reader =
+        new FileReader();
+
+
+        reader.onload = function(e){
+
+            const box =
+            document.createElement("div");
+
+            box.className =
+            "preview-item";
+
+
+            box.innerHTML = `
+
+                <img src="${e.target.result}">
+
+                <button
+                    class="remove-image"
+                    onclick="removeImage(${index})">
+                    ×
+                </button>
+
+            `;
+
+            preview.appendChild(box);
+
+        };
+
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+
+/* =========================
+   REMOVE IMAGE
+========================= */
+
+function removeImage(index){
+
+    selectedImages.splice(index,1);
+
+    renderSelectedImages();
+
+}
+
+
+function renderSelectedImages(){
+
+    const preview =
+    document.getElementById("preview");
+
+    preview.innerHTML = "";
+
+
+    selectedImages.forEach((file,index)=>{
+
+        const reader =
+        new FileReader();
+
+
+        reader.onload = function(e){
+
+            const box =
+            document.createElement("div");
+
+            box.className =
+            "preview-item";
+
+
+            box.innerHTML = `
+
+                <img src="${e.target.result}">
+
+                <button
+                    class="remove-image"
+                    onclick="removeImage(${index})">
+                    ×
+                </button>
+
+            `;
+
+            preview.appendChild(box);
+
+        };
+
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+
+/* =========================
+   SUBMIT ORDER
+========================= */
+
+function submitOrder(){
+
+    const page =
+    document.getElementById("page").value;
+
+    const customerName =
+    document.getElementById("customerName").value.trim();
+
+    const phone =
+    document.getElementById("phone").value.trim();
+
+    const address =
+    document.getElementById("address").value.trim();
+
+    const sizeColor =
+    document.getElementById("sizeColor").value.trim();
+
+    const quantity =
+    document.getElementById("quantity").value;
+
+    const productNote =
+    document.getElementById("productNote").value.trim();
+
+    const tokenBuyer =
+    document.getElementById("tokenBuyer").value.trim();
+
+    const paymentNote =
+    document.getElementById("paymentNote").value.trim();
+
+
+    if(page === ""){
+
+        alert("পেজ সিলেক্ট করুন।");
+
+        return;
+
+    }
+
+
+    if(selectedImages.length === 0){
+
+        alert("অর্ডারের অন্তত একটি ছবি যুক্ত করুন।");
+
+        return;
+
+    }
+
+
+    if(phone === ""){
+
+        alert("ফোন নাম্বার দিন।");
+
+        return;
+
+    }
+
+
+    /* DUPLICATE PHONE */
+
+    const duplicate =
+    orders.find(order =>
+        order.phone === phone &&
+        order.status !== "courier"
+    );
+
+
+    if(duplicate){
+
+        const confirmDuplicate =
+        confirm(
+            "এই নাম্বারে আগে Order: " +
+            String(duplicate.id).padStart(2,"0") +
+            " আছে। আপনি কি আবারও সাবমিট করবেন?"
+        );
+
+
+        if(!confirmDuplicate){
+
+            return;
+
+        }
+
+    }
+
+
+    const activeTags =
+    Array.from(
+        document.querySelectorAll(".tag.active")
+    )
+    .map(tag => tag.innerText);
+
+
+    const newOrder = {
+
+        id:
+        orders.length > 0
+        ? Math.max(...orders.map(o => o.id)) + 1
+        : 1,
+
+        page:page,
+
+        customerName:
+        customerName || "নাম দেওয়া হয়নি",
+
+        phone:phone,
+
+        address:address,
+
+        sizeColor:sizeColor,
+
+        quantity:quantity,
+
+        productNote:productNote,
+
+        tokenBuyer:tokenBuyer,
+
+        paymentNote:paymentNote,
+
+        tags:activeTags,
+
+        status:"pending",
+
+        emergency:false,
+
+        date:
+        new Date().toLocaleString()
+
+    };
+
+
+    orders.push(newOrder);
+
+    saveOrders();
+
+    alert(
+        "Order: " +
+        String(newOrder.id).padStart(2,"0") +
+        " সফলভাবে সাবমিট হয়েছে।"
+    );
+
+
+    resetForm();
+
+    renderOrders();
+
+    openGroup("pending");
+
+}
+
+
+/* =========================
+   SAVE
+========================= */
+
+function saveOrders(){
+
+    localStorage.setItem(
+        "mayaOrders",
+        JSON.stringify(orders)
+    );
+
+}
+
+
+/* =========================
+   RESET FORM
+========================= */
+
+function resetForm(){
+
+    document.getElementById("page").value = "";
+
+    document.getElementById("customerName").value = "";
+
+    document.getElementById("phone").value = "";
+
+    document.getElementById("address").value = "";
+
+    document.getElementById("sizeColor").value = "";
+
+    document.getElementById("quantity").value = "1";
+
+    document.getElementById("productNote").value = "";
+
+    document.getElementById("tokenBuyer").value = "";
+
+    document.getElementById("paymentNote").value = "";
+
+    document.getElementById("images").value = "";
+
+    document.getElementById("preview").innerHTML = "";
+
+    selectedImages = [];
+
+
+    document
+    .querySelectorAll(".tag")
+    .forEach(tag =>
+        tag.classList.remove("active")
+    );
+
+
+    document
+    .getElementById("orderForm")
+    .classList.remove("open");
+
+}
+
+
+/* =========================
+   ORDER CARD
+========================= */
+
+function createOrderCard(order){
+
+    return `
+
+    <div class="order-card">
+
+        <div class="order-top">
+
+            <span class="order-number">
+                Order:
+                ${String(order.id).padStart(2,"0")}
+            </span>
+
+            <span class="badge">
+                ${order.page}
+            </span>
+
+        </div>
+
+
+        <div class="order-info">
+
+            <b>${order.customerName}</b>
+
+            <br>
+
+            📞 ${order.phone}
+
+            ${
+                order.address
+                ? "<br>📍 " + order.address
+                : ""
+            }
+
+            ${
+                order.sizeColor
+                ? "<br>সাইজ/কালার: " + order.sizeColor
+                : ""
+            }
+
+            <br>
+
+            পরিমাণ:
+            ${order.quantity}
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+
+/* =========================
+   RENDER ORDERS
+========================= */
+
+function renderOrders(){
+
+    const pending =
+    orders.filter(order =>
+        order.status === "pending"
+    );
+
+    const emergency =
+    orders.filter(order =>
+        order.emergency === true
+    );
+
+
+    document.getElementById("allCount")
+    .innerText =
+    orders.length + " Orders";
+
+
+    document.getElementById("pendingCount")
+    .innerText =
+    pending.length + " Orders";
+
+
+    document.getElementById("emergencyCount")
+    .innerText =
+    emergency.length + " Orders";
+
+
+    const allBox =
+    document.getElementById("allOrders");
+
+    const pendingBox =
+    document.getElementById("pendingOrders");
+
+    const emergencyBox =
+    document.getElementById("emergencyOrders");
+
+
+    if(orders.length === 0){
+
+        allBox.innerHTML =
+        '<div class="empty">এখনো কোনো অর্ডার নেই</div>';
+
+    }else{
+
+        allBox.innerHTML =
+        orders
+        .map(createOrderCard)
+        .join("");
+
+    }
+
+
+    if(pending.length === 0){
+
+        pendingBox.innerHTML =
+        '<div class="empty">কোনো Pending Order নেই</div>';
+
+    }else{
+
+        pendingBox.innerHTML =
+        pending
+        .map(createOrderCard)
+        .join("");
+
+    }
+
+
+    if(emergency.length === 0){
+
+        emergencyBox.innerHTML =
+        '<div class="empty">কোনো Emergency Order নেই</div>';
+
+    }else{
+
+        emergencyBox.innerHTML =
+        emergency
+        .map(createOrderCard)
+        .join("");
+
+    }
+
+}
+
+
+/* =========================
+   SUMMARY
+========================= */
+
+function showSummary(){
+
+    const pending =
+    orders.filter(order =>
+        order.status === "pending"
+    ).length;
+
+    const emergency =
+    orders.filter(order =>
+        order.emergency === true
+    ).length;
+
+
+    alert(
+        "Order Summary\n\n" +
+        "Total Orders: " +
+        orders.length +
+        "\nPending: " +
+        pending +
+        "\nEmergency: " +
+        emergency
+    );
+
+}
+
+
+/* START */
+
+renderOrders();
+
+</script>
+
+</body>
+</html>
