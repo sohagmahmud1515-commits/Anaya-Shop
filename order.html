@@ -6413,5 +6413,145 @@ document.addEventListener("DOMContentLoaded", function(){
   font-weight:900 !important;
 }
 </style>
+  <style>
+/* ===== FINAL NEW ORDER FORM FIX ===== */
+
+#newOrderExpand .new-order-box{
+  width:100% !important;
+  box-sizing:border-box !important;
+  background:#ffffff !important;
+  border:1px solid #d9ece9 !important;
+  border-radius:18px !important;
+  padding:14px !important;
+  margin-top:10px !important;
+  box-shadow:0 5px 16px rgba(17,112,108,.06) !important;
+}
+
+#newOrderExpand .pretty-field{
+  width:100% !important;
+  margin-bottom:14px !important;
+  box-sizing:border-box !important;
+}
+
+#newOrderExpand .select-wrap{
+  width:100% !important;
+}
+
+#newOrderExpand #pageName{
+  width:100% !important;
+  height:50px !important;
+  border:1.5px solid #b9d9d5 !important;
+  border-radius:14px !important;
+  background:#ffffff !important;
+  padding:0 14px !important;
+  font-size:15px !important;
+  color:#27484d !important;
+  outline:none !important;
+  box-sizing:border-box !important;
+}
+
+#newOrderExpand #pageName:focus{
+  border-color:#149b88 !important;
+  box-shadow:0 0 0 3px rgba(20,155,136,.10) !important;
+}
+
+#newOrderExpand .order-image-picker-fixed{
+  width:100% !important;
+  min-height:92px !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:14px !important;
+  padding:16px !important;
+  margin:0 !important;
+  border:1.5px dashed #8fc9c3 !important;
+  border-radius:16px !important;
+  background:#f2fbf9 !important;
+  box-sizing:border-box !important;
+}
+
+#newOrderExpand .order-image-picker-plus{
+  width:58px !important;
+  height:58px !important;
+  flex:0 0 58px !important;
+  border-radius:15px !important;
+  background:#ddf4f0 !important;
+  color:#07998f !important;
+  font-size:36px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+#newOrderExpand .order-image-picker-text{
+  font-size:17px !important;
+  font-weight:800 !important;
+  color:#245e61 !important;
+}
+
+#newOrderExpand .pretty-field > label:not(.order-image-picker-fixed){
+  display:block !important;
+  font-size:14px !important;
+  font-weight:800 !important;
+  color:#31545a !important;
+  margin:0 0 8px !important;
+}
+
+#newOrderExpand #orderText{
+  display:block !important;
+  width:100% !important;
+  min-height:150px !important;
+  border:1.5px solid #b9d9d5 !important;
+  border-radius:14px !important;
+  background:#ffffff !important;
+  padding:13px !important;
+  font-size:15px !important;
+  line-height:1.55 !important;
+  resize:vertical !important;
+  outline:none !important;
+  box-sizing:border-box !important;
+}
+
+#newOrderExpand #orderText:focus{
+  border-color:#149b88 !important;
+  box-shadow:0 0 0 3px rgba(20,155,136,.10) !important;
+}
+
+#newOrderExpand .pretty-submit-btn{
+  width:100% !important;
+  min-height:52px !important;
+  border:0 !important;
+  border-radius:15px !important;
+  background:linear-gradient(135deg,#0f8f83,#147b8d) !important;
+  color:#ffffff !important;
+  font-size:16px !important;
+  font-weight:900 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:7px !important;
+  box-shadow:0 6px 16px rgba(15,143,131,.18) !important;
+}
+
+#newOrderExpand .selected-image-preview{
+  display:block;
+  width:100% !important;
+  box-sizing:border-box !important;
+}
+
+#newOrderExpand .selected-image-grid{
+  width:100% !important;
+}
+
+#newOrderExpand.open{
+  padding-top:0 !important;
+}
+
+/* Remove old cramped inline layout */
+#newOrderExpand textarea,
+#newOrderExpand select,
+#newOrderExpand button{
+  max-width:100% !important;
+}
+</style>
 </body>
 </html>
