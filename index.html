@@ -2619,12 +2619,139 @@ body.external-section-open .container{
 }
 </style>
 
+
+<style>
+/* ===== TEST: focused Order Group screen ===== */
+
+/* Group-এর ভিতরে গেলে নিচের App Navigation লুকাবে */
+body.order-group-open .bottom-nav{
+  display:none !important;
+}
+
+/* Group-এর ভিতরে পুরনো visible Back button লাগবে না;
+   Android/browser Back আগের মতো কাজ করবে */
+body.order-group-open #allOrdersSection > .back,
+body.order-group-open #pendingSection > .back,
+body.order-group-open #emergencySection > .back,
+body.order-group-open #deleteApprovalSection > .back{
+  display:none !important;
+}
+
+/* Search box Header-এর ঠিক নিচে থাকবে */
+body.order-group-open #allOrdersSection .order-search-card,
+body.order-group-open #pendingSection .order-search-card,
+body.order-group-open #emergencySection .order-search-card{
+  position:sticky !important;
+  top:70px !important;
+  z-index:18 !important;
+  margin-top:10px !important;
+  margin-bottom:12px !important;
+  box-shadow:0 5px 18px rgba(15,107,115,.12) !important;
+}
+
+/* Bottom menu লুকানো হলে অতিরিক্ত নিচের ফাঁকা জায়গা কমানো */
+body.order-group-open #allOrdersSection,
+body.order-group-open #pendingSection,
+body.order-group-open #emergencySection,
+body.order-group-open #deleteApprovalSection{
+  padding-bottom:20px !important;
+}
+</style>
+
+
+<style>
+/* ===== TEST: Pending + Emergency search fixed at bottom ===== */
+body.order-group-open #pendingSection,
+body.order-group-open #emergencySection{
+  padding-bottom:92px !important;
+}
+
+body.order-group-open #pendingSection .order-search-card,
+body.order-group-open #emergencySection .order-search-card{
+  position:fixed !important;
+  left:10px !important;
+  right:10px !important;
+  bottom:10px !important;
+  top:auto !important;
+  z-index:16000 !important;
+  margin:0 !important;
+  padding:8px 10px !important;
+  border-radius:15px !important;
+  box-shadow:0 6px 22px rgba(0,0,0,.18) !important;
+}
+
+/* নিচের search compact রাখি */
+body.order-group-open #pendingSection .order-search-title,
+body.order-group-open #emergencySection .order-search-title{
+  font-size:12px !important;
+  margin-bottom:5px !important;
+}
+
+body.order-group-open #pendingSection .order-search-hint,
+body.order-group-open #emergencySection .order-search-hint{
+  display:none !important;
+}
+
+body.order-group-open #pendingSection .order-search-row input,
+body.order-group-open #emergencySection .order-search-row input{
+  min-height:42px !important;
+}
+
+/* All Order search আগের জায়গাতেই থাকবে */
+body.order-group-open #allOrdersSection .order-search-card{
+  position:relative !important;
+  top:auto !important;
+}
+</style>
+
+
+<style>
+/* ===== TEST: floating ↑ / ↓ buttons ===== */
+.group-scroll-nav{
+  position:fixed;
+  right:12px;
+  bottom:18px;
+  z-index:17000;
+  display:none;
+  flex-direction:column;
+  gap:8px;
+}
+.group-scroll-nav.show{
+  display:flex;
+}
+.group-scroll-nav button{
+  width:44px;
+  height:44px;
+  border:0;
+  border-radius:50%;
+  background:#0f7c82;
+  color:#fff;
+  font-size:24px;
+  font-weight:800;
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 6px 18px rgba(0,0,0,.22);
+  cursor:pointer;
+}
+.group-scroll-nav button:active{
+  transform:scale(.96);
+}
+
+/* Pending / Emergency-এর নিচের fixed search box-এর উপর বাটন থাকবে */
+body.order-group-open #pendingSection.active ~ .group-scroll-nav,
+body.order-group-open #emergencySection.active ~ .group-scroll-nav{
+  bottom:92px;
+}
+</style>
+
 </head>
 
 <body>
   <div class="header">
     <div class="header-title">
-      Order Management
+      <span id="orderHeaderTitle">Order Management</span>
       <span style="font-size:10px;opacity:.8;font-weight:600">FINAL CORE</span>
     </div>
     <div class="header-actions">
@@ -2995,6 +3122,21 @@ body.external-section-open .container{
     <div id="courierTrackingList"></div>
   </div>
 </section>
+
+
+<!-- ===== TEST: quick top/bottom navigation for long order groups ===== -->
+<div id="groupScrollNav" class="group-scroll-nav" aria-label="Quick scroll">
+  <button id="groupScrollTopBtn"
+          type="button"
+          onclick="scrollOrderGroupToTop()"
+          title="উপরে যান"
+          aria-label="উপরে যান">↑</button>
+  <button id="groupScrollBottomBtn"
+          type="button"
+          onclick="scrollOrderGroupToBottom()"
+          title="নিচে যান"
+          aria-label="নিচে যান">↓</button>
+</div>
 
 <div class="bottom-nav">
   <div>🏠<br>Home</div>
@@ -3738,7 +3880,7 @@ body.external-section-open .container{
       saveOrders();
       renderEverything();
 
-      alert("Order Emergency Group থেকে সরানো হয়েছে.");
+      alert("✅ Emergency Group থেকে সরানো হয়েছে। All Order record থাকবে।");
       return;
     }
 
@@ -3748,7 +3890,7 @@ body.external-section-open .container{
     saveOrders();
     renderEverything();
 
-    alert("Order Pending Group থেকে সরানো হয়েছে.");
+    alert("✅ Pending Group থেকে সরানো হয়েছে। All Order record থাকবে।");
   }
 
   function requestDelete(id){
@@ -3900,6 +4042,34 @@ body.external-section-open .container{
     }
   }
 
+  function loadDeletedOrderArchive(){
+    try{
+      const data = JSON.parse(localStorage.getItem("mayaDeletedOrderArchive") || "[]");
+      return Array.isArray(data) ? data : [];
+    }catch(e){
+      return [];
+    }
+  }
+
+  function saveDeletedOrderArchive(data){
+    localStorage.setItem("mayaDeletedOrderArchive", JSON.stringify(data || []));
+  }
+
+  function archiveDeletedOrder(order){
+    const archive = loadDeletedOrderArchive();
+    const snapshot = {
+      ...order,
+      deletedApproved: true,
+      deletedAt: new Date().toLocaleString(),
+      deletedDateKey: localDateKey(),
+      deletedBy: getCurrentEmployee()
+    };
+    const oldIndex = archive.findIndex(x => x.id === snapshot.id);
+    if(oldIndex >= 0) archive[oldIndex] = snapshot;
+    else archive.push(snapshot);
+    saveDeletedOrderArchive(archive);
+  }
+
   function approveDelete(id){
     const order = orders.find(order => order.id === id);
 
@@ -3918,6 +4088,14 @@ body.external-section-open .container{
       order,
       order.deleteReason || ""
     );
+
+    const wasCourierSent =
+      order.status === "courier_sent" ||
+      order.courierSent === true;
+
+    if(!wasCourierSent){
+      archiveDeletedOrder(order);
+    }
 
     orders = orders.filter(order => order.id !== id);
 
@@ -4323,21 +4501,30 @@ body.external-section-open .container{
       </button>
     `;
 
-    const deleteButton = isDeletePending
+    const deleteButton =
+      isCourierSent && (viewMode === "pending" || viewMode === "emergency")
         ? `
           <button
             class="mini-action mini-delete"
-            disabled>
-            🗑️ Requested
+            onclick="removeAfterCourier('${order.id}')">
+            🗑️ Remove
           </button>
         `
-        : `
-          <button
-            class="mini-action mini-delete"
-            onclick="requestDelete('${order.id}')">
-            🗑️ Delete
-          </button>
-        `;
+        : isDeletePending
+          ? `
+            <button
+              class="mini-action mini-delete"
+              disabled>
+              🗑️ Requested
+            </button>
+          `
+          : `
+            <button
+              class="mini-action mini-delete"
+              onclick="requestDelete('${order.id}')">
+              🗑️ Delete
+            </button>
+          `;
 
     const canCourierSend =
       viewMode === "pending" ||
@@ -5022,7 +5209,7 @@ body.external-section-open .container{
       .toLowerCase();
 
       return hay.includes(q);
-    });
+    }).sort((a,b) => (a.serial || 0) - (b.serial || 0));
 
     const list =
       document.getElementById("pendingList");
@@ -5069,9 +5256,7 @@ body.external-section-open .container{
 
         if(
           order.emergency !== true ||
-          order.hiddenFromEmergency === true ||
-          order.status === "courier_sent" ||
-          order.courierSent === true
+          order.hiddenFromEmergency === true
         ){
           return false;
         }
@@ -5092,7 +5277,7 @@ body.external-section-open .container{
         .toLowerCase();
 
         return hay.includes(q);
-      });
+      }).sort((a,b) => (a.serial || 0) - (b.serial || 0));
 
     const list =
       document.getElementById("emergencyList");
@@ -5370,159 +5555,181 @@ body.external-section-open .container{
     renderDailySummary();
   }
 
-  function renderDailySummary(){
-    const container =
-      document.getElementById(
-        "dailySummaryContent"
-      );
-          if(!container) return;
+  function deletedOrdersForCurrentSummaryRange(){
+    const archive = loadDeletedOrderArchive();
 
-    const summaryOrders = getSummaryOrders();
+    function inRange(order){
+      const key = orderDateKey(order);
+      if(summaryRange === "today") return key === localDateKey();
+      if(summaryRange === "yesterday") return key === dateKeyOffset(-1);
+      if(summaryRange === "week"){
+        const end = localDateKey();
+        const d = new Date();
+        d.setDate(d.getDate() - 6);
+        const start = localDateKey(d);
+        return key >= start && key <= end;
+      }
+      if(summaryRange === "month"){
+        const end = localDateKey();
+        const d = new Date();
+        d.setMonth(d.getMonth() - 1);
+        const start = localDateKey(d);
+        return key >= start && key <= end;
+      }
+      if(summaryRange === "range" && selectedSummaryFrom && selectedSummaryTo){
+        return key >= selectedSummaryFrom && key <= selectedSummaryTo;
+      }
+      return false;
+    }
+
+    return archive.filter(inRange);
+  }
+
+  function renderDailySummary(){
+    const container = document.getElementById("dailySummaryContent");
+    if(!container) return;
+
+    const activeOrders = getSummaryOrders();
+    const deletedOrders = deletedOrdersForCurrentSummaryRange();
+    const allHistoricalOrders = [...activeOrders, ...deletedOrders];
+
+    const pendingOrders = activeOrders.filter(order =>
+      order.status !== "courier_sent" &&
+      order.courierSent !== true &&
+      order.hiddenFromPending !== true &&
+      order.emergency !== true
+    );
+
+    const emergencyOrders = activeOrders.filter(order =>
+      order.emergency === true &&
+      order.hiddenFromEmergency !== true &&
+      order.status !== "courier_sent" &&
+      order.courierSent !== true
+    );
+
+    const courierOrders = activeOrders.filter(order =>
+      order.status === "courier_sent" ||
+      order.courierSent === true
+    );
 
     const byEmployee = {};
-    const byPage = {};
+    allHistoricalOrders.forEach(order => {
+      const name = order.createdBy || "Admin";
+      if(!byEmployee[name]){
+        byEmployee[name] = {total:0, pending:0, courier:0, deleted:0};
+      }
+      byEmployee[name].total++;
+    });
 
-    summaryOrders.forEach(order => {
-      const employee = order.createdBy || "Admin";
-      const page = order.pageName || "Unknown";
-
-      byEmployee[employee] =
-        (byEmployee[employee] || 0) + 1;
-
-      byPage[page] =
-        (byPage[page] || 0) + 1;
+    pendingOrders.forEach(order => {
+      const name = order.createdBy || "Admin";
+      if(byEmployee[name]) byEmployee[name].pending++;
+    });
+    courierOrders.forEach(order => {
+      const name = order.createdBy || "Admin";
+      if(byEmployee[name]) byEmployee[name].courier++;
+    });
+    deletedOrders.forEach(order => {
+      const name = order.createdBy || "Admin";
+      if(byEmployee[name]) byEmployee[name].deleted++;
     });
 
     const employeeRows =
       Object.entries(byEmployee)
-        .sort((a,b) => b[1] - a[1])
-        .map(([name,count]) => `
+        .sort((a,b) => b[1].total - a[1].total)
+        .map(([name,s]) => `
           <tr>
             <td>${escapeHTML(name)}</td>
-            <td>${count}</td>
+            <td>${s.total}</td>
+            <td>${s.pending}</td>
+            <td>${s.courier}</td>
+            <td>${s.deleted}</td>
           </tr>
-        `)
-        .join("")
-      || '<tr><td colspan="2">No data</td></tr>';
+        `).join("")
+      || '<tr><td colspan="5">No data</td></tr>';
+
+    const byPage = {};
+    allHistoricalOrders.forEach(order => {
+      const page = order.pageName || "Unknown";
+      byPage[page] = (byPage[page] || 0) + 1;
+    });
 
     const pageRows =
       Object.entries(byPage)
         .sort((a,b) => b[1] - a[1])
         .map(([name,count]) => `
-          <tr>
-            <td>${escapeHTML(name)}</td>
-            <td>${count}</td>
-          </tr>
-        `)
-        .join("")
+          <tr><td>${escapeHTML(name)}</td><td>${count}</td></tr>
+        `).join("")
       || '<tr><td colspan="2">No data</td></tr>';
-
-    const pendingCount =
-      summaryOrders.filter(order =>
-        order.status !== "courier_sent" &&
-        order.hiddenFromPending !== true &&
-        order.emergency !== true
-      ).length;
-
-    const emergencyCount =
-      summaryOrders.filter(order =>
-        order.emergency === true &&
-        order.hiddenFromEmergency !== true
-      ).length;
 
     container.innerHTML = `
       <div class="summary-card">
         <h3>${escapeHTML(summaryRangeTitle())}</h3>
-
         <div class="summary-grid">
-
-          <div
-            class="summary-box"
-            onclick="openSummaryOrders('total')">
-
-            Total Orders
-            <strong>
-              ${summaryOrders.length}
-            </strong>
+          <div class="summary-box">
+            All Orders
+            <strong>${allHistoricalOrders.length}</strong>
           </div>
-
-          <div
-            class="summary-box"
-            onclick="openSummaryOrders('pending')">
-
+          <div class="summary-box">
             Pending
-            <strong>
-              ${pendingCount}
-            </strong>
+            <strong>${pendingOrders.length}</strong>
           </div>
-
-          <div
-            class="summary-box"
-            onclick="openSummaryOrders('emergency')">
-
-            Emergency
-            <strong>
-              ${emergencyCount}
-            </strong>
+          <div class="summary-box">
+            Courier Sent
+            <strong>${courierOrders.length}</strong>
           </div>
-
-          <div
-            class="summary-box"
-            onclick="openSummaryOrders('pages')">
-
-            Pages
-            <strong>
-              ${Object.keys(byPage).length}
-            </strong>
+          <div class="summary-box">
+            Deleted
+            <strong>${deletedOrders.length}</strong>
           </div>
-
+        </div>
+        <div style="margin-top:9px;font-size:11px;color:#738083;line-height:1.45">
+          Emergency Active: <b>${emergencyOrders.length}</b>
         </div>
       </div>
 
       <div class="summary-card">
-
-        <h3>
-          Who Took How Many Orders
-        </h3>
-
-        <table class="summary-table">
-
-          <thead>
-            <tr>
-              <th>Employee</th>
-              <th>Orders</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            ${employeeRows}
-          </tbody>
-
-        </table>
-
+        <h3>Moderator-wise Summary</h3>
+        <div style="overflow-x:auto">
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th>Moderator</th>
+                <th>All</th>
+                <th>Pending</th>
+                <th>Courier</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody>${employeeRows}</tbody>
+          </table>
+        </div>
       </div>
 
       <div class="summary-card">
-
-        <h3>
-          Page-wise Orders
-        </h3>
-
+        <h3>Delete Summary</h3>
+        <div style="font-size:12px;color:#69777a;margin-bottom:8px">
+          Admin-approved, Courier-এর আগের Delete Order
+        </div>
         <table class="summary-table">
-
-          <thead>
-            <tr>
-              <th>Page</th>
-              <th>Orders</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            ${pageRows}
-          </tbody>
-
+          <thead><tr><th>Moderator</th><th>Deleted</th></tr></thead>
+          <tbody>${
+            Object.entries(byEmployee)
+              .filter(([,s]) => s.deleted > 0)
+              .sort((a,b) => b[1].deleted - a[1].deleted)
+              .map(([name,s]) => `<tr><td>${escapeHTML(name)}</td><td>${s.deleted}</td></tr>`)
+              .join("")
+            || '<tr><td colspan="2">No deleted orders</td></tr>'
+          }</tbody>
         </table>
+      </div>
 
+      <div class="summary-card">
+        <h3>Page-wise Orders</h3>
+        <table class="summary-table">
+          <thead><tr><th>Page</th><th>Orders</th></tr></thead>
+          <tbody>${pageRows}</tbody>
+        </table>
       </div>
     `;
   }
@@ -5709,15 +5916,13 @@ body.external-section-open .container{
     const pending =
       orders.filter(order =>
         order.hiddenFromPending !== true &&
-        order.status !== "courier_sent" &&
         order.emergency !== true
       ).length;
 
     const emergency =
       orders.filter(order =>
         order.emergency === true &&
-        order.hiddenFromEmergency !== true &&
-        order.status !== "courier_sent"
+        order.hiddenFromEmergency !== true
       ).length;
 
     const courier =
@@ -5779,7 +5984,87 @@ body.external-section-open .container{
       );
   }
 
+  
+  /* ===== Android / Browser Back Button support ===== */
+  let mayaBackHandling = false;
+
+  function mayaPushGroupHistory(groupName){
+    if(mayaBackHandling) return;
+    try{
+      history.pushState(
+        { mayaOrderGroup: groupName },
+        "",
+        location.href
+      );
+    }catch(e){}
+  }
+
+  window.addEventListener("popstate", function(){
+    const anySectionOpen = Array.from(
+      document.querySelectorAll(".section")
+    ).some(section => section.classList.contains("active"));
+
+    if(anySectionOpen){
+      mayaBackHandling = true;
+      goBack();
+      setTimeout(() => { mayaBackHandling = false; }, 0);
+    }
+  });
+
+  function getOpenScrollableOrderGroup(){
+    if(document.getElementById("allOrdersSection")?.classList.contains("active")) return "all";
+    if(document.getElementById("pendingSection")?.classList.contains("active")) return "pending";
+    if(document.getElementById("emergencySection")?.classList.contains("active")) return "emergency";
+    return "";
+  }
+
+  function scrollOrderGroupToTop(){
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  function scrollOrderGroupToBottom(){
+    const maxY = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    );
+    window.scrollTo({top:maxY, behavior:"smooth"});
+  }
+
+  function updateGroupScrollNav(){
+    const nav = document.getElementById("groupScrollNav");
+    const up = document.getElementById("groupScrollTopBtn");
+    const down = document.getElementById("groupScrollBottomBtn");
+    if(!nav || !up || !down) return;
+
+    const group = getOpenScrollableOrderGroup();
+    if(!group){
+      nav.classList.remove("show");
+      return;
+    }
+
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    const docH = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+    const maxY = Math.max(0, docH - window.innerHeight);
+
+    nav.classList.add("show");
+    nav.style.bottom = (group === "pending" || group === "emergency") ? "92px" : "18px";
+
+    /* নিচে গেলে ↑, উপরে থাকলে ↓; মাঝখানে দুটোই */
+    up.style.display = y > 180 ? "flex" : "none";
+    down.style.display = (maxY - y) > 220 ? "flex" : "none";
+  }
+
+  window.addEventListener("scroll", updateGroupScrollNav, {passive:true});
+  window.addEventListener("resize", updateGroupScrollNav);
+
+  function setOrderHeaderTitle(title){
+    const el = document.getElementById("orderHeaderTitle");
+    if(el) el.textContent = title || "Order Management";
+  }
+
   function openAllOrders(){
+    setOrderHeaderTitle("All Order Group");
+    document.body.classList.add("order-group-open");
     document.body.classList.remove(
       "external-section-open"
     );
@@ -5791,9 +6076,13 @@ body.external-section-open .container{
       .classList.add("active");
 
     renderAllOrders();
+    setTimeout(updateGroupScrollNav, 0);
+    mayaPushGroupHistory("all");
   }
 
   function openPending(){
+    setOrderHeaderTitle("Pending Group");
+    document.body.classList.add("order-group-open");
     document.body.classList.add(
       "external-section-open"
     );
@@ -5806,9 +6095,13 @@ body.external-section-open .container{
 
     renderPending();
     window.scrollTo(0,0);
+    setTimeout(updateGroupScrollNav, 0);
+    mayaPushGroupHistory("pending");
   }
 
   function openEmergency(){
+    setOrderHeaderTitle("Emergency Group");
+    document.body.classList.add("order-group-open");
     document.body.classList.add(
       "external-section-open"
     );
@@ -5821,9 +6114,13 @@ body.external-section-open .container{
 
     renderEmergency();
     window.scrollTo(0,0);
+    setTimeout(updateGroupScrollNav, 0);
+    mayaPushGroupHistory("emergency");
   }
 
   function openDeleteApproval(){
+    setOrderHeaderTitle("Delete Group");
+    document.body.classList.add("order-group-open");
     document.body.classList.add(
       "external-section-open"
     );
@@ -5836,6 +6133,7 @@ body.external-section-open .container{
 
     renderDeleteApproval();
     window.scrollTo(0,0);
+    mayaPushGroupHistory("delete");
   }
 
   function getOrderNotifications(){
@@ -5967,6 +6265,7 @@ body.external-section-open .container{
   }
 
   function openOrderNotifications(){
+    document.body.classList.remove("order-group-open");
     document.body.classList.add(
       "external-section-open"
     );
@@ -6178,6 +6477,7 @@ body.external-section-open .container{
     }
   }
       function openDailySummary(){
+    document.body.classList.remove("order-group-open");
     document.body.classList.add("external-section-open");
 
     hideAll();
@@ -6191,6 +6491,7 @@ body.external-section-open .container{
   }
 
   function openCourierTracking(){
+    document.body.classList.remove("order-group-open");
     hideAll();
 
     document
@@ -6229,6 +6530,8 @@ body.external-section-open .container{
   }
 
   function goBack(){
+    setOrderHeaderTitle("Order Management");
+    document.body.classList.remove("order-group-open");
     document.body.classList.remove(
       "external-section-open"
     );
@@ -6245,6 +6548,7 @@ body.external-section-open .container{
 
     updateCounts();
     window.scrollTo(0,0);
+    setTimeout(updateGroupScrollNav, 0);
   }
 
   function renderEverything(){
