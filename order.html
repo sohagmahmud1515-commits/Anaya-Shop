@@ -1468,7 +1468,177 @@
 .new-order-expand > .new-order-box{
   margin:0 !important;
 }
+/* ===== MINIMAL GLASS SEARCH - FINAL ===== */
 
+#allOrdersSection .all-order-search-top{
+    margin-top:12px !important;
+    margin-bottom:14px !important;
+    padding:0 !important;
+
+    background:transparent !important;
+    border:0 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+}
+
+#allOrdersSection .all-order-search-top .order-search-title{
+    color:#216f79 !important;
+    font-size:15px !important;
+    font-weight:900 !important;
+    margin-bottom:10px !important;
+}
+
+/* Main glass search box */
+#allOrdersSection .all-order-search-top .order-search-row{
+    position:relative !important;
+
+    display:flex !important;
+    align-items:center !important;
+
+    width:100% !important;
+    min-height:54px !important;
+
+    background:rgba(255,255,255,.88) !important;
+
+    border:1.5px solid #b8d8d7 !important;
+    border-radius:17px !important;
+
+    box-shadow:
+        0 6px 18px rgba(20,103,105,.08) !important;
+
+    overflow:hidden !important;
+}
+
+/* Search icon */
+#allOrdersSection .all-order-search-top .order-search-row::before{
+    content:"⌕" !important;
+
+    position:absolute !important;
+    left:15px !important;
+    top:50% !important;
+
+    transform:translateY(-50%) !important;
+
+    color:#2c7a7d !important;
+    font-size:20px !important;
+    font-weight:700 !important;
+
+    z-index:5 !important;
+    pointer-events:none !important;
+}
+
+/* Search input */
+#allOrdersSection .all-order-search-top .order-search-row input{
+    display:block !important;
+
+    width:100% !important;
+    flex:1 1 100% !important;
+
+    min-width:0 !important;
+    height:54px !important;
+
+    margin:0 !important;
+
+    padding:
+        0
+        50px
+        0
+        44px !important;
+
+    border:0 !important;
+    border-radius:17px !important;
+
+    background:transparent !important;
+
+    color:#26383b !important;
+    font-size:16px !important;
+
+    outline:0 !important;
+    box-shadow:none !important;
+
+    -webkit-appearance:none !important;
+    appearance:none !important;
+}
+
+/* Placeholder */
+#allOrdersSection .all-order-search-top .order-search-row input::placeholder{
+    color:#8b999a !important;
+    opacity:1 !important;
+}
+
+/* Remove browser search X */
+#allOrdersSection .all-order-search-top
+.order-search-row input::-webkit-search-cancel-button{
+    -webkit-appearance:none !important;
+    appearance:none !important;
+    display:none !important;
+}
+
+/* Remove old focus border */
+#allOrdersSection .all-order-search-top .order-search-row input:focus{
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+}
+
+/* Glass focus glow */
+#allOrdersSection .all-order-search-top .order-search-row:focus-within{
+    border-color:#3a9194 !important;
+
+    box-shadow:
+        0 0 0 3px rgba(58,145,148,.12),
+        0 7px 20px rgba(20,103,105,.09) !important;
+}
+
+/* Clear X button */
+#allOrdersSection .all-order-search-top .order-search-row button{
+    position:absolute !important;
+
+    right:8px !important;
+    top:50% !important;
+
+    transform:translateY(-50%) !important;
+
+    width:36px !important;
+    height:36px !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    border:0 !important;
+    border-radius:50% !important;
+
+    background:#edf7f6 !important;
+    color:#3c7779 !important;
+
+    font-size:20px !important;
+    font-weight:700 !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    box-shadow:none !important;
+    cursor:pointer !important;
+}
+
+/* X button press effect */
+#allOrdersSection .all-order-search-top .order-search-row button:active{
+    transform:
+        translateY(-50%)
+        scale(.92) !important;
+}
+
+/* Search help text */
+#allOrdersSection .all-order-search-top .order-search-hint{
+    margin-top:8px !important;
+    padding-left:2px !important;
+
+    color:#7b8b8d !important;
+
+    font-size:11.5px !important;
+    line-height:1.45 !important;
+}
 </style>
 
 <style>
@@ -6662,6 +6832,15 @@ document.addEventListener("DOMContentLoaded", function(){
 #newOrderExpand select,
 #newOrderExpand button{
   max-width:100% !important;
+}
+    /* ===== COURIER TRACKING VISIBILITY FIX ===== */
+
+#courierTrackingSection{
+    display:none !important;
+}
+
+#courierTrackingSection.active{
+    display:block !important;
 }
 </style>
 </body>
