@@ -6158,3 +6158,203 @@ function callCustomer(phone){
 }
 
 </script>
+  <div id="submitSuccessToast" class="submit-success-toast">
+  <div class="submit-success-icon">✓</div>
+  <div>
+    <b id="submitSuccessTitle">Order Submitted</b>
+    <div id="submitSuccessText">Pending Group-এ যোগ হয়েছে</div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  const imageInput = document.getElementById("productImage");
+
+  if(imageInput){
+    imageInput.addEventListener(
+      "change",
+      renderSelectedImagePreview
+    );
+  }
+});
+</script>
+
+<style>
+/* Pending image layout = All Order Group image layout */
+#pendingSection .image-grid{
+  display:grid !important;
+  gap:5px !important;
+  margin:0 auto 7px !important;
+  width:100% !important;
+  overflow:visible !important;
+}
+
+#pendingSection .image-grid.one{
+  grid-template-columns:1fr !important;
+  max-width:210px !important;
+}
+
+#pendingSection .image-grid.one .image-cell{
+  width:auto !important;
+  height:auto !important;
+  flex:none !important;
+  border-radius:9px !important;
+}
+
+#pendingSection .image-grid.one img{
+  width:100% !important;
+  height:230px !important;
+  max-height:none !important;
+  object-fit:contain !important;
+  border-radius:9px !important;
+}
+
+#pendingSection .image-grid.two{
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  max-width:none !important;
+}
+
+#pendingSection .image-grid.two .image-cell,
+#pendingSection .image-grid.many .image-cell{
+  width:auto !important;
+  height:auto !important;
+  flex:none !important;
+}
+
+#pendingSection .image-grid.two img{
+  width:100% !important;
+  height:180px !important;
+  object-fit:contain !important;
+  border-radius:9px !important;
+}
+
+#pendingSection .image-grid.three{
+  grid-template-columns:1.25fr .75fr !important;
+  grid-template-rows:90px 90px !important;
+}
+
+#pendingSection .image-grid.three .image-cell{
+  width:auto !important;
+  height:auto !important;
+  flex:none !important;
+}
+
+#pendingSection .image-grid.three .image-cell:first-child{
+  grid-row:1 / 3 !important;
+}
+
+#pendingSection .image-grid.three img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  border-radius:9px !important;
+}
+
+#pendingSection .image-grid.many{
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+}
+
+#pendingSection .image-grid.many img{
+  width:100% !important;
+  height:145px !important;
+  object-fit:contain !important;
+  border-radius:9px !important;
+}
+</style>
+
+<style>
+/* Compact Page / Submitted By / Token Time / WhatsApp box */
+.submitter-meta-compact{
+  grid-template-columns:1.05fr .95fr .72fr 1.28fr !important;
+  margin:4px 0 7px !important;
+  padding:5px 6px !important;
+  border-radius:12px !important;
+  font-size:9px !important;
+  min-height:0 !important;
+}
+
+.submitter-meta-compact>div{
+  padding:2px 5px !important;
+  border-right:1px solid #d9e9e8 !important;
+}
+
+.submitter-meta-compact>div:last-child{
+  border-right:0 !important;
+}
+
+.submitter-meta-compact span{
+  font-size:9px !important;
+  line-height:1.05 !important;
+}
+
+.submitter-meta-compact b{
+  font-size:10.5px !important;
+  line-height:1.15 !important;
+  margin-top:2px !important;
+}
+
+.submitter-wa{
+  padding:3px 4px !important;
+  border-radius:14px !important;
+}
+
+@media(max-width:520px){
+
+  .submitter-meta-compact{
+    grid-template-columns:1.05fr .95fr .72fr 1.28fr !important;
+    padding:5px 5px !important;
+    font-size:9px !important;
+  }
+
+  .submitter-meta-compact>div{
+    padding:2px 4px !important;
+    border-right:1px solid #d9e9e8 !important;
+  }
+
+  .submitter-meta-compact>div:last-child{
+    border-right:0 !important;
+  }
+
+  .submitter-meta-compact b{
+    font-size:10px !important;
+  }
+
+  .submitter-meta-compact span{
+    font-size:8.5px !important;
+  }
+}
+</style>
+
+<style>
+/* FINAL SAFETY FIX */
+.tracking-modal:not(.active){
+  display:none !important;
+}
+
+.section:not(.active){
+  display:none !important;
+}
+
+.new-order-launcher{
+  display:flex !important;
+  width:100% !important;
+  align-items:center !important;
+  gap:12px !important;
+}
+
+.new-order-expand:not(.open){
+  max-height:0 !important;
+  overflow:hidden !important;
+  opacity:0 !important;
+  visibility:hidden !important;
+}
+
+.new-order-expand.open{
+  max-height:1000px !important;
+  opacity:1 !important;
+  visibility:visible !important;
+}
+</style>
+
+</body>
+</html>
