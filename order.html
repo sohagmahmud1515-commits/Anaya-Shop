@@ -6355,6 +6355,63 @@ document.addEventListener("DOMContentLoaded", function(){
   visibility:visible !important;
 }
 </style>
+<style>
+/* Hide submit success toast by default */
+.submit-success-toast{
+  display:none !important;
+}
 
+.submit-success-toast.show{
+  display:flex !important;
+}
+
+/* Restore New Order launcher card design */
+.new-order-launcher{
+  border:1px solid #cfe5e2 !important;
+  border-radius:18px !important;
+  padding:13px 14px !important;
+  background:linear-gradient(135deg,#f0fbf9,#f7fcfb) !important;
+  box-shadow:0 5px 16px rgba(17,112,108,.08) !important;
+  cursor:pointer !important;
+  text-align:left !important;
+}
+
+.new-order-launch-icon{
+  width:48px !important;
+  height:48px !important;
+  flex:0 0 48px !important;
+  border-radius:14px !important;
+  background:linear-gradient(135deg,#12a28e,#198ca3) !important;
+  color:#fff !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  font-size:29px !important;
+  font-weight:700 !important;
+}
+
+.new-order-launch-copy{
+  flex:1 !important;
+}
+
+.new-order-launch-copy b{
+  font-size:16px !important;
+  color:#24474d !important;
+  font-weight:800 !important;
+}
+
+.new-order-launch-arrow{
+  width:34px !important;
+  height:34px !important;
+  border-radius:10px !important;
+  background:#e3f4f1 !important;
+  color:#0c8d79 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  font-size:20px !important;
+  font-weight:900 !important;
+}
+</style>
 </body>
 </html>
