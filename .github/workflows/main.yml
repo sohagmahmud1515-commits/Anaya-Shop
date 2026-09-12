@@ -28,7 +28,7 @@ jobs:
       - name: Install Capacitor
         run: |
           npm init -y
-          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/app
 
       - name: Prepare web files
         run: |
@@ -46,7 +46,9 @@ jobs:
           EOF
 
       - name: Add Android
-        run: npx cap add android
+        run: |
+          npx cap add android
+          npx cap sync android
 
       - name: Build APK
         run: |
