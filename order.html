@@ -6891,5 +6891,330 @@ document.addEventListener("DOMContentLoaded", function(){
     display:block !important;
 }
 </style>
+  <script>
+/* =====================================================
+   MAYA GARMENTS - ANDROID BACK BUTTON FIX
+   ===================================================== */
+
+(function(){
+
+  /* পুরোনো functionগুলো নিরাপদে রেখে দিচ্ছি */
+  const oldOpenAllOrders = window.openAllOrders;
+  const oldOpenPending = window.openPending;
+  const oldOpenEmergency = window.openEmergency;
+  const oldOpenDeleteApproval = window.openDeleteApproval;
+  const oldOpenOrderNotifications = window.openOrderNotifications;
+  const oldOpenDailySummary = window.openDailySummary;
+  const oldOpenCourierTracking = window.openCourierTracking;
+  const oldGoBack = window.goBack;
+
+  let handlingPopState = false;
+
+
+  /* -------------------------------
+     History state যোগ করা
+  -------------------------------- */
+  function addHistory(view){
+
+    if(handlingPopState) return;
+
+    history.pushState(
+      { mayaView:view },
+      "",
+      "#maya-" + view
+    );
+  }
+
+
+  /* -------------------------------
+     All Order Group
+  -------------------------------- */
+  window.openAllOrders = function(){
+
+    oldOpenAllOrders();
+
+    addHistory("allOrders");
+  };
+
+
+  /* -------------------------------
+     Pending Group
+  -------------------------------- */
+  window.openPending = function(){
+
+    oldOpenPending();
+
+    addHistory("pending");
+  };
+
+
+  /* -------------------------------
+     Emergency Group
+  -------------------------------- */
+  window.openEmergency = function(){
+
+    oldOpenEmergency();
+
+    addHistory("emergency");
+  };
+
+
+  /* -------------------------------
+     Delete Approval
+  -------------------------------- */
+  window.openDeleteApproval = function(){
+
+    oldOpenDeleteApproval();
+
+    addHistory("deleteApproval");
+  };
+
+
+  /* -------------------------------
+     Notification
+  -------------------------------- */
+  window.openOrderNotifications = function(){
+
+    oldOpenOrderNotifications();
+
+    addHistory("notifications");
+  };
+
+
+  /* -------------------------------
+     Daily Summary
+  -------------------------------- */
+  window.openDailySummary = function(){
+
+    oldOpenDailySummary();
+
+    addHistory("summary");
+  };
+
+
+  /* -------------------------------
+     Courier Tracking
+  -------------------------------- */
+  window.openCourierTracking = function(){
+
+    oldOpenCourierTracking();
+
+    addHistory("courierTracking");
+  };
+
+
+  /* =====================================================
+     ফোনের Back চাপার আগে কোনো Modal খোলা আছে কিনা দেখবে
+     ===================================================== */
+  function closeOpenModal(){
+
+    const tracking =
+      document.getElementById("trackingModal");
+
+    if(
+      tracking &&
+      tracking.classList.contains("active")
+    ){
+      closeTrackingModal();
+      return true;
+    }
+
+
+    const edit =
+      document.getElementById("editOrderModal");
+
+    if(
+      edit &&
+      edit.classList.contains("active")
+    ){
+      closeOrderEditor();
+      return true;
+    }
+
+
+    const deleteModal =
+      document.getElementById("deleteRequestModal");
+
+    if(
+      deleteModal &&
+      deleteModal.classList.contains("active")
+    ){
+      closeDeleteRequest();
+      return true;
+    }
+
+
+    const duplicate =
+      document.getElementById("duplicateOrderModal");
+
+    if(
+      duplicate &&
+      duplicate.classList.contains("active")
+    ){
+      closeDuplicateOrderModal();
+      return true;
+    }
+
+
+    const fraud =
+      document.getElementById("fraudModal");
+
+    if(
+      fraud &&
+      fraud.classList.contains("active")
+    ){
+      closeFraudChecker();
+      return true;
+    }
+
+
+    const image =
+      document.getElementById("imageLightbox");
+
+    if(
+      image &&
+      image.classList.contains("active")
+    ){
+      closeImagePreview();
+      return true;
+    }
+
+
+    const notification =
+      document.getElementById(
+        "notificationOrderModal"
+      );
+
+    if(
+      notification &&
+      notification.classList.contains("active")
+    ){
+      closeNotificationOrder();
+      return true;
+    }
+
+    return false;
+  }
+
+
+  /* =====================================================
+     HTML এর ← Back বাটনও এখন history ব্যবহার করবে
+     ===================================================== */
+  window.goBack = function(){
+
+    /* Modal খোলা থাকলে আগে Modal বন্ধ */
+    if(closeOpenModal()){
+      return;
+    }
+
+
+    /* New Order form খোলা থাকলে আগে সেটি বন্ধ */
+    const newOrderBox =
+      document.getElementById("newOrderExpand");
+
+    if(
+      newOrderBox &&
+      newOrderBox.classList.contains("open")
+    ){
+      toggleNewOrderForm(false);
+      return;
+    }
+
+
+    /* তারপর আগের Page */
+    if(
+      history.state &&
+      history.state.mayaView !== "groups"
+    ){
+      history.back();
+      return;
+    }
+
+
+    oldGoBack();
+  };
+
+
+  /* =====================================================
+     Android System Back / Gesture
+     ===================================================== */
+  window.addEventListener(
+    "popstate",
+    function(event){
+
+      handlingPopState = true;
+
+      const view =
+        event.state?.mayaView ||
+        "groups";
+
+
+      /* আগে খোলা modal বন্ধ */
+      closeOpenModal();
+
+
+      if(view === "allOrders"){
+
+        oldOpenAllOrders();
+
+      }
+      else if(view === "pending"){
+
+        oldOpenPending();
+
+      }
+      else if(view === "emergency"){
+
+        oldOpenEmergency();
+
+      }
+      else if(view === "deleteApproval"){
+
+        oldOpenDeleteApproval();
+
+      }
+      else if(view === "notifications"){
+
+        oldOpenOrderNotifications();
+
+      }
+      else if(view === "summary"){
+
+        oldOpenDailySummary();
+
+      }
+      else if(view === "courierTracking"){
+
+        oldOpenCourierTracking();
+
+      }
+      else{
+
+        oldGoBack();
+
+      }
+
+
+      setTimeout(function(){
+
+        handlingPopState = false;
+
+      },50);
+
+    }
+  );
+
+
+  /* =====================================================
+     App শুরু হলে Order Management = root history
+     ===================================================== */
+  history.replaceState(
+    { mayaView:"groups" },
+    "",
+    "#maya-orders"
+  );
+
+})();
+</script>
 </body>
 </html>
