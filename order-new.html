@@ -11177,12 +11177,25 @@ body.order-group-open #emergencySection .order-search-card{
     if(!r.ok)throw new Error('HTTP '+r.status);let d=await r.json();return parseFraudData(d);
   }
   async function fetchApiKeyFraud(ph){
-    /* Steadfast API-key/secret Fraud Check endpoint */
-    if(typeof getSteadfastSettings!=='function') throw new Error('API setup unavailable');
-    const cfg=getSteadfastSettings();
-    if(!cfg?.apiKey || !cfg?.secretKey) throw new Error('Settings → Courier Setup থেকে API Key ও Secret Key দিন');
-    const data = await steadfastRequest('/fraud_check/' + encodeURIComponent(ph));
-    return parseFraudData(data);
+  const r = await fetch(
+    'https://steadfast.com.bd/user/consignment/getbyphone/' +
+    encodeURIComponent(ph),
+    {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    }
+  );
+
+  if(!r.ok){
+    throw new Error('HTTP ' + r.status);
+  }
+
+  const data = await r.json();
+  return parseFraudData(data);
   }
   function appHistory(ph){
     const allOrders=(typeof orders!=='undefined'&&Array.isArray(orders))?orders:(window.orders||[]);
