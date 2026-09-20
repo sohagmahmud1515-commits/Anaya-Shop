@@ -11178,15 +11178,14 @@ body.order-group-open #emergencySection .order-search-card{
   }
   async function fetchApiKeyFraud(ph){
   const r = await fetch(
-    'https://steadfast.com.bd/user/consignment/getbyphone/' +
+    'https://dawn-union-ab10.sohagmahmud1515.workers.dev/fraud?phone=' +
     encodeURIComponent(ph),
     {
       method: 'GET',
-      credentials: 'include',
       headers: {
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
+        'Accept': 'application/json'
+      },
+      cache: 'no-store'
     }
   );
 
@@ -11196,7 +11195,7 @@ body.order-group-open #emergencySection .order-search-card{
 
   const data = await r.json();
   return parseFraudData(data);
-  }
+}
   function appHistory(ph){
     const allOrders=(typeof orders!=='undefined'&&Array.isArray(orders))?orders:(window.orders||[]);
     const os=allOrders.filter(o=>phone(o.phone||o.orderText||'')===ph && (o.courierSent||o.status==='courier_sent'||o.parcelId||o.trackingCode||o.trackingId));
