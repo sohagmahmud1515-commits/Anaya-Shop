@@ -9345,9 +9345,48 @@ function deleteCourierSuccessOrder(){
   window.openModeratorForm=function(m){
     document.getElementById('ocModeratorTitle').textContent=m?'Edit Moderator':'Add Moderator';document.getElementById('ocModeratorId').value=m?.id||'';document.getElementById('ocModeratorName').value=m?.name||'';document.getElementById('ocModeratorWhatsapp').value=m?.whatsapp||'';document.getElementById('ocModeratorPassword').value=m?.password||'';populatePageChecks(m?.pages||[]);
     const g=m?.groups||[];document.getElementById('ocAccessAll').checked=g.includes('All Order');document.getElementById('ocAccessPending').checked=g.includes('Pending');document.getElementById('ocAccessEmergency').checked=g.includes('Emergency');document.getElementById('ocAccessDelete').checked=g.includes('Delete Approval');document.getElementById('ocCourierAccess').checked=!!m?.courier;document.getElementById('ocCallAccess').checked=!!m?.callAccess;document.getElementById('ocModeratorModal').classList.add('active');
-  };
-  window.editModerator=function(id){openModeratorForm(readMods().find(x=>String(x.id)===String(id)))};
-  window.deleteModerator=function(id){if(!isAdmin())return alert('শুধু Admin Moderator Delete করতে পারবে।');if(!confirm('এই Moderator Delete করতে চান?'))return;writeMods(readMods().filter(x=>String(x.id)!==String(id)));renderModerators();};
+  };window.editModerator=function(id){openModeratorForm(readMods().find(x=>String(x.id)===String(id)))};
+  window.deleteModerator=async function(id){
+  if(!isAdmin()){
+    return alert('শুধু Admin Moderator Delete করতে পারবে।');
+  }
+
+  if(!confirm('এই Moderator Delete করতে চান?'))return;
+
+  try{
+    const U="https://scfnwfkwusgzthnzesjw.supabase.co";
+    const K="sb_publishable_d1-bjfKJkSWrs1dONuQrNA_BA4vJDGD";
+
+    const r=await fetch(
+      U+"/rest/v1/app_profiles?id=eq."+encodeURIComponent("moderator:"+id),
+      {
+        method:"DELETE",
+        headers:{
+          "apikey":K,
+          "Authorization":"Bearer "+K,
+          "Content-Type":"application/json",
+          "Prefer":"return=minimal"
+        }
+      }
+    );
+
+    if(!r.ok){
+      throw new Error(await r.text());
+    }
+
+    writeMods(
+      readMods().filter(x=>String(x.id)!==String(id))
+    );
+
+    renderModerators();
+
+    alert('✅ Moderator সব ডিভাইস থেকে Delete হয়েছে');
+
+  }catch(e){
+    console.error("Moderator cloud delete:",e);
+    alert('❌ Moderator Server থেকে Delete হয়নি।');
+  }
+};
   window.saveModerator=function(){
     if(!isAdmin())return alert('শুধু Admin Moderator সেটিং পরিবর্তন করতে পারবে।');
     const name=document.getElementById('ocModeratorName').value.trim(),whatsapp=document.getElementById('ocModeratorWhatsapp').value.trim();if(!name)return alert('Moderator name লিখুন।');
