@@ -13495,47 +13495,54 @@ function showSubmitSuccessCard(){
 </script>
 <!-- ===== END NEW SUBMIT SUCCESS CARD ===== -->
 <style>
-/* ===== SMALL SUCCESS POPUP - DESIGN 2 ===== */
+/* ===== FINAL SMALL SUCCESS POPUP DESIGN ===== */
 
 #submitSuccessToast.show::before{
-  width:min(82vw,340px) !important;
-  height:300px !important;
-  border-radius:24px !important;
+    width:min(82vw,340px) !important;
+    height:300px !important;
+    border-radius:24px !important;
 }
 
+/* Green Tick */
 #submitSuccessToast .success-check{
-  width:76px !important;
-  height:76px !important;
-  margin:0 auto 20px !important;
-  box-shadow:0 0 0 11px rgba(39,196,112,.10) !important;
+    width:76px !important;
+    height:76px !important;
+    margin:0 auto 18px !important;
+    border-radius:50% !important;
+    box-shadow:0 0 0 11px rgba(39,196,112,.10) !important;
 }
 
 #submitSuccessToast .success-check::after{
-  font-size:47px !important;
+    font-size:47px !important;
 }
 
+/* Main Text */
 #submitSuccessToast .success-main-text{
-  font-size:20px !important;
-  line-height:1.35 !important;
-  margin:0 15px 13px !important;
+    font-size:20px !important;
+    line-height:1.35 !important;
+    margin:0 15px 13px !important;
 }
 
+/* Thank You */
 #submitSuccessToast .success-thanks{
-  font-size:17px !important;
-  margin-bottom:24px !important;
+    font-size:17px !important;
+    margin-bottom:24px !important;
 }
 
+/* OK Button */
 #submitSuccessToast .success-ok-btn{
-  width:105px !important;
-  height:48px !important;
-  margin-right:15px !important;
-  border-radius:14px !important;
-  font-size:16px !important;
+    width:105px !important;
+    height:48px !important;
+    margin-right:15px !important;
+    border-radius:14px !important;
+    font-size:16px !important;
+    box-shadow:0 8px 20px rgba(0,118,110,.20) !important;
 }
 
 #submitSuccessToast .success-ok-btn span::after{
-  font-size:25px !important;
-  margin-left:10px !important;
+    content:"›";
+    font-size:25px !important;
+    margin-left:10px !important;
 }
 </style>
 </body>
