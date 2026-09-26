@@ -8588,13 +8588,23 @@ function callCustomer(phone){
 }
 
 </script>
-  <div id="submitSuccessToast" class="submit-success-toast">
-  <div class="submit-success-icon">✓</div>
-  <div>
-    <b id="submitSuccessTitle">Order Submitted</b>
-    <div id="submitSuccessText">Pending Group-এ যোগ হয়েছে</div>
+  <div id="submitSuccessToast" class="submit-success-toast success-card-new">
+
+  <div class="success-check">✓</div>
+
+  <div class="success-main-text">
+    অর্ডার সফলভাবে সাবমিট হয়েছে
   </div>
-</div>
+
+  <div class="success-thanks">
+    ধন্যবাদ ♥
+  </div>
+
+  <button class="success-ok-btn" onclick="closeSubmitSuccessCard()">
+    OK <span>›</span>
+  </button>
+
+  </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function(){
@@ -8841,7 +8851,132 @@ document.addEventListener("DOMContentLoaded", function(){
   justify-content:center !important;
   font-size:20px !important;
   font-weight:900 !important;
+}/* ===== SUBMIT SUCCESS CARD - FINAL DESIGN ===== */
+
+.submit-success-toast.success-card-new{
+    position:fixed !important;
+    inset:0 !important;
+    width:100% !important;
+    height:100% !important;
+    z-index:99999 !important;
+
+    background:rgba(15, 30, 40, .72) !important;
+
+    display:none !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    padding:22px !important;
+    box-sizing:border-box !important;
 }
+
+.submit-success-toast.success-card-new.show{
+    display:flex !important;
+}
+
+/* White Card */
+.submit-success-toast.success-card-new{
+    flex-direction:column !important;
+}
+
+.submit-success-toast.success-card-new::before{
+    content:"✓";
+    width:105px;
+    height:105px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+    background:linear-gradient(145deg,#45d98a,#00a85a);
+    color:#fff;
+
+    font-size:64px;
+    font-weight:800;
+
+    box-shadow:
+        0 0 0 18px rgba(39,196,121,.12),
+        0 12px 30px rgba(0,120,90,.20);
+
+    margin-bottom:24px;
+}
+
+/* Main success text */
+.success-main-text{
+    font-size:24px !important;
+    line-height:1.35 !important;
+    font-weight:800 !important;
+    color:#08766f !important;
+    text-align:center !important;
+    margin-bottom:18px !important;
+}
+
+/* Thank you */
+.success-thanks{
+    font-size:20px !important;
+    font-weight:800 !important;
+    color:#08766f !important;
+    text-align:center !important;
+    margin-bottom:30px !important;
+}
+
+/* OK button - right side */
+.success-ok-btn{
+    align-self:flex-end !important;
+
+    border:0 !important;
+    outline:0 !important;
+
+    min-width:125px !important;
+    height:58px !important;
+
+    border-radius:17px !important;
+
+    background:linear-gradient(135deg,#087c76,#006b67) !important;
+    color:#fff !important;
+
+    font-size:20px !important;
+    font-weight:800 !important;
+
+    padding:0 24px !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:13px !important;
+
+    box-shadow:0 10px 24px rgba(0,105,100,.22) !important;
+}
+
+.success-ok-btn span::after{
+    content:"›";
+    font-size:34px;
+    line-height:1;
+    margin-left:10px;
+}
+
+/* Make the popup itself a clean white card */
+.submit-success-toast.success-card-new{
+    left:50% !important;
+    top:50% !important;
+    right:auto !important;
+    bottom:auto !important;
+    transform:translate(-50%,-50%) !important;
+
+    width:calc(100% - 42px) !important;
+    max-width:430px !important;
+    height:auto !important;
+    min-height:430px !important;
+
+    border-radius:28px !important;
+    background:
+      linear-gradient(to top,#e5faf5 0,#ffffff 27%,#ffffff 100%) !important;
+
+    padding:38px 28px 28px !important;
+
+    box-shadow:0 25px 70px rgba(0,0,0,.30) !important;
+  }
 </style>
   <style>
 /* ===== FINAL NEW ORDER FORM FIX ===== */
