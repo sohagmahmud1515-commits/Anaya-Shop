@@ -8925,12 +8925,99 @@ document.addEventListener("DOMContentLoaded", function(){
 .success-ok-btn{
     align-self:flex-end !important;
 
+<style id="submit-success-popup-fixed">
+/* Submit Success Popup - Mobile Fixed */
+
+.submit-success-toast.success-card-new{
+    position:fixed !important;
+    inset:0 !important;
+    width:100% !important;
+    height:100% !important;
+    z-index:99999 !important;
+
+    background:rgba(15,30,40,.65) !important;
+
+    display:none !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    padding:20px !important;
+    box-sizing:border-box !important;
+
+    transform:none !important;
+}
+
+.submit-success-toast.success-card-new.show{
+    display:flex !important;
+}
+
+/* White popup card */
+.submit-success-toast.success-card-new .success-card-inner{
+    width:100% !important;
+    max-width:380px !important;
+    min-height:330px !important;
+
+    background:#ffffff !important;
+    border-radius:28px !important;
+    padding:32px 24px 24px !important;
+    box-sizing:border-box !important;
+
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    text-align:center !important;
+    box-shadow:0 20px 60px rgba(0,0,0,.28) !important;
+}
+
+/* Check mark */
+.submit-success-toast.success-card-new::before{
+    content:"✓";
+    width:88px;
+    height:88px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+    background:linear-gradient(145deg,#45d98a,#008a5a);
+    color:#fff;
+
+    font-size:52px;
+    font-weight:900;
+
+    margin-bottom:20px;
+}
+
+/* Success text */
+.success-main-text{
+    font-size:22px !important;
+    line-height:1.45 !important;
+    font-weight:800 !important;
+    color:#087c66 !important;
+    text-align:center !important;
+    margin:0 0 12px !important;
+}
+
+/* Thank you */
+.success-thanks{
+    font-size:18px !important;
+    font-weight:700 !important;
+    color:#087c66 !important;
+    text-align:center !important;
+    margin:0 0 26px !important;
+}
+
+/* OK button */
+.success-ok-btn{
+    width:100% !important;
+    max-width:210px !important;
+    height:56px !important;
+
     border:0 !important;
     outline:0 !important;
-
-    min-width:125px !important;
-    height:58px !important;
-
     border-radius:17px !important;
 
     background:linear-gradient(135deg,#087c76,#006b67) !important;
@@ -8939,44 +9026,22 @@ document.addEventListener("DOMContentLoaded", function(){
     font-size:20px !important;
     font-weight:800 !important;
 
-    padding:0 24px !important;
-
     display:flex !important;
     align-items:center !important;
     justify-content:center !important;
-    gap:13px !important;
+    gap:10px !important;
 
-    box-shadow:0 10px 24px rgba(0,105,100,.22) !important;
+    margin:0 auto !important;
+    padding:0 20px !important;
+    box-sizing:border-box !important;
 }
 
 .success-ok-btn span::after{
     content:"›";
-    font-size:34px;
+    font-size:30px;
     line-height:1;
-    margin-left:10px;
+    margin-left:8px;
 }
-
-/* Make the popup itself a clean white card */
-.submit-success-toast.success-card-new{
-    left:50% !important;
-    top:50% !important;
-    right:auto !important;
-    bottom:auto !important;
-    transform:translate(-50%,-50%) !important;
-
-    width:calc(100% - 42px) !important;
-    max-width:430px !important;
-    height:auto !important;
-    min-height:430px !important;
-
-    border-radius:28px !important;
-    background:
-      linear-gradient(to top,#e5faf5 0,#ffffff 27%,#ffffff 100%) !important;
-
-    padding:38px 28px 28px !important;
-
-    box-shadow:0 25px 70px rgba(0,0,0,.30) !important;
-  }
 </style>
   <style>
 /* ===== FINAL NEW ORDER FORM FIX ===== */
