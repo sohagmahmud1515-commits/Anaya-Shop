@@ -9765,14 +9765,78 @@ window.deleteAdminV2=async function(i){
   };
   document.getElementById('ocModeratorPhoto')?.addEventListener('change',function(){const t=document.getElementById('ocPhotoText');if(t)t.textContent=this.files?.[0]?.name||'ছবি যুক্ত করুন'});
   const baseSave=window.saveModerator;
-  window.saveModerator=async function(){
-    const id=document.getElementById('ocModeratorId')?.value||''; let existing=null;
-    try{const mods=JSON.parse(localStorage.getItem('mayaModerators')||'[]');existing=mods.find(x=>String(x.id)===String(id))||null}catch(e){}
-    const file=document.getElementById('ocModeratorPhoto')?.files?.[0]; let photo=existing?.photo||'';
-    if(file){photo=await new Promise(resolve=>{const r=new FileReader();r.onload=()=>resolve(String(r.result||''));r.onerror=()=>resolve(photo);r.readAsDataURL(file)})}
-    baseSave();
-    try{const mods=JSON.parse(localStorage.getItem('mayaModerators')||'[]');const currentId=document.getElementById('ocModeratorId')?.value||id;let target=mods.find(x=>String(x.id)===String(id));if(!target&&mods.length)target=mods[mods.length-1];if(target&&photo){target.photo=photo;localStorage.setItem('mayaModerators',JSON.stringify(mods));if(typeof renderModerators==='function')renderModerators()}}catch(e){}
-  };
+
+window.saveModerator=async function(){
+  const id=document.getElementById('ocModeratorId')?.value||'';
+
+  let existing=null;
+  try{
+    const mods=JSON.parse(localStorage.getItem('mayaModerators')||'[]');
+    existing=mods.find(x=>String(x.id)===String(id))||null;
+  }catch(e){}
+
+  const file=document.getElementById('ocModeratorPhoto')?.files?.[0];
+  let photo=existing?.photo||'';
+
+  if(file){
+    photo=await new Promise(resolve=>{
+      const r=new FileReader();
+      r.onload=()=>resolve(String(r.result||''));
+      r.onerror=()=>resolve(photo);
+      r.readAsDataURL(file);
+    });
+  }
+
+  baseSave();
+
+  try{
+    const mods=JSON.parse(localStorage.getItem('mayaModerators')||'[]');
+
+    let target=mods.find(x=>String(x.id)===String(id));
+    if(!target&&mods.length) target=mods[mods.length-1];
+
+    if(!target)return;
+
+    if(photo){
+      target.photo=photo;
+      localStorage.setItem('mayaModerators',JSON.stringify(mods));
+
+      if(typeof renderModerators==='function'){
+        renderModerators();
+      }
+    }
+
+    const U="https://scfnwfkwusgzthnzesjw.supabase.co";
+    const K="sb_publishable_d1-bjfKJkSWrs1dONuQrNA_BA4vJDGD";
+
+    const r=await fetch(
+      U+"/rest/v1/app_profiles?on_conflict=id",
+      {
+        method:"POST",
+        headers:{
+          "apikey":K,
+          "Authorization":"Bearer "+K,
+          "Content-Type":"application/json",
+          "Prefer":"resolution=merge-duplicates,return=minimal"
+        },
+        body:JSON.stringify({
+          id:"moderator:"+target.id,
+          role:"moderator",
+          data:{...target,role:"moderator"},
+          updated_at:new Date().toISOString()
+        })
+      }
+    );
+
+    if(!r.ok){
+      throw new Error(await r.text());
+    }
+
+  }catch(e){
+    console.error("Moderator photo/edit cloud sync:",e);
+    alert("Moderator Save হয়েছে, কিন্তু Photo/Edit Server-এ sync হয়নি।");
+  }
+};
 })();
 </script>
 
