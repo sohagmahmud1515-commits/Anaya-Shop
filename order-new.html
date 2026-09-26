@@ -13497,5 +13497,129 @@ body.maya-moderator #ocSettingsHome > .oc-menu-card[data-admin-only="1"]{display
   window.omRefreshSettingsAccess=markAndApply;
 })();
 </script>
+<!-- ===== NEW SUBMIT SUCCESS CARD ===== -->
+<style>
+#submitSuccessToast{
+  display:none !important;
+}
+
+#submitSuccessToast.show{
+  display:flex !important;
+  position:fixed !important;
+  inset:0 !important;
+  z-index:999999 !important;
+  background:rgba(15,23,42,.58) !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:22px !important;
+}
+
+#submitSuccessToast.show{
+  width:auto !important;
+  height:auto !important;
+  border-radius:0 !important;
+}
+
+#submitSuccessToast.show.success-card-new{
+  flex-direction:column !important;
+  background:rgba(15,23,42,.58) !important;
+}
+
+/* আসল সাদা কার্ড */
+#submitSuccessToast.show::before{
+  content:"";
+  position:absolute;
+  width:min(88vw,420px);
+  height:390px;
+  background:
+    linear-gradient(to top,
+      rgba(204,248,239,.75) 0%,
+      rgba(235,255,250,.55) 24%,
+      #ffffff 42%);
+  border-radius:28px;
+  box-shadow:0 25px 70px rgba(0,0,0,.30);
+  z-index:-1;
+}
+
+/* ✓ */
+#submitSuccessToast .success-check{
+  width:105px !important;
+  height:105px !important;
+  border-radius:50% !important;
+  background:linear-gradient(145deg,#43d37e,#08a85a) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  margin:0 auto 28px !important;
+  color:white !important;
+  font-size:0 !important;
+  box-shadow:0 0 0 15px rgba(39,196,112,.10) !important;
+}
+
+#submitSuccessToast .success-check::after{
+  content:"✓";
+  font-size:64px;
+  font-weight:800;
+  line-height:1;
+}
+
+/* মূল লেখা */
+#submitSuccessToast .success-main-text{
+  font-size:25px !important;
+  line-height:1.35 !important;
+  font-weight:800 !important;
+  color:#08766e !important;
+  text-align:center !important;
+  margin:0 18px 22px !important;
+}
+
+/* ধন্যবাদ */
+#submitSuccessToast .success-thanks{
+  font-size:21px !important;
+  font-weight:700 !important;
+  color:#08766e !important;
+  text-align:center !important;
+  margin-bottom:35px !important;
+}
+
+/* OK ডান পাশে */
+#submitSuccessToast .success-ok-btn{
+  align-self:flex-end !important;
+  margin-right:18px !important;
+  width:125px !important;
+  height:58px !important;
+  border:0 !important;
+  border-radius:17px !important;
+  background:linear-gradient(135deg,#08766e,#009688) !important;
+  color:#fff !important;
+  font-size:19px !important;
+  font-weight:800 !important;
+  box-shadow:0 10px 24px rgba(0,118,110,.22) !important;
+}
+
+#submitSuccessToast .success-ok-btn span::after{
+  content:"›";
+  font-size:31px;
+  margin-left:15px;
+  vertical-align:-2px;
+}
+
+/* Browser alert বন্ধ করে Success Card দেখাবে */
+</style>
+
+<script>
+function closeSubmitSuccessCard(){
+  const card = document.getElementById("submitSuccessToast");
+  if(card) card.classList.remove("show");
+}
+
+function showSubmitSuccessCard(){
+  const card = document.getElementById("submitSuccessToast");
+  if(card){
+    card.classList.add("show");
+  }
+}
+</script>
+<!-- ===== END NEW SUBMIT SUCCESS CARD ===== -->
 </body>
 </html>
