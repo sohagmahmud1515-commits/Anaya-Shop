@@ -11280,20 +11280,119 @@ body.order-group-open #emergencySection .order-search-card{
   function setStat(id,v){let e=document.getElementById(id);if(e)e.textContent=(v===null||v===undefined?'—':String(v))}
   function setLive(html,cls){let e=document.getElementById('fraudLiveInfo');if(!e)return;e.className=cls||'';e.innerHTML=html}
   function parseFraudData(data){
-    const d=data?.data||data?.result||data||{};
-    const delivered=Number(d.total_delivered??d.delivered??0)||0;
-    const cancelled=Number(d.total_cancelled??d.cancelled??d.total_cancel??0)||0;
-    let fr=d.frauds??d.total_fraud_reports??d.fraud??[];
-    let frauds=Array.isArray(fr)?fr.length:(Number(fr)||0);
-    const suppliedTotal=Number(d.Total_parcels??d.total_parcels??d.total??0)||0;
-    const total=suppliedTotal || (delivered+cancelled);
-    return {delivered,cancelled,frauds,total,raw:d};
+  const d =
+    data?.data?.summary ??
+    data?.summary ??
+    data?.data ??
+    data?.result ??
+    data ??
+    {};
+
+  const num = (v) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
+  };
+
+  let delivered = num(d.total_delivered ?? d.delivered);
+  let cancelled = num(
+    d.total_cancelled ??
+    d.cancelled ??
+    d.total_cancel
+  );
+
+  let total = num(
+    d.Total_parcels ??
+    d.total_parcels ??
+    d.total
+  );
+
+  if(!total && (delivered || cancelled)){
+    total = delivered + cancelled;
   }
-  async function fetchMerchantSessionFraud(ph){
-    const r=await fetch('https://steadfast.com.bd/user/frauds/check/'+encodeURIComponent(ph),{method:'GET',credentials:'include',headers:{'Accept':'application/json','X-Requested-With':'XMLHttpRequest'}});
-    if(!r.ok)throw new Error('HTTP '+r.status);let d=await r.json();return parseFraudData(d);
+
+  let fraudRaw =
+    d.fraud_reports ??
+    d.frauds ??
+    d.total_fraud_reports ??
+    d.fraud ??
+    0;
+
+  const frauds = Array.isArray(fraudRaw)
+    ? fraudRaw.length
+    : num(fraudRaw);
+
+  let deliveryRatio = Number(
+    d.delivery_ratio ??
+    d.deliveryRatio
+  );
+
+  let cancellationRatio = Number(
+    d.cancellation_ratio ??
+    d.cancellationRatio
+  );
+
+  if(!Number.isFinite(deliveryRatio)){
+    deliveryRatio = total ? (delivered / total) * 100 : 0;
   }
-  async function fetchApiKeyFraud(ph){
+
+  if(!Number.isFinite(cancellationRatio)){
+    cancellationRatio = total ? (cancelled / total) * 100 : 0;
+  }
+
+  if(deliveryRatio > 0 && deliveryRatio <= 1){
+    deliveryRatio *= 100;
+  }
+
+  if(cancellationRatio > 0 && cancellationRatio <= 1){
+    cancellationRatio *= 100;
+  }
+
+  deliveryRatio = Math.round(deliveryRatio * 10) / 10;
+  cancellationRatio = Math.round(cancellationRatio * 10) / 10;
+
+  const volumeBand = String(
+    d.volume_band ??
+    d.volumeBand ??
+    ''
+  ).trim().toLowerCase();
+
+  return {
+    delivered,
+    cancelled,
+    total,
+    frauds,
+    deliveryRatio,
+    cancellationRatio,
+    volumeBand,
+    raw: d
+  };
+}
+
+async function fetchMerchantSessionFraud(ph){
+  const r = await fetch(
+    'https://steadfast.com.bd/user/consignment/getbyphone/' +
+    encodeURIComponent(ph) +
+    '?summary=1',
+    {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      cache: 'no-store'
+    }
+  );
+
+  if(!r.ok){
+    throw new Error('HTTP ' + r.status);
+  }
+
+  const data = await r.json();
+  return parseFraudData(data);
+}
+
+async function fetchApiKeyFraud(ph){
   const r = await fetch(
     'https://dawn-union-ab10.sohagmahmud1515.workers.dev/fraud?phone=' +
     encodeURIComponent(ph),
@@ -11320,32 +11419,86 @@ body.order-group-open #emergencySection .order-search-card{
     return {delivered,cancelled,total:delivered+cancelled,frauds:0};
   }
   async function loadRealFraud(ph){
-    setStat('fraudTotal',null);setStat('fraudSuccess',null);setStat('fraudCancel',null);setStat('fraudBad',null);
-    setLive('⏳ Steadfast API দিয়ে <b>'+esc(ph)+'</b> নম্বর যাচাই হচ্ছে…','');
-    let result=null,source='',apiError='';
+
+  setStat('fraudTotal', null);
+  setStat('fraudSuccess', null);
+  setStat('fraudCancel', null);
+  setStat('fraudBad', null);
+
+  setLive(
+    '⏳ Steadfast দিয়ে <b>' +
+    esc(ph) +
+    '</b> নম্বর যাচাই হচ্ছে…',
+    ''
+  );
+
+  let result = null;
+  let source = '';
+  let apiError = '';
+
+  try{
+
+    result = await fetchApiKeyFraud(ph);
+    source = 'Steadfast';
+
+  }catch(e1){
+
+    apiError = e1?.message || String(e1);
+
     try{
-      result=await fetchApiKeyFraud(ph);
-      source='Steadfast API';
-    }catch(e1){
-      apiError=e1?.message||String(e1);
-      /* Browser login session থাকলে merchant endpoint fallback হিসেবে চেষ্টা করবে. */
-      try{
-        result=await fetchMerchantSessionFraud(ph);
-        source='Steadfast merchant session';
-      }catch(e2){
-        const local=appHistory(ph);
-        if(local.total){
-          result=local;source='এই App-এর synced courier history';
-        }else{
-          setLive('❌ Live Fraud Check করা যায়নি।<br><small>API error: '+esc(apiError||'request blocked')+'. Settings → Courier Setup-এ API Connected আছে কিনা Test করুন। WebView/CORS block হলে secure backend/proxy প্রয়োজন হবে।</small>','err');
-          return;
-        }
+
+      result = await fetchMerchantSessionFraud(ph);
+      source = 'Steadfast Live';
+
+    }catch(e2){
+
+      const local = appHistory(ph);
+
+      if(local.total){
+
+        result = parseFraudData(local);
+        source = 'App courier history';
+
+      }else{
+
+        setLive(
+          '❌ Live Fraud Check করা যায়নি।' +
+          '<br><small>' +
+          esc(apiError || 'request blocked') +
+          '</small>',
+          'err'
+        );
+
+        return;
       }
     }
-    const total = Number(result.total||0);
-    const rate=total?Math.round((Number(result.delivered||0)/total)*1000)/10:0;
-    setStat('fraudTotal',total);setStat('fraudSuccess',result.delivered);setStat('fraudCancel',result.cancelled);setStat('fraudBad',result.frauds);
-    setLive('<b>Success Rate: '+rate+'%</b> • Source: '+esc(source)+'<div id="fraudRateBar"><div id="fraudRateFill" style="width:'+Math.max(0,Math.min(100,rate))+'%"></div></div>',result.frauds?'warn':'ok');
+  }
+
+  const successRate =
+    Number(result.deliveryRatio || 0);
+
+  const cancelRate =
+    Number(result.cancellationRatio || 0);
+
+  const volume =
+    result.volumeBand
+      ? result.volumeBand.charAt(0).toUpperCase() +
+        result.volumeBand.slice(1)
+      : '—';
+
+  setStat('fraudTotal', result.total || '—');
+  setStat('fraudSuccess', successRate + '%');
+  setStat('fraudCancel', cancelRate + '%');
+  setStat('fraudBad', result.frauds || 0);
+
+  setLive(
+    '<b>Success ' + successRate + '%</b>' +
+    ' • Cancelled ' + cancelRate + '%' +
+    ' • Parcels ' + esc(volume) +
+    ' • Fraud reports ' + Number(result.frauds || 0) +
+    '<br><small>Source: ' + esc(source) + '</small>',
+    Number(result.frauds || 0) > 0 ? 'warn' : 'ok'
+  );
   }
   const oldOpen=window.openFraudChecker;
   window.openFraudChecker=function(orderId){
@@ -11386,64 +11539,130 @@ body.order-group-open #emergencySection .order-search-card{
   }
 
   function showFraudCompactMessage(orderId, html, clickable){
-    /* Result now lives only inside the Fraud button. Keep legacy boxes hidden. */
-    getFraudStatusBoxes(orderId).forEach(function(box){
-      box.innerHTML = '';
-      box.classList.remove('show','fraud-result-clickable');
-      box.style.setProperty('display','none','important');
-    });
+
+  getFraudStatusBoxes(orderId).forEach(function(box){
+
+    box.innerHTML = html || '';
+
+    box.classList.add('show');
+
+    box.classList.toggle(
+      'fraud-result-clickable',
+      !!clickable
+    );
+
+    box.style.setProperty('display','block','important');
+    box.style.setProperty('height','auto','important');
+    box.style.setProperty('min-height','0','important');
+    box.style.setProperty('margin','5px 0 8px','important');
+    box.style.setProperty('padding','8px 10px','important');
+    box.style.setProperty('border','1px solid #cfe5e1','important');
+    box.style.setProperty('overflow','visible','important');
+
+    box.onclick = clickable
+      ? function(ev){
+          ev.preventDefault();
+          ev.stopPropagation();
+
+          return window.openFraudResultDetails(
+            orderId,
+            ev
+          );
+        }
+      : null;
+  });
   }
 
   function paintFraudCompact(orderId, result, source){
-    if(!result) return;
 
-    const total = Number(result.total || 0);
-    const success = Number(result.delivered || 0);
-    const cancel = Number(result.cancelled || 0);
-    const bad = Number(result.frauds || 0);
-    const rate = total ? Math.round((success / total) * 1000) / 10 : 0;
+  if(!result) return;
 
-    getFraudButtons(orderId).forEach(function(btn){
-      const label = btn.querySelector('.fraud-demo5-text');
-      if(label){
-        label.innerHTML =
-          'Fraud <span class="f-success">' + success + '/' + total + '</span>' +
-          '<span>•</span><span class="f-cancel">' + cancel + '</span>' +
-          '<span>•</span><span class="f-fraud">' + bad + '</span>';
-      }
-    });
+  const successRate = Number(result.deliveryRatio || 0);
+  const cancelRate = Number(result.cancellationRatio || 0);
+  const bad = Number(result.frauds || 0);
 
-    const allOrders = (typeof orders !== 'undefined' && Array.isArray(orders))
-      ? orders : (window.orders || []);
-    const o = allOrders.find(x => String(x.id) === String(orderId));
-    if(o){
-      o.fraudCheckResult = {
-        total: total,
-        delivered: success,
-        cancelled: cancel,
-        frauds: bad,
-        source: source || 'Fraud Check',
-        checkedAt: new Date().toISOString(),
-        phone: phone(o.phone || o.orderText || ''),
-        raw: result.raw || null
-      };
-      try{ saveOrders(); }catch(e){}
+  const volume =
+    result.volumeBand
+      ? result.volumeBand.charAt(0).toUpperCase() +
+        result.volumeBand.slice(1)
+      : '—';
+
+  getFraudButtons(orderId).forEach(function(btn){
+
+    const label = btn.querySelector('.fraud-demo5-text');
+
+    if(label){
+      label.innerHTML =
+        'Fraud ' +
+        '<span class="f-success">' + successRate + '%</span>' +
+        '<span> • </span>' +
+        '<span class="f-cancel">' + cancelRate + '%</span>' +
+        '<span> • </span>' +
+        '<span class="f-fraud">' + bad + '</span>';
     }
+  });
 
-    showFraudCompactMessage(orderId,
-      '<div class="fraud-compact-row">' +
-        '<span><b>মোট:</b> ' + total + '</span>' +
-        '<span class="ok">সফল ' + success + '</span>' +
-        '<span class="cancel">ক্যানসেল ' + cancel + '</span>' +
-        '<span class="bad">ফ্রড ' + bad + '</span>' +
-      '</div>' +
-      '<div class="fraud-compact-row" style="margin-top:4px">' +
-        '<span><b>Success Rate:</b> ' + rate + '%</span>' +
-        '<span class="muted">Source: ' + esc(source || 'Fraud Check') + '</span>' +
-      '</div>' +
-      '<div class="fraud-result-open-hint">বিস্তারিত দেখতে এই রেজাল্টে চাপ দিন</div>',
-      true
-    );
+  const allOrders =
+    (typeof orders !== 'undefined' && Array.isArray(orders))
+      ? orders
+      : (window.orders || []);
+
+  const o = allOrders.find(
+    x => String(x.id) === String(orderId)
+  );
+
+  if(o){
+
+    o.fraudCheckResult = {
+      total: Number(result.total || 0),
+      delivered: Number(result.delivered || 0),
+      cancelled: Number(result.cancelled || 0),
+
+      frauds: bad,
+
+      deliveryRatio: successRate,
+      cancellationRatio: cancelRate,
+      volumeBand: result.volumeBand || '',
+
+      source: source || 'Steadfast',
+
+      checkedAt: new Date().toISOString(),
+
+      phone: phone(o.phone || o.orderText || ''),
+
+      raw: result.raw || null
+    };
+
+    try{
+      saveOrders();
+    }catch(e){}
+  }
+
+  showFraudCompactMessage(
+    orderId,
+
+    '<div class="fraud-compact-row">' +
+
+      '<span class="ok"><b>Success:</b> ' +
+      successRate + '%</span>' +
+
+      '<span class="cancel"><b>Cancelled:</b> ' +
+      cancelRate + '%</span>' +
+
+      '<span><b>Parcels:</b> ' +
+      esc(volume) + '</span>' +
+
+      '<span class="bad"><b>Fraud:</b> ' +
+      bad + '</span>' +
+
+    '</div>' +
+
+    '<div class="fraud-result-open-hint">' +
+      'বিস্তারিত দেখতে এখানে চাপ দিন' +
+    '</div>',
+
+    true
+  );
   }
 
   async function loadFraudCompact(orderId){
@@ -11631,7 +11850,7 @@ body.order-group-open #emergencySection .order-search-card{
     const allOrders = (typeof orders !== 'undefined' && Array.isArray(orders))
       ? orders : (window.orders || []);
     const o = allOrders.find(x => String(x.id) === String(orderId));
-    if(o && o.fraudCheckResult){
+    if(o && o.fraudCheckResult && !o.fraudCheckResult.unavailable){
       return window.openFraudResultDetails(orderId, ev);
     }
     return window.fraudCheckOnly(orderId, ev, btn);
