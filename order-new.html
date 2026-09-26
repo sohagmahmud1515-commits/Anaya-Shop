@@ -8957,18 +8957,18 @@ document.addEventListener("DOMContentLoaded", function(){
 }
 
 .submit-success-toast.success-card-new .success-card-inner{
-    position:relative !important;
-    left:auto !important;
-    right:auto !important;
-    top:auto !important;
-    bottom:auto !important;
-    transform:none !important;
-
-    width:100% !important;
+    position:fixed !important;
+    width:calc(100% - 40px) !important;
     max-width:380px !important;
     min-height:330px !important;
-    margin:auto !important;
 
+    left:50% !important;
+    top:50% !important;
+    right:auto !important;
+    bottom:auto !important;
+    transform:translate(-50%, -50%) !important;
+
+    margin:0 !important;
     background:#ffffff !important;
     border-radius:28px !important;
     padding:32px 24px 24px !important;
@@ -8981,7 +8981,7 @@ document.addEventListener("DOMContentLoaded", function(){
     text-align:center !important;
 
     box-shadow:0 20px 60px rgba(0,0,0,.28) !important;
-}
+  }
 
 .submit-success-toast.success-card-new::before{
     content:"✓";
@@ -9049,16 +9049,7 @@ document.addEventListener("DOMContentLoaded", function(){
     font-size:30px;
     line-height:1;
     margin-left:8px;
-}/* POPUP EXACT CENTER FIX */
-.submit-success-toast.success-card-new .success-card-inner{
-    position:absolute !important;
-    left:50% !important;
-    top:50% !important;
-    right:auto !important;
-    bottom:auto !important;
-    margin:0 !important;
-    transform:translate(-50%,-50%) !important;
-  }
+
 </style>
   <style>
 /* ===== FINAL NEW ORDER FORM FIX ===== */
