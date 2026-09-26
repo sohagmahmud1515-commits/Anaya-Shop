@@ -4179,24 +4179,51 @@ body.order-group-open #emergencySection.active ~ .group-scroll-nav{
     return String(value || "").replace(/[০-৯]/g, d => map[d]);
   }
 
-  function extractCodAmountFromOrder(order){
-    if(order.codAmount !== undefined && order.codAmount !== null && order.codAmount !== ""){
-      const saved = Number(normalizeBanglaDigits(order.codAmount).replace(/[^0-9.]/g,""));
-      if(Number.isFinite(saved) && saved >= 0) return saved;
-    }
-    const text = normalizeBanglaDigits(order.orderText || "");
-    const patterns = [
-      /(?:বিল|bill|cod\s*amount|cod|টোটাল|total|amount|মোট)\s*[:：=-]?\s*(?:৳|tk|taka)?\s*([0-9]+(?:\.[0-9]+)?)/i,
-      /(?:৳|tk|taka)\s*([0-9]+(?:\.[0-9]+)?)/i
-    ];
-    for(const re of patterns){
-      const m = text.match(re);
-      if(m){
-        const n = Number(m[1]);
-        if(Number.isFinite(n) && n >= 0) return n;
+ function extractCodAmountFromOrder(order){
+  if(order.codAmount !== undefined && order.codAmount !== null && order.codAmount !== ""){
+    const saved = Number(
+      normalizeBanglaDigits(String(order.codAmount))
+        .replace(/[^0-9.]/g,"")
+    );
+    if(Number.isFinite(saved) && saved >= 0) return saved;
+  }
+
+  const text = normalizeBanglaDigits(order.orderText || "");
+  const lines = text.split(/\r?\n/).map(v=>v.trim()).filter(Boolean);
+
+  for(const line of lines){
+    const m=line.match(
+      /([0-9]+(?:\.[0-9]+)?)\s*\+\s*([0-9]+(?:\.[0-9]+)?)(?:\s*=\s*([0-9]+(?:\.[0-9]+)?))?/
+    );
+
+    if(m){
+      const first=Number(m[1]);
+      const second=Number(m[2]);
+      const total=m[3]!==undefined ? Number(m[3]) : first+second;
+
+      if(Number.isFinite(total) && total>=0){
+        return total;
       }
     }
-    return null;
+  }
+
+  const patterns = [
+    /(?:বিল|bill|cod\s*amount|cod|টোটাল|total|amount|মোট)\s*[:：=-]?\s*(?:৳|tk|taka)?\s*([0-9]+(?:\.[0-9]+)?)/i,
+    /(?:৳|tk|taka)\s*([0-9]+(?:\.[0-9]+)?)/i
+  ];
+
+  for(const re of patterns){
+    const m=text.match(re);
+
+    if(m){
+      const n=Number(m[1]);
+      if(Number.isFinite(n) && n>=0){
+        return n;
+      }
+    }
+  }
+
+  return null;
   }
 
   async function sendOrderToSteadfastOneTap(id, clickedButton){
