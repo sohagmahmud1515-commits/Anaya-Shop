@@ -5873,7 +5873,8 @@ function deleteFromSourceGroup(){
       .toLowerCase();
 
     let visibleOrders = orders
-      .slice()
+      .filter(o=>o.appDeleted!==true)
+.slice()
       .sort(
         (a,b) =>
           (b.serial || 0) -
@@ -9428,11 +9429,70 @@ window.canCall = canCall;
 // It only controls cycleCallStatus() above, as required.
   /* Delete notification: order owner + requester; duplicate recipient gets only one notification. */
   if(typeof window.approveDelete==='function'){
-    window.approveDelete=function(id){
-      const order=orders.find(o=>o.id===id);if(!order)return; if(!confirm('Admin Approval: Order '+String(order.serial).padStart(2,'0')+' স্থায়ীভাবে Delete করবেন?'))return;
-      const recipients=[order.createdBy||'Admin',order.deleteRequestedBy||''].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);recipients.forEach(r=>pushOrderNotification(r,order,order.deleteReason||''));
-      try{archiveDeletedOrder(order)}catch(e){} orders=orders.filter(o=>o.id!==id);saveOrders();renderEverything();alert('Order deleted. সংশ্লিষ্ট Moderator-দের Notification পাঠানো হয়েছে।');
+  window.approveDelete=async function(id){
+    const order=orders.find(o=>String(o.id)===String(id));
+    if(!order)return;
+
+    if(!confirm(
+      'Admin Approval: Order '+
+      String(order.serial).padStart(2,'0')+
+      ' স্থায়ীভাবে Delete করবেন?'
+    ))return;
+
+    try{
+      const r=await fetch(
+        OM_SUPABASE_URL+
+        '/rest/v1/'+OM_ORDERS_TABLE+
+        '?id=eq.'+encodeURIComponent(order.id),
+        {
+          method:'DELETE',
+          headers:omHeaders({
+            'Prefer':'return=minimal'
+          })
+        }
+      );
+
+      if(!r.ok){
+        throw new Error(await r.text());
+      }
+
+      const recipients=[
+        order.createdBy||'Admin',
+        order.deleteRequestedBy||''
+      ]
+      .filter(Boolean)
+      .filter((v,i,a)=>a.indexOf(v)===i);
+
+      recipients.forEach(name=>{
+        pushOrderNotification(
+          name,
+          order,
+          order.deleteReason||''
+        );
+      });
+
+      try{
+        archiveDeletedOrder(order);
+      }catch(e){}
+
+      orders=orders.filter(
+        o=>String(o.id)!==String(id)
+      );
+
+      localStorage.setItem(
+        'mayaOrders',
+        JSON.stringify(orders)
+      );
+
+      renderEverything();
+
+      alert('✅ Order Delete হয়েছে।');
+    }catch(e){
+      console.error('Order cloud delete:',e);
+      alert('❌ Server থেকে Order Delete হয়নি।');
     }
+  };
+  }
   }
 
   function pageRecipients(page){const names=readMods().filter(m=>(m.pages||[]).includes(page)).map(m=>m.name).filter(Boolean);let admins=[];try{admins=JSON.parse(localStorage.getItem('mayaAdmins')||'[]')}catch(e){};(Array.isArray(admins)?admins:[]).forEach(a=>{if(a&&a.name)names.push(a.name)});if(!names.length||!names.some(n=>String(n).toLowerCase()==='admin'))names.push('Admin');return [...new Set(names)];}
@@ -11441,8 +11501,13 @@ window.saveModerator=async function(){
     const baseInput=document.getElementById(group==='pending'?'pendingSearchInput':'emergencySearchInput');
     const alt=document.getElementById('mg_'+(group==='pending'?'pendingSearchInput':'emergencySearchInput'));
     const q=alt?.value??baseInput?.value??'';
-    let arr=(window.orders||orders||[]).filter(o=>group==='pending'?(o.hiddenFromPending!==true&&o.emergency!==true):(o.emergency===true&&o.hiddenFromEmergency!==true)).filter(o=>matchOrder(o,q)).sort((a,b)=>(a.serial||0)-(b.serial||0));
-    const cnt=document.getElementById('pendingPageCount'); if(group==='pending'&&cnt)cnt.textContent=arr.length+'টি';
+let arr=(window.orders||orders||[])
+  .filter(o=>o.appDeleted!==true)
+  .filter(o=>group==='pending'
+    ?(o.hiddenFromPending!==true&&o.emergency!==true)
+    :(o.emergency===true&&o.hiddenFromEmergency!==true))
+  .filter(o=>matchOrder(o,q))
+  .sort((a,b)=>(a.serial||0)-(b.serial||0));  const cnt=document.getElementById('pendingPageCount'); if(group==='pending'&&cnt)cnt.textContent=arr.length+'টি';
     list.innerHTML=arr.length?arr.map(o=>orderHTML(o,false,group)).join(''):'<div class="search-empty">🔎 কোনো '+(group==='pending'?'Pending':'Emergency')+' Order পাওয়া যায়নি।</div>';
   }
   window.renderPending=function(){installSearchBoxes();renderGroup('pending')};
