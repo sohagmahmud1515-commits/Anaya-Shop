@@ -9424,14 +9424,236 @@ window.canCall = canCall;
 <script>
 /* ===== FULL FINAL V2: 2 ADMINS + PAGE BASED COURIER ===== */
 (function(){
-  function esc(v){return typeof escapeHTML==='function'?escapeHTML(String(v??'')):String(v??'').replace(/[&<>\"]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[s]));}
-  function getAdmins(){let a=[];try{a=JSON.parse(localStorage.getItem('mayaAdmins')||'[]')}catch(e){};if(!Array.isArray(a)||!a.length){a=[{id:'ADMIN1',name:'Admin',phone:'',password:''}];localStorage.setItem('mayaAdmins',JSON.stringify(a));}return a;}
-  function saveAdmins(a){localStorage.setItem('mayaAdmins',JSON.stringify(a));}
-  window.openOCAdminManagement=function(){document.getElementById('ocAdminManager')?.classList.add('active');renderAdminsV2();};
-  window.renderAdminsV2=function(){const el=document.getElementById('ocAdminList');if(!el)return;const a=getAdmins();el.innerHTML=a.map((x,i)=>`<div class="oc-admin-card"><div class="title">Admin ${i+1} • Full Access</div><div class="oc-admin-grid"><input id="admName${i}" value="${esc(x.name)}" placeholder="Admin name"><input id="admPhone${i}" value="${esc(x.phone||'')}" placeholder="Phone"><input id="admPass${i}" type="password" value="${esc(x.password||'')}" placeholder="Password"><input value="Full Access" disabled></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"><button class="oc-btn" onclick="saveAdminV2(${i})">Save</button><button class="oc-btn" style="background:#fff;color:#b42318;border:1px solid #f1c7c3" onclick="deleteAdminV2(${i})">Delete</button></div></div>`).join('');};
-  window.addAdminV2=function(){const a=getAdmins();a.push({id:'ADMIN_'+Date.now(),name:'Admin '+(a.length+1),phone:'',password:''});saveAdmins(a);renderAdminsV2();};
-  window.saveAdminV2=function(i){const a=getAdmins();if(!a[i])return;a[i]={...a[i],name:(document.getElementById('admName'+i)?.value||'').trim()||('Admin '+(i+1)),phone:(document.getElementById('admPhone'+i)?.value||'').trim(),password:document.getElementById('admPass'+i)?.value||''};saveAdmins(a);renderAdminsV2();alert('✅ Admin saved');};
-  window.deleteAdminV2=function(i){const a=getAdmins();if(a.length<=1)return alert('কমপক্ষে ১ জন Admin রাখতে হবে।');if(!confirm('এই Admin Delete করবেন?'))return;a.splice(i,1);saveAdmins(a);renderAdminsV2();};
+  function esc(v){
+  return typeof escapeHTML==='function'
+    ? escapeHTML(String(v??''))
+    : String(v??'').replace(/[&<>"]/g,s=>({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'
+      }[s]));
+}
+
+const ADMIN_SB_URL="https://scfnwfkwusgzthnzesjw.supabase.co";
+const ADMIN_SB_KEY="sb_publishable_d1-bjfKJkSWrs1dONuQrNA_BA4vJDGD";
+
+function adminHeaders(extra){
+  return Object.assign({
+    "apikey":ADMIN_SB_KEY,
+    "Authorization":"Bearer "+ADMIN_SB_KEY,
+    "Content-Type":"application/json"
+  },extra||{});
+}
+
+function getAdmins(){
+  let a=[];
+  try{
+    a=JSON.parse(localStorage.getItem('mayaAdmins')||'[]');
+  }catch(e){}
+
+  if(!Array.isArray(a)||!a.length){
+    a=[{
+      id:'admin-main',
+      name:'Admin',
+      phone:'',
+      password:'',
+      role:'admin'
+    }];
+    localStorage.setItem('mayaAdmins',JSON.stringify(a));
+  }
+  return a;
+}
+
+function saveAdmins(a){
+  localStorage.setItem('mayaAdmins',JSON.stringify(a));
+}
+
+async function loadAdminsCloud(){
+  try{
+    const r=await fetch(
+      ADMIN_SB_URL+"/rest/v1/app_profiles?role=eq.admin&select=id,role,data",
+      {headers:adminHeaders()}
+    );
+
+    if(!r.ok) throw new Error(await r.text());
+
+    const rows=await r.json();
+    const admins=rows
+      .filter(x=>x&&x.data)
+      .map(x=>x.data);
+
+    if(admins.length){
+      saveAdmins(admins);
+    }
+  }catch(e){
+    console.error("Admin cloud load:",e);
+  }
+}
+
+async function saveAdminCloud(item){
+  const row={
+    id:"admin:"+item.id,
+    role:"admin",
+    data:item,
+    updated_at:new Date().toISOString()
+  };
+
+  const r=await fetch(
+    ADMIN_SB_URL+"/rest/v1/app_profiles?on_conflict=id",
+    {
+      method:"POST",
+      headers:adminHeaders({
+        "Prefer":"resolution=merge-duplicates,return=minimal"
+      }),
+      body:JSON.stringify(row)
+    }
+  );
+
+  if(!r.ok) throw new Error(await r.text());
+}
+
+async function deleteAdminCloud(id){
+  const r=await fetch(
+    ADMIN_SB_URL+
+    "/rest/v1/app_profiles?id=eq."+
+    encodeURIComponent("admin:"+id),
+    {
+      method:"DELETE",
+      headers:adminHeaders({
+        "Prefer":"return=minimal"
+      })
+    }
+  );
+
+  if(!r.ok) throw new Error(await r.text());
+}
+
+window.openOCAdminManagement=async function(){
+  document.getElementById('ocAdminManager')?.classList.add('active');
+  await loadAdminsCloud();
+  renderAdminsV2();
+};
+
+window.renderAdminsV2=function(){
+  const el=document.getElementById('ocAdminList');
+  if(!el)return;
+
+  const a=getAdmins();
+
+  el.innerHTML=a.map((x,i)=>`
+    <div class="oc-admin-card">
+      <div class="title">Admin ${i+1} • Full Access</div>
+
+      <div class="oc-admin-grid">
+        <input id="admName${i}"
+          value="${esc(x.name||'')}"
+          placeholder="Admin name">
+
+        <input id="admPhone${i}"
+          value="${esc(x.phone||'')}"
+          placeholder="Phone">
+
+        <input id="admPass${i}"
+          type="password"
+          value="${esc(x.password||'')}"
+          placeholder="Password">
+
+        <input value="Full Access" disabled>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+        <button class="oc-btn" onclick="saveAdminV2(${i})">
+          Save
+        </button>
+
+        <button class="oc-btn"
+          style="background:#fff;color:#b42318;border:1px solid #f1c7c3"
+          onclick="deleteAdminV2(${i})">
+          Delete
+        </button>
+      </div>
+    </div>
+  `).join('');
+};
+
+window.addAdminV2=function(){
+  const a=getAdmins();
+
+  a.push({
+    id:'ADMIN_'+Date.now(),
+    name:'Admin '+(a.length+1),
+    phone:'',
+    password:'',
+    role:'admin'
+  });
+
+  saveAdmins(a);
+  renderAdminsV2();
+};
+
+window.saveAdminV2=async function(i){
+  const a=getAdmins();
+  if(!a[i])return;
+
+  let id=a[i].id||('ADMIN_'+Date.now());
+
+  if(i===0 && (id==='ADMIN1'||id==='admin-main')){
+    id='admin-main';
+  }
+
+  const item={
+    ...a[i],
+    id:id,
+    name:(document.getElementById('admName'+i)?.value||'').trim()||('Admin '+(i+1)),
+    phone:(document.getElementById('admPhone'+i)?.value||'').trim(),
+    password:document.getElementById('admPass'+i)?.value||'',
+    role:'admin'
+  };
+
+  if(!item.phone){
+    return alert('Admin Mobile Number দিন।');
+  }
+
+  if(!item.password){
+    return alert('Admin Password দিন।');
+  }
+
+  try{
+    await saveAdminCloud(item);
+
+    a[i]=item;
+    saveAdmins(a);
+    renderAdminsV2();
+
+    alert('✅ Admin সব ডিভাইসের জন্য Save হয়েছে');
+  }catch(e){
+    console.error("Admin cloud save:",e);
+    alert('❌ Admin Server-এ Save হয়নি। আবার চেষ্টা করুন।');
+  }
+};
+
+window.deleteAdminV2=async function(i){
+  const a=getAdmins();
+
+  if(a.length<=1){
+    return alert('কমপক্ষে ১ জন Admin রাখতে হবে।');
+  }
+
+  if(!a[i])return;
+
+  if(!confirm('এই Admin Delete করবেন?'))return;
+
+  try{
+    await deleteAdminCloud(a[i].id);
+
+    a.splice(i,1);
+    saveAdmins(a);
+    renderAdminsV2();
+
+    alert('✅ Admin সব ডিভাইস থেকে Delete হয়েছে');
+  }catch(e){
+    console.error("Admin cloud delete:",e);
+    alert('❌ Admin Server থেকে Delete হয়নি।');
+  }
+};
 
   function getPageCourierStore(){try{return JSON.parse(localStorage.getItem('mayaPageCourierConfigs')||'{}')}catch(e){return {}}}
   function savePageCourierStore(v){localStorage.setItem('mayaPageCourierConfigs',JSON.stringify(v));}
