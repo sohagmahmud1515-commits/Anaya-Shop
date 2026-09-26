@@ -5038,7 +5038,7 @@ function deleteFromSourceGroup(){
             onclick="if(typeof canCall==='function' && canCall()) cycleCallStatus('${order.id}')"
             ${typeof canCall==='function' && !canCall() ? 'disabled aria-disabled="true"' : ''}
             title="${typeof canCall==='function' && !canCall() ? 'শুধু Call Status দেখা যাবে' : 'চাপ দিয়ে Call Status পরিবর্তন করুন'}">
-            ☎️✓ কল হয়েছে
+            ☎️✓ কল করা হয়েছে
             ${order.callStatusAt ? `<span class="call-status-time">${escapeHTML(order.callStatusAt)}</span>` : ""}${order.callStatusDate ? `<small class="call-status-date">${escapeHTML(order.callStatusDate)}</small>` : ""}
           </button>
         </div>
@@ -5066,7 +5066,7 @@ function deleteFromSourceGroup(){
           class="call-status-btn call-status-none"
           onclick="cycleCallStatus('${order.id}')"
           title="চাপ দিয়ে Call Status পরিবর্তন করুন">
-          📞 কল হয়নি
+          📞 কল করা হয়নি
         </button>
       </div>
     `;
@@ -9357,9 +9357,9 @@ function deleteCourierSuccessOrder(){
   };
 
   function canCall(){if(isAdmin())return true;const me=readMods().find(m=>String(m.name||'').trim()===String(currentUser()).trim());return !!me?.callAccess;}
-  // Call Access is intentionally NOT applied to the phone dial action.
-  // It only controls cycleCallStatus() above, as required.
-
+window.canCall = canCall;
+// Call Access is intentionally NOT applied to the phone dial action.
+// It only controls cycleCallStatus() above, as required.
   /* Delete notification: order owner + requester; duplicate recipient gets only one notification. */
   if(typeof window.approveDelete==='function'){
     window.approveDelete=function(id){
