@@ -5359,30 +5359,44 @@ window.adminCompleteDelete=async function(id){
         </button>
       `;
 
-    const deleteButton =
-      isCourierSent && (viewMode === "pending" || viewMode === "emergency")
+    const isAdminAllOrder =
+  arguments.length >= 3 &&
+  viewMode === "all" &&
+  typeof window.mayaIsAdmin === "function" &&
+  window.mayaIsAdmin();
+
+const deleteButton =
+  isCourierSent && (viewMode === "pending" || viewMode === "emergency")
+    ? `
+      <button
+        class="mini-action mini-delete"
+        onclick="removeAfterCourier('${order.id}')">
+        🗑️ Remove
+      </button>
+    `
+    : isAdminAllOrder
+      ? `
+        <button
+          class="mini-action mini-delete"
+          onclick="adminCompleteDelete('${order.id}')">
+          🗑️ Delete
+        </button>
+      `
+      : isDeletePending
         ? `
           <button
             class="mini-action mini-delete"
-            onclick="removeAfterCourier('${order.id}')">
-            🗑️ Remove
+            disabled>
+            🗑️ Requested
           </button>
         `
-        : isDeletePending
-          ? `
-            <button
-              class="mini-action mini-delete"
-              disabled>
-              🗑️ Requested
-            </button>
-          `
-          : `
-            <button
-              class="mini-action mini-delete"
-              onclick="requestDelete('${order.id}')">
-              🗑️ Delete
-            </button>
-          `;
+        : `
+          <button
+            class="mini-action mini-delete"
+            onclick="requestDelete('${order.id}')">
+            🗑️ Delete
+          </button>
+        `;
 
     const canCourierSend =
       viewMode === "pending" ||
