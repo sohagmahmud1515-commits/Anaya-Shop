@@ -4871,40 +4871,71 @@ window.adminCompleteDelete=async function(id){
     saveDeletedOrderArchive(archive);
   }
 
-  function approveDelete(id){
-    const order = orders.find(order => order.id === id);
+window.approveDelete = async function(id){
+  const order = orders.find(
+    o => String(o.id) === String(id)
+  );
 
-    if(!order) return;
+  if(!order) return;
 
-    const ok = confirm(
-      "Admin Approval: Order " +
-      String(order.serial).padStart(2,"0") +
-      " স্থায়ীভাবে Delete করবেন?"
+  if(!confirm(
+    'Admin Approval: Order ' +
+    String(order.serial).padStart(2,'0') +
+    ' স্থায়ীভাবে Delete করবেন?'
+  )) return;
+
+  try{
+    const r = await fetch(
+      OM_SUPABASE_URL +
+      '/rest/v1/' + OM_ORDERS_TABLE +
+      '?id=eq.' + encodeURIComponent(order.id),
+      {
+        method:'DELETE',
+        headers:omHeaders({
+          'Prefer':'return=minimal'
+        })
+      }
     );
 
-    if(!ok) return;
-
-    pushOrderNotification(
-      order.createdBy || "Admin",
-      order,
-      order.deleteReason || ""
-    );
-
-    const wasCourierSent =
-      order.status === "courier_sent" ||
-      order.courierSent === true;
-
-    if(!wasCourierSent){
-      archiveDeletedOrder(order);
+    if(!r.ok){
+      throw new Error(await r.text());
     }
 
-    orders = orders.filter(order => order.id !== id);
+    const recipients = [
+      order.createdBy || 'Admin',
+      order.deleteRequestedBy || ''
+    ]
+    .filter(Boolean)
+    .filter((v,i,a)=>a.indexOf(v)===i);
 
-    saveOrders();
+    recipients.forEach(name=>{
+      pushOrderNotification(
+        name,
+        order,
+        order.deleteReason || ''
+      );
+    });
+
+    try{
+      archiveDeletedOrder(order);
+    }catch(e){}
+
+    orders = orders.filter(
+      o => String(o.id) !== String(id)
+    );
+
+    localStorage.setItem(
+      'mayaOrders',
+      JSON.stringify(orders)
+    );
+
     renderEverything();
 
-    alert("Order permanently deleted. Taken By-কে Notification পাঠানো হয়েছে.");
+  }catch(e){
+    console.error('Order cloud delete:',e);
+    alert('❌ Server থেকে Order Delete হয়নি।');
   }
+};
 
   function rejectDelete(id){
     const order = orders.find(order => order.id === id);
