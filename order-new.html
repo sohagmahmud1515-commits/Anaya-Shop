@@ -4663,7 +4663,95 @@ function deleteFromSourceGroup(){
       document.getElementById("deleteReasonInput").focus();
     }, 120);
   }
+window.adminCompleteDelete=async function(id){
+  const isAdminUser =
+    typeof window.mayaIsAdmin==='function' &&
+    window.mayaIsAdmin();
 
+  if(!isAdminUser){
+    return alert('শুধু Admin Complete Delete করতে পারবে।');
+  }
+
+  const order=orders.find(
+    o=>String(o.id)===String(id)
+  );
+
+  if(!order)return;
+
+  const isCourierSent =
+    order.courierSent===true ||
+    order.status==='courier_sent' ||
+    !!order.parcelId ||
+    !!order.trackingId ||
+    !!order.trackingCode ||
+    !!order.consignmentId;
+
+  const ok=confirm(
+    '⚠️ Order #'+
+    String(order.serial).padStart(2,'0')+
+    ' Complete Delete করবেন?\n\n'+
+    (isCourierSent
+      ? 'App ও Summary থেকে চলে যাবে। Courier Tracking থাকবে।'
+      : 'App, Summary এবং Server থেকে সম্পূর্ণ মুছে যাবে।')
+  );
+
+  if(!ok)return;
+
+  try{
+    if(isCourierSent){
+      order.appDeleted=true;
+      order.appDeletedAt=new Date().toISOString();
+      order.appDeletedBy=
+        typeof getCurrentEmployee==='function'
+          ? getCurrentEmployee()
+          : 'Admin';
+
+      order.deleteRequested=false;
+      order.deleteReason='';
+      order.deleteRequestedAt='';
+      order.deleteRequestedBy='';
+
+      saveOrders();
+    }else{
+      const r=await fetch(
+        OM_SUPABASE_URL+
+        '/rest/v1/'+OM_ORDERS_TABLE+
+        '?id=eq.'+encodeURIComponent(order.id),
+        {
+          method:'DELETE',
+          headers:omHeaders({
+            'Prefer':'return=minimal'
+          })
+        }
+      );
+
+      if(!r.ok){
+        throw new Error(await r.text());
+      }
+
+      orders=orders.filter(
+        o=>String(o.id)!==String(id)
+      );
+
+      localStorage.setItem(
+        'mayaOrders',
+        JSON.stringify(orders)
+      );
+    }
+
+    renderEverything();
+
+    alert(
+      isCourierSent
+        ? '✅ App থেকে Delete হয়েছে। Courier Tracking রাখা হয়েছে।'
+        : '✅ Order সম্পূর্ণভাবে Delete হয়েছে।'
+    );
+
+  }catch(e){
+    console.error('Admin complete delete:',e);
+    alert('❌ Delete করা যায়নি।');
+  }
+};
   function closeDeleteRequest(){
     document.getElementById("deleteRequestModal").classList.remove("active");
     document.getElementById("deleteOrderId").value = "";
@@ -10281,7 +10369,7 @@ window.saveModerator=async function(){
     return '<div class="ms-order-item"><div class="ms-order-item-top"><span class="ms-order-no">Order #'+msEsc(serial)+'</span><span class="ms-order-status">'+msEsc(msOrderStatusLabel(o,deleted))+'</span></div><div class="ms-order-customer">'+msEsc(name||'Customer')+'</div><div class="ms-order-meta"><span class="ms-order-phone">'+msEsc(phone||'—')+'</span><br>💰 '+msEsc(msMoney(msOrderAmount(o)))+'<br>📄 '+msEsc(o?.pageName||'Unknown')+' • 👤 '+msEsc(o?.createdBy||'Admin')+'<br>🕒 '+msEsc(o?.date||o?.createdAt||o?.createdDateKey||'')+(address?'<br>📍 '+msEsc(address):'')+'</div></div>';
   }
   window.msOpenOrderList=function(kind,title){
-    const active=msFilter(orders||[]), deleted=msFilter(msDeletedArchive()).map(o=>Object.assign({},o,{__deleted:true}));let list=[];
+    const active=msFilter((orders||[]).filter(o=>o.appDeleted!==true)), deleted=msFilter(msDeletedArchive()).map(o=>Object.assign({},o,{__deleted:true}));let list=[];
     if(msSource==='app'){
       if(kind==='total')list=[...active,...deleted];
       else if(kind==='pending')list=active.filter(o=>!o.courierSent&&o.status!=='courier_sent'&&o.hiddenFromPending!==true&&o.emergency!==true);
@@ -10336,7 +10424,7 @@ window.saveModerator=async function(){
   }
   window.msChooseModerator=function(name){if(!msIsAdmin())return;const s=document.getElementById('msModeratorFilter');if(s){s.value=name;msRenderSummary();window.scrollTo({top:0,behavior:'smooth'})}}
   window.msRenderSummary=function(){
-    msPopulateFilters();const c=document.getElementById('msSummaryContent');if(!c)return;const active=msFilter(orders||[]),deleted=msFilter(msDeletedArchive()).map(o=>Object.assign({},o,{__deleted:true}));
+    msPopulateFilters();const c=document.getElementById('msSummaryContent');if(!c)return;const active=msFilter((orders||[]).filter(o=>o.appDeleted!==true)),deleted=msFilter(msDeletedArchive()).map(o=>Object.assign({},o,{__deleted:true}));
     let metrics='',pageHead='';
     if(msSource==='app'){
       const p=active.filter(o=>!o.courierSent&&o.status!=='courier_sent'&&o.hiddenFromPending!==true&&!o.emergency),e=active.filter(o=>o.emergency&&o.hiddenFromEmergency!==true&&!o.courierSent&&o.status!=='courier_sent'),co=active.filter(o=>o.courierSent||o.status==='courier_sent'),all=[...active,...deleted];
@@ -10769,7 +10857,7 @@ window.saveModerator=async function(){
     if(dsRange==='today')return k===end;
     if(dsRange==='yesterday')return k===dsOffset(-1);
     if(dsRange==='3days')return k>=dsOffset(-2)&&k<=end;
-    if(dsRange==='week')return k>=dsOffset(-6)&&k<=end;
+   dge==='week')return k>=dsOffset(-6)&&k<=end;
     if(dsRange==='15days')return k>=dsOffset(-14)&&k<=end;
     if(dsRange==='month')return k>=dsOffset(-29)&&k<=end;
     return k===end;
@@ -10801,9 +10889,7 @@ window.saveModerator=async function(){
   }
   function dsDeleted(){
     try{return (typeof loadDeletedOrderArchive==='function'?loadDeletedOrderArchive():[]).filter(dsInRange)}catch(e){return []}
-  }
-  function dsActive(){return (Array.isArray(orders)?orders:[]).filter(dsInRange)}
-  function dsMetric(label,list,cls){
+  function dsActive(){return (Array.isArray(orders)?orders:[]).filter(o=>o.appDeleted!==true).filter(dsInRange)}
     const icons={
       'All Orders':'📦',
       'Pending':'⏳',
