@@ -13358,7 +13358,11 @@ if(!Number.isFinite(counter) || counter<1){
       var m=String(err&&err.message||err);
       if(m.indexOf("IMAGE:")===0) alert("ছবি Supabase Storage-এ আপলোড হয়নি। Storage policy চেক করতে হবে।");
       else if(m.indexOf("ORDER:")===0) alert("Order Supabase table-এ save হয়নি। orders policy চেক করতে হবে।");
-      else alert("Submit সমস্যা: "+m);
+      else alert(
+  "Submit সমস্যা\n\n" +
+  "Error: " + m +
+  "\n\nধাপ: IMAGE upload → SERIAL → ORDER save"
+);
     }finally{
       if(btn){btn.disabled=false;btn.innerHTML="☑️ &nbsp; অর্ডার সাবমিট করুন";}
     }
