@@ -6834,63 +6834,68 @@ const deleteButton =
 
   function updateCounts(){
 
-    const pending =
-      orders.filter(order =>
-        order.hiddenFromPending !== true &&
-        order.emergency !== true
+  // Deleted order কোনো Group Count-এ ধরা হবে না
+  const activeOrders = orders.filter(order =>
+    order.appDeleted !== true
+  );
+
+  const pending =
+    activeOrders.filter(order =>
+      order.hiddenFromPending !== true &&
+      order.emergency !== true
+    ).length;
+
+  const emergency =
+    activeOrders.filter(order =>
+      order.emergency === true &&
+      order.hiddenFromEmergency !== true
+    ).length;
+
+  const courier =
+    activeOrders.filter(order =>
+      order.status === "courier_sent" ||
+      order.courierSent === true
+    ).length;
+
+  document
+    .getElementById("allCount")
+    .innerText = activeOrders.length;
+
+  document
+    .getElementById("pendingCount")
+    .innerText = pending;
+
+  document
+    .getElementById("emergencyCount")
+    .innerText = emergency;
+
+  document
+    .getElementById("deleteCount")
+    .innerText =
+      activeOrders.filter(order =>
+        order.deleteRequested === true
       ).length;
 
-    const emergency =
-      orders.filter(order =>
-        order.emergency === true &&
-        order.hiddenFromEmergency !== true
-      ).length;
+  const topPending =
+    document.getElementById("topPendingCount");
 
-    const courier =
-      orders.filter(order =>
-        order.status === "courier_sent" ||
-        order.courierSent === true
-      ).length;
+  const topEmergency =
+    document.getElementById("topEmergencyCount");
 
-    document
-      .getElementById("allCount")
-      .innerText = orders.length;
+  const topCourier =
+    document.getElementById("topCourierCount");
 
-    document
-      .getElementById("pendingCount")
-      .innerText = pending;
+  if(topPending){
+    topPending.innerText = pending;
+  }
 
-    document
-      .getElementById("emergencyCount")
-      .innerText = emergency;
+  if(topEmergency){
+    topEmergency.innerText = emergency;
+  }
 
-    document
-      .getElementById("deleteCount")
-      .innerText =
-        orders.filter(
-          order =>
-            order.deleteRequested === true
-        ).length;
-          const topPending =
-      document.getElementById("topPendingCount");
-
-    const topEmergency =
-      document.getElementById("topEmergencyCount");
-
-    const topCourier =
-      document.getElementById("topCourierCount");
-
-    if(topPending){
-      topPending.innerText = pending;
-    }
-
-    if(topEmergency){
-      topEmergency.innerText = emergency;
-    }
-
-    if(topCourier){
-      topCourier.innerText = courier;
-    }
+  if(topCourier){
+    topCourier.innerText = courier;
+  }
   }
 
   function hideAll(){
