@@ -3542,9 +3542,9 @@ body.order-group-open #emergencySection.active ~ .group-scroll-nav{
         if(!x || !x.data) return null;
         return Object.assign({},x.data,{id:x.data.id||x.id,serial:x.data.serial||x.serial});
       }).filter(Boolean);
-      const localMap = new Map(orders.map(o => [String(o.id), o]));
-      incoming.forEach(o => localMap.set(String(o.id), o));
-      orders = Array.from(localMap.values()).sort((a,b)=>(Number(b.serial)||0)-(Number(a.serial)||0));
+      orders = incoming.sort(
+  (a,b)=>(Number(b.serial)||0)-(Number(a.serial)||0)
+);
       localStorage.setItem("mayaOrders", JSON.stringify(orders));
       try{ renderEverything(); }catch(e){}
       try{ updateCounts(); }catch(e){}
