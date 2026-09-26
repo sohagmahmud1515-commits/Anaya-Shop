@@ -13352,7 +13352,7 @@ if(!Number.isFinite(counter) || counter<1){
       try{if(typeof renderEverything==="function")renderEverything()}catch(e){}
       try{if(typeof updateCounts==="function")updateCounts()}catch(e){}
       try{if(typeof toggleNewOrderForm==="function")toggleNewOrderForm(false)}catch(e){}
-      alert("✅ অর্ডার সফলভাবে Supabase-এ সাবমিট হয়েছে।");
+      showSubmitSuccessCard();
     }catch(err){
       console.error(err);
       var m=String(err&&err.message||err);
