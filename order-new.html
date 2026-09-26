@@ -11318,7 +11318,7 @@ window.saveModerator=async function(){
     const riderNote=latestRider(o), localNote=latestDelivery(o);
     const riderName=o.riderName||o.courierRiderName||o.deliveryRiderName||(riderNote&&riderNote.rider)||'';
     const riderPhone=o.riderPhone||o.courierRiderPhone||o.deliveryRiderPhone||'';
-    const hub=o.courierLocation||o.currentHub||o.hubName||'Courier API থেকে আসবে';
+    const hub=o.courierLocation||o.currentdi.hubName||'Courier API থেকে আসবে';
     const hubPhone=o.hubPhone||o.currentHubPhone||'';
     const notes=(o.callNotes||[]).map(x=>'<div class="call-note-item"><b>'+e(x.status||'Call Note')+'</b><br>'+e(x.text||'')+'<br><small>'+e(x.by||'Admin')+' • '+e(x.at||'')+'</small></div>').join('');
     const booking=o.courierSentAt||o.date||o.createdAt||'—';
@@ -11362,7 +11362,16 @@ window.saveModerator=async function(){
         <textarea id="trackingCallNote" class="track-note-box" placeholder="কাস্টমারের সাথে কথা হলে Note লিখুন..."></textarea>
         <div class="pt-call-controls"><button class="call-status-chip" onclick="selectCallStatus(this,'Called')">📞 Called</button><button class="call-status-chip" onclick="selectCallStatus(this,'No Answer')">📵 No Answer</button><button class="call-status-chip" onclick="selectCallStatus(this,'Call Later')">☎ Call Later</button><button class="pt-call-save" onclick="saveTrackingCallNote()">Save</button></div>
         <div class="pt-call-history">${notes}</div>
-      </div>`;
+      </div>
+
+${(typeof window.mayaIsAdmin==='function' && window.mayaIsAdmin()) ? `
+  <button
+    onclick="deleteCourierTracking('${e(o.id)}')"
+    style="width:100%;border:0;border-radius:13px;padding:14px;margin:4px 0 16px;background:#d93636;color:#fff;font-size:15px;font-weight:900;">
+    🗑️ Delete from Courier Tracking
+  </button>
+` : ''}
+`;
     document.getElementById('trackingModal')?.classList.add('active');
   };
 })();
@@ -11415,7 +11424,57 @@ window.saveModerator=async function(){
   function charge(o){ return o.courierCharge??o.deliveryCharge??o.steadfastDeliveryCharge??0; }
   function weight(o){ const v=o.weight??o.parcelWeight??o.courierWeight; return (v===undefined||v===null||v==='')?'—':String(v).replace(/\s*kg$/i,'')+'kg'; }
   function provider(o){ return o.courierName||o.courierProvider||'Courier'; }
-  function sentOrders(){ return (window.orders||[]).filter(o=>o.status==='courier_sent'||o.courierSent===true||o.parcelId||o.consignmentId||o.trackingId||o.trackingCode); }
+  function sentOrders(){
+  return (window.orders||[]).filter(
+    o=>o.trackingDeleted!==true &&
+    (
+      o.status==='courier_sent' ||
+      o.courierSent===true ||
+      o.parcelId ||
+      o.consignmentId ||
+      o.trackingId ||
+      o.trackingCode
+    )
+  );
+  }window.deleteCourierTracking=function(id){
+  const isAdminUser =
+    typeof window.mayaIsAdmin==='function' &&
+    window.mayaIsAdmin();
+
+  if(!isAdminUser){
+    return alert('শুধু Admin Tracking Delete করতে পারবে।');
+  }
+
+  const o=(window.orders||orders||[]).find(
+    x=>String(x.id)===String(id)
+  );
+
+  if(!o)return;
+
+  if(!confirm(
+    'Courier Tracking থেকে Order #'+
+    String(o.serial||'').padStart(2,'0')+
+    ' মুছে ফেলবেন?'
+  ))return;
+
+  o.trackingDeleted=true;
+  o.trackingDeletedAt=new Date().toISOString();
+  o.trackingDeletedBy=
+    typeof getCurrentEmployee==='function'
+      ? getCurrentEmployee()
+      : 'Admin';
+
+  saveOrders();
+  renderCourierTrackingList();
+
+  document
+    .getElementById('trackingModal')
+    ?.classList.remove('active');
+
+  currentTrackingOrderId=null;
+
+  alert('✅ Courier Tracking থেকে Delete হয়েছে।');
+};
   function timeAllowed(o){
     const sel=document.getElementById('courierParcelTimeFilter'); const v=sel?sel.value:'all'; if(v==='all')return true;
     const d=dateObj(o); if(!d)return false; const now=new Date();
