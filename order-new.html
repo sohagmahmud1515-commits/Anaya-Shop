@@ -13125,7 +13125,24 @@ document.addEventListener('click',function(){setTimeout(function(){wire();accoun
       for(var i=0;i<inp.files.length;i++) urls.push(await upload(inp.files[i],id,i));
 
       var now=new Date();
-      var counter=parseInt(localStorage.getItem("orderCounter")||"0",10)+1;
+      var serialRes=await fetch(
+  SB_URL+"/rest/v1/rpc/next_order_serial",
+  {
+    method:"POST",
+    headers:headers({"Content-Type":"application/json"}),
+    body:"{}"
+  }
+);
+
+if(!serialRes.ok){
+  throw new Error("SERIAL: "+await serialRes.text());
+}
+
+var counter=Number(await serialRes.json());
+
+if(!Number.isFinite(counter) || counter<1){
+  throw new Error("SERIAL: invalid serial");
+}
       var order={
         id:id,serial:counter,pageName:pageName,orderText:orderText,phone:phone,
         images:urls,image:urls[0]||"",status:"pending",emergency:false,
