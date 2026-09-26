@@ -9912,7 +9912,7 @@ window.saveModerator=async function(){
     return /^(?:address|thikana|ঠিকানা|full\s*address|পূর্ণ\s*ঠিকানা)(?:\s|[:：ঃ=\-–—.]|$)/i.test(mgClean(line));
   }
   function mgIsLocationLine(line){
-    return /^(?:গ্রাম|village|এলাকা|area|রোড|road|থানা|thana|উপজেলা|upazila|জেলা|district|zila|zela|পোস্ট|post|ইউনিয়ন|union|ওয়ার্ড|ward)(?:\s|[:：ঃ=\-–—.]|$)/i.test(mgClean(line));
+    return /^(?:গ্রাম|village|এলাকা|area|রোড|road|থানা|thana|উপজেলা|upazila|জেলা|district|zila|zela|পোস্ট|post|ডাকঘর|post\s*office|বিভাগ|division|ইউনিয়ন|union|ওয়ার্ড|ward)(?:\s|[:：ঃ=\-–—.]|$)/i.test(mgClean(line));
   }
   function mgStripAddressLabel(line){
     return mgClean(line).replace(/^(?:address|thikana|ঠিকানা|full\s*address|পূর্ণ\s*ঠিকানা)\s*[:：ঃ=\-–—.]?\s*/i,'').trim();
@@ -9935,7 +9935,7 @@ window.saveModerator=async function(){
         if(mgIsLocationLine(line)){ before.push(line); continue; }
         break;
       }
-      if(before.length) parts.push(...before);
+      if(before.length) parts.push(...before.reverse());
 
       for(let j=i+1;j<lines.length;j++){
         const line=lines[j];
