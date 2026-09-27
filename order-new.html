@@ -4657,7 +4657,48 @@ function deleteFromSourceGroup(){
       document.getElementById("deleteReasonInput").focus();
     }, 120);
   }
-window.adminCompleteDelete=async function(id){
+
+  function showPermanentDeleteConfirm(order){
+  return new Promise((resolve)=>{
+    const old = document.getElementById('permanentDeleteConfirm');
+    if(old) old.remove();
+
+    const serial = String(order?.serial || '').padStart(2,'0');
+
+    const overlay = document.createElement('div');
+    overlay.id = 'permanentDeleteConfirm';
+
+    overlay.innerHTML = `
+      <div class="pd-confirm-card">
+        <div class="pd-delete-icon">🗑️</div>
+
+        <div class="pd-confirm-title">
+          Order #${serial} <span>Permanently Delete</span> করবেন?
+        </div>
+
+        <div class="pd-confirm-actions">
+          <button type="button" class="pd-cancel-btn">Cancel</button>
+          <button type="button" class="pd-delete-btn">Delete</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const finish = (answer)=>{
+      overlay.remove();
+      resolve(answer);
+    };
+
+    overlay.querySelector('.pd-cancel-btn').onclick = ()=>finish(false);
+    overlay.querySelector('.pd-delete-btn').onclick = ()=>finish(true);
+
+    overlay.onclick = (e)=>{
+      if(e.target === overlay) finish(false);
+    };
+  });
+  }
+  window.adminCompleteDelete=async function(id){
   const isAdminUser =
     typeof window.mayaIsAdmin==='function' &&
     window.mayaIsAdmin();
@@ -4680,16 +4721,8 @@ window.adminCompleteDelete=async function(id){
     !!order.trackingCode ||
     !!order.consignmentId;
 
-  const ok=confirm(
-    '⚠️ Order #'+
-    String(order.serial).padStart(2,'0')+
-    ' Complete Delete করবেন?\n\n'+
-    (isCourierSent
-      ? 'App ও Summary থেকে চলে যাবে। Courier Tracking থাকবে।'
-      : 'App, Summary এবং Server থেকে সম্পূর্ণ মুছে যাবে।')
-  );
-
-  if(!ok)return;
+   const ok = await showPermanentDeleteConfirm(order);
+if(!ok) return;
 
   try{
     if(isCourierSent){
