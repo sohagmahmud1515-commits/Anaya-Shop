@@ -13296,7 +13296,7 @@ if(!Number.isFinite(counter) || counter<1){
           if(oi>=0) orders[oi]=order; else orders.unshift(order);
         }
       }catch(e){}
-      try{if(typeof omLoadCloudOrders==="function")await omLoadCloudOrders()}catch(e){console.error("Post-submit cloud reload:",e)}
+    try{if(typeof renderAllOrders==="function")renderAllOrders()}catch(e){}      
       if(txt)txt.value="";
       if(inp)inp.value="";
       try{if(typeof clearSelectedImagePreview==="function")clearSelectedImagePreview()}catch(e){}
