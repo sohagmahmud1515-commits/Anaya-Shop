@@ -11912,9 +11912,7 @@ body.order-group-open #emergencySection .order-search-card{
     if(c){const ph=phone(o.phone||o.orderText||'');c.innerHTML='<div class="d-order">Order '+String(o.serial||'').padStart(2,'0')+' • '+esc(o.pageName||'')+'</div><div class="d-meta"><b>কার অর্ডার:</b> 👤 '+esc(o.createdBy||'Admin')+(ph?'<br><b>Customer Phone:</b> '+esc(ph):'')+'</div>'}
     const q=document.querySelector('#deleteRequestModal .delete-question-box');if(q)q.innerHTML='<div>কেন এই Order Delete করতে চান?</div><div class="delete-sub">সঠিক কারণ লিখুন — এটি Admin Approval-এ পাঠানো হবে।</div>';
   }
-  const prevReq=window.requestDelete;
-  if(typeof prevReq==='function')window.requestDelete=function(id){const r=prevReq.apply(this,arguments);setTimeout(()=>applyDeleteInfo(id),0);return r};
-
+  
   /* Real Steadfast Fraud UI. */
   function ensureFraudUI(){
     const sheet=document.querySelector('#fraudModal .fraud-sheet');if(!sheet)return;
