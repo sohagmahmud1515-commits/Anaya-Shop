@@ -12153,31 +12153,33 @@ async function fetchApiKeyFraud(ph){
     }
   }
 
-  const successRate =
-    Number(result.deliveryRatio || 0);
+   const successRate = Number(result.deliveryRatio || 0);
+const cancelRate = Number(result.cancellationRatio || 0);
 
-  const cancelRate =
-    Number(result.cancellationRatio || 0);
+const delivered = Number(result.delivered || 0);
+const cancelled = Number(result.cancelled || 0);
+const bad = Number(result.frauds || 0);
 
-  const volume =
-    result.volumeBand
-      ? result.volumeBand.charAt(0).toUpperCase() +
-        result.volumeBand.slice(1)
-      : '—';
+const volume =
+  result.volumeRange ||
+  result.volumeBand ||
+  '—';
 
-  setStat('fraudTotal', result.total || '—');
-  setStat('fraudSuccess', successRate + '%');
-  setStat('fraudCancel', cancelRate + '%');
-  setStat('fraudBad', result.frauds || 0);
+setStat('fraudTotal', result.total || (delivered + cancelled) || '—');
+setStat('fraudSuccess', successRate + '%');
+setStat('fraudCancel', cancelRate + '%');
+setStat('fraudBad', bad);
 
-  setLive(
-    '<b>Success ' + successRate + '%</b>' +
-    ' • Cancelled ' + cancelRate + '%' +
-    ' • Parcels ' + esc(volume) +
-    ' • Fraud reports ' + Number(result.frauds || 0) +
-    '<br><small>Source: ' + esc(source) + '</small>',
-    Number(result.frauds || 0) > 0 ? 'warn' : 'ok'
-  );
+setLive(
+  '<b>Success ' + successRate + '%</b>' +
+  ' • Cancelled ' + cancelRate + '%' +
+  ' • ' + delivered + ' delivered' +
+  ' • ' + cancelled + ' cancelled' +
+  ' • Parcel volume ' + esc(volume) +
+  ' • Fraud reports ' + bad +
+  '<br><small>Source: ' + esc(source) + '</small>',
+  bad > 0 ? 'warn' : 'ok'
+);
   }
   const oldOpen=window.openFraudChecker;
   window.openFraudChecker=function(orderId){
@@ -12257,14 +12259,15 @@ async function fetchApiKeyFraud(ph){
   if(!result) return;
 
   const successRate = Number(result.deliveryRatio || 0);
-  const cancelRate = Number(result.cancellationRatio || 0);
-  const bad = Number(result.frauds || 0);
+const cancelRate = Number(result.cancellationRatio || 0);
+const delivered = Number(result.delivered || 0);
+const cancelled = Number(result.cancelled || 0);
+const bad = Number(result.frauds || 0);
 
-  const volume =
-    result.volumeBand
-      ? result.volumeBand.charAt(0).toUpperCase() +
-        result.volumeBand.slice(1)
-      : '—';
+const volume =
+  result.volumeRange ||
+  result.volumeBand ||
+  '—';
 
   getFraudButtons(orderId).forEach(function(btn){
 
@@ -12300,9 +12303,9 @@ async function fetchApiKeyFraud(ph){
       frauds: bad,
 
       deliveryRatio: successRate,
-      cancellationRatio: cancelRate,
-      volumeBand: result.volumeBand || '',
-
+cancellationRatio: cancelRate,
+volumeBand: result.volumeBand || '',
+volumeRange: result.volumeRange || '',
       source: source || 'Steadfast',
 
       checkedAt: new Date().toISOString(),
@@ -12323,16 +12326,22 @@ async function fetchApiKeyFraud(ph){
     '<div class="fraud-compact-row">' +
 
       '<span class="ok"><b>Success:</b> ' +
-      successRate + '%</span>' +
+successRate + '%</span> • ' +
 
-      '<span class="cancel"><b>Cancelled:</b> ' +
-      cancelRate + '%</span>' +
+'<span class="cancel"><b>Cancelled:</b> ' +
+cancelRate + '%</span> • ' +
 
-      '<span><b>Parcels:</b> ' +
-      esc(volume) + '</span>' +
+'<span><b>Delivered:</b> ' +
+delivered + '</span> • ' +
 
-      '<span class="bad"><b>Fraud:</b> ' +
-      bad + '</span>' +
+'<span><b>Cancelled:</b> ' +
+cancelled + '</span> • ' +
+
+'<span><b>Parcel volume:</b> ' +
+esc(volume) + '</span> • ' +
+
+'<span class="bad"><b>Fraud reports:</b> ' +
+bad + '</span>' +
 
     '</div>' +
 
@@ -12378,21 +12387,31 @@ async function fetchApiKeyFraud(ph){
       let source = '';
       let lastErr = '';
 
-      try{
-        result = await fetchApiKeyFraud(ph);
-        source = 'Steadfast API';
-      }catch(e1){
-        lastErr = e1?.message || String(e1);
+     
         try{
-          result = await fetchMerchantSessionFraud(ph);
-          source = 'Steadfast merchant session';
-        }catch(e2){
-          const local = appHistory(ph);
-          if(local.total){
-            result = local;
-            source = 'App courier history';
-          }
-        }
+  // নতুন Steadfast live data আগে চেষ্টা করবে
+  result = await fetchMerchantSessionFraud(ph);
+  source = 'Steadfast Live';
+
+}catch(e1){
+
+  lastErr = e1?.message || String(e1);
+
+  try{
+    // Steadfast direct request কাজ না করলে Worker API
+    result = await fetchApiKeyFraud(ph);
+    source = 'Steadfast API';
+
+  }catch(e2){
+
+    const local = appHistory(ph);
+
+    if(local.total){
+      result = parseFraudData(local);
+      source = 'App courier history';
+    }
+  }
+        
       }
 
       if(result){
