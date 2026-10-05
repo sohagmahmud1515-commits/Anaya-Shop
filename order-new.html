@@ -11942,16 +11942,23 @@ body.order-group-open #emergencySection .order-search-card{
     return Number.isFinite(n) ? n : 0;
   };
 
-  let delivered = num(d.total_delivered ?? d.delivered);
-  let cancelled = num(
+  // New Steadfast fields + old format fallback
+  const delivered = num(
+    d.delivered_count ??
+    d.total_delivered ??
+    d.delivered
+  );
+
+  const cancelled = num(
+    d.cancelled_count ??
     d.total_cancelled ??
     d.cancelled ??
     d.total_cancel
   );
 
   let total = num(
-    d.Total_parcels ??
     d.total_parcels ??
+    d.Total_parcels ??
     d.total
   );
 
@@ -12003,7 +12010,26 @@ body.order-group-open #emergencySection .order-search-card{
     d.volume_band ??
     d.volumeBand ??
     ''
-  ).trim().toLowerCase();
+  ).trim();
+
+  const volumeRange = String(
+    d.volume_range ??
+    d.volumeRange ??
+    ''
+  ).trim();
+
+  const fraudCategories = Array.isArray(d.fraud_categories)
+    ? d.fraud_categories
+    : [];
+
+  const fraudKeywords = Array.isArray(d.fraud_keywords)
+    ? d.fraud_keywords
+    : [];
+
+  const reportedByYou = Boolean(
+    d.reported_by_you ??
+    d.reportedByYou
+  );
 
   return {
     delivered,
@@ -12013,6 +12039,10 @@ body.order-group-open #emergencySection .order-search-card{
     deliveryRatio,
     cancellationRatio,
     volumeBand,
+    volumeRange,
+    fraudCategories,
+    fraudKeywords,
+    reportedByYou,
     raw: d
   };
 }
