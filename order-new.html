@@ -12086,8 +12086,9 @@ async function fetchApiKeyFraud(ph){
     throw new Error('HTTP ' + r.status);
   }
 
-  const data = await r.json();
-  return parseFraudData(data);
+ const data = await r.json();
+const realData = data?.data?.summary || data?.summary || data?.data || data;
+return parseFraudData(realData);
 }
   function appHistory(ph){
     const allOrders=(typeof orders!=='undefined'&&Array.isArray(orders))?orders:(window.orders||[]);
