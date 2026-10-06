@@ -3116,7 +3116,48 @@ body.order-group-open #emergencySection.active ~ .group-scroll-nav{
     <button class="edit-save" onclick="saveOrderEdit()">Save Changes</button>
   </div>
 </div>
+<div id="emergencyPopup" style="
+display:none;
+position:fixed;
+inset:0;
+z-index:20000;
+background:rgba(0,0,0,.55);
+align-items:center;
+justify-content:center;
+padding:25px;">
 
+  <div style="
+  width:100%;
+  max-width:300px;
+  background:white;
+  border-radius:22px;
+  padding:25px 20px 20px;
+  text-align:center;
+  box-shadow:0 15px 40px rgba(0,0,0,.25);">
+
+    <div style="font-size:48px;">🚨</div>
+
+    <div style="
+    font-size:20px;
+    font-weight:900;
+    margin:12px 0 20px;">
+      Emergency-তে<br>পাঠানো হয়েছে ✅
+    </div>
+
+    <button onclick="closeEmergencyPopup()" style="
+    width:100%;
+    border:0;
+    border-radius:13px;
+    padding:13px;
+    background:#0f8f83;
+    color:white;
+    font-size:17px;
+    font-weight:900;">
+      OK
+    </button>
+
+  </div>
+</div>
 <div id="fraudModal" class="fraud-modal" onclick="closeFraudChecker()">
   <div class="fraud-sheet" onclick="event.stopPropagation()">
     <button class="sheet-close" onclick="closeFraudChecker()">×</button>
@@ -4000,9 +4041,15 @@ body.order-group-open #emergencySection.active ~ .group-scroll-nav{
     saveOrders();
     renderEverything();
 
-    alert("🚨 Order sent to Emergency");
+    showEmergencyPopup();
   }
+function showEmergencyPopup(){
+  document.getElementById("emergencyPopup").style.display = "flex";
+}
 
+function closeEmergencyPopup(){
+  document.getElementById("emergencyPopup").style.display = "none";
+  }
   const STEADFAST_BASE_URL = "https://portal.packzy.com/api/v1";
 
   function getSteadfastSettings(){
