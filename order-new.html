@@ -5862,28 +5862,11 @@ const deleteButton =
     }
 
     const newPhone = extractPhone(edited);
-
-    if(newPhone){
-      const duplicate = orders.find(
-        o =>
-          o.id !== id &&
-          normalizePhone(o.phone) === newPhone &&
-          o.status !== "courier_sent"
-      );
-
-      if(duplicate){
-        alert(
-          "Duplicate Order Warning!\n\n" +
-          "এই নাম্বারে আরেকটি Order এখনো Courier Sent হয়নি.\n" +
-          "Order: " +
-          String(duplicate.serial).padStart(2,"0")
-        );
-
-        return;
-      }
-              order.phone = newPhone;
-    }
-
+if(newPhone){
+    order.phone = newPhone;
+  }
+   
+        
     order.editHistory = order.editHistory || [];
 
     const previousText = order.orderText || "";
@@ -5921,7 +5904,7 @@ const deleteButton =
     closeOrderEditor();
     renderEverything();
 
-    alert("Order successfully updated.");
+  
   }
 
   function checkFraudViaCourierApi(orderId){
