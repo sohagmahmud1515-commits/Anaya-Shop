@@ -4857,7 +4857,7 @@ if(!ok) return;
     closeDeleteRequest();
     renderEverything();
 
-    alert("Delete Request Admin Approval-এ পাঠানো হয়েছে.");
+    showDeleteRequestSuccess();
   }
 
   function pushOrderNotification(recipient, order, reason){
@@ -13673,5 +13673,230 @@ function showSubmitSuccessCard(){
     margin-left:10px !important;
 }
 </style>
+<!-- ===== DELETE REQUEST SUCCESS POPUP START ===== -->
+
+<style>
+#deleteRequestSuccessPopup{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:99999999;
+  background:rgba(15,23,42,.62);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+#deleteRequestSuccessPopup.show{
+  display:flex;
+}
+
+.delete-success-card{
+  position:relative;
+  width:min(88vw,360px);
+  overflow:hidden;
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #ffffff 68%,
+      #e7fff9 100%
+    );
+  border-radius:28px;
+  padding:35px 20px 24px;
+  text-align:center;
+  box-shadow:
+    0 25px 70px rgba(0,0,0,.32),
+    0 2px 8px rgba(0,0,0,.08);
+}
+
+/* বড় সবুজ Tick */
+.delete-success-check-wrap{
+  position:relative;
+  width:120px;
+  height:105px;
+  margin:0 auto 20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.delete-success-check{
+  position:relative;
+  z-index:2;
+  width:88px;
+  height:88px;
+  border-radius:50%;
+  background:linear-gradient(
+    145deg,
+    #35e36f,
+    #08a94e
+  );
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:57px;
+  font-weight:900;
+  line-height:1;
+  box-shadow:
+    0 0 0 14px rgba(51,220,111,.11),
+    0 13px 27px rgba(16,174,83,.25);
+}
+
+/* Tick-এর দুই পাশের ছোট decoration */
+.delete-success-check-wrap::before,
+.delete-success-check-wrap::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  width:22px;
+  height:7px;
+  background:#66dc88;
+  border-radius:20px;
+}
+
+.delete-success-check-wrap::before{
+  left:0;
+  transform:rotate(45deg);
+}
+
+.delete-success-check-wrap::after{
+  right:0;
+  transform:rotate(-45deg);
+}
+
+/* Main heading */
+.delete-success-title{
+  position:relative;
+  z-index:2;
+  color:#073f43;
+  font-size:21px;
+  line-height:1.35;
+  font-weight:900;
+  margin:0;
+}
+
+/* নিচের লেখা */
+.delete-success-sub{
+  position:relative;
+  z-index:2;
+  color:#6e7e88;
+  font-size:16px;
+  line-height:1.4;
+  margin-top:10px;
+}
+
+/* OK Button */
+.delete-success-ok{
+  position:relative;
+  z-index:2;
+  display:block;
+  width:145px;
+  height:52px;
+  margin:27px auto 0;
+  border:0;
+  border-radius:18px;
+  background:linear-gradient(
+    135deg,
+    #0aa096,
+    #007d79
+  );
+  color:#fff;
+  font-size:20px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 11px 24px rgba(0,126,120,.25);
+}
+
+.delete-success-ok:active{
+  transform:scale(.97);
+}
+
+/* ছোট ফোনেও সুন্দর রাখবে */
+@media(max-width:390px){
+  .delete-success-card{
+    width:min(90vw,340px);
+    padding:31px 17px 21px;
+    border-radius:25px;
+  }
+
+  .delete-success-check{
+    width:78px;
+    height:78px;
+    font-size:50px;
+  }
+
+  .delete-success-check-wrap{
+    height:95px;
+    margin-bottom:17px;
+  }
+
+  .delete-success-title{
+    font-size:19px;
+  }
+
+  .delete-success-sub{
+    font-size:14px;
+  }
+
+  .delete-success-ok{
+    width:135px;
+    height:49px;
+    font-size:18px;
+  }
+}
+</style>
+
+<div id="deleteRequestSuccessPopup">
+
+  <div class="delete-success-card">
+
+    <div class="delete-success-check-wrap">
+      <div class="delete-success-check">✓</div>
+    </div>
+
+    <div class="delete-success-title">
+      Delete Request Submitted ✅
+    </div>
+
+    <div class="delete-success-sub">
+      Waiting for Admin Approval
+    </div>
+
+    <button
+      type="button"
+      class="delete-success-ok"
+      onclick="closeDeleteRequestSuccess()">
+      OK
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+function showDeleteRequestSuccess(){
+  const popup =
+    document.getElementById("deleteRequestSuccessPopup");
+
+  if(popup){
+    popup.classList.add("show");
+  }
+}
+
+function closeDeleteRequestSuccess(){
+  const popup =
+    document.getElementById("deleteRequestSuccessPopup");
+
+  if(popup){
+    popup.classList.remove("show");
+  }
+}
+</script>
+
+<!-- ===== DELETE REQUEST SUCCESS POPUP END ===== --> 
 </body>
 </html>
