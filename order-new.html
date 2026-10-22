@@ -5863,7 +5863,10 @@ const deleteButton =
 
     const newPhone = extractPhone(edited);
 if(newPhone){
-    order.phone = newPhone;
+  if(normalizePhone(order.phone) !== normalizePhone(newPhone)){
+    delete order.fraudCheckResult;
+  }
+  order.phone = newPhone;
   }
    
         
