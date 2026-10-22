@@ -5531,6 +5531,9 @@ function deleteFromSourceGroup(){
 
         return;
       }
+      if (normalizePhone(order.phone) !== normalizePhone(newPhone)) {
+  delete order.fraudCheckResult;
+  }
               order.phone = newPhone;
     }
 
