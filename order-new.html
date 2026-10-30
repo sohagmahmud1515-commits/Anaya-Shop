@@ -4313,6 +4313,7 @@ function closeEmergencyPopup(){
       order.status = "courier_sent";
       order.courierSent = true;
       order.courierSentAt = new Date().toLocaleString();
+      order.courierSentDateKey = localDateKey();
       order.courierStatus = c.status || "in_review";
       order.hiddenFromPending = false;
       order.hiddenFromEmergency = false;
@@ -4412,6 +4413,7 @@ function closeEmergencyPopup(){
       order.status = "courier_sent";
       order.courierSent = true;
       order.courierSentAt = new Date().toLocaleString();
+      order.courierSentDateKey = localDateKey();
       order.courierStatus = c.status || "in_review";
       // Courier Send হওয়ার পর Pending/Emergency group থেকে অটো সরাবে না।
       // User পরে Remove চাপলে group থেকে সরবে।
@@ -9701,7 +9703,7 @@ window.canCall = canCall;
     }
   };
   }
-  }
+  
 
   function pageRecipients(page){const names=readMods().filter(m=>(m.pages||[]).includes(page)).map(m=>m.name).filter(Boolean);let admins=[];try{admins=JSON.parse(localStorage.getItem('mayaAdmins')||'[]')}catch(e){};(Array.isArray(admins)?admins:[]).forEach(a=>{if(a&&a.name)names.push(a.name)});if(!names.length||!names.some(n=>String(n).toLowerCase()==='admin'))names.push('Admin');return [...new Set(names)];}
   window.receiveRiderNote=function(orderId,note,rider='Rider'){
@@ -10977,7 +10979,7 @@ window.saveModerator=async function(){
     if(dsRange==='today')return k===end;
     if(dsRange==='yesterday')return k===dsOffset(-1);
     if(dsRange==='3days')return k>=dsOffset(-2)&&k<=end;
-   dge==='week')return k>=dsOffset(-6)&&k<=end;
+   if(dsRange==='week')return k>=dsOffset(-6)&&k<=end;
     if(dsRange==='15days')return k>=dsOffset(-14)&&k<=end;
     if(dsRange==='month')return k>=dsOffset(-29)&&k<=end;
     return k===end;
@@ -11424,7 +11426,7 @@ window.saveModerator=async function(){
     const riderNote=latestRider(o), localNote=latestDelivery(o);
     const riderName=o.riderName||o.courierRiderName||o.deliveryRiderName||(riderNote&&riderNote.rider)||'';
     const riderPhone=o.riderPhone||o.courierRiderPhone||o.deliveryRiderPhone||'';
-    const hub=o.courierLocation||o.currentdi.hubName||'Courier API থেকে আসবে';
+    const hub=o.courierLocation||o.currentdi?.hubName||'Courier API থেকে আসবে';
     const hubPhone=o.hubPhone||o.currentHubPhone||'';
     const notes=(o.callNotes||[]).map(x=>'<div class="call-note-item"><b>'+e(x.status||'Call Note')+'</b><br>'+e(x.text||'')+'<br><small>'+e(x.by||'Admin')+' • '+e(x.at||'')+'</small></div>').join('');
     const booking=o.courierSentAt||o.date||o.createdAt||'—';
@@ -11531,7 +11533,7 @@ ${(typeof window.mayaIsAdmin==='function' && window.mayaIsAdmin()) ? `
   function weight(o){ const v=o.weight??o.parcelWeight??o.courierWeight; return (v===undefined||v===null||v==='')?'—':String(v).replace(/\s*kg$/i,'')+'kg'; }
   function provider(o){ return o.courierName||o.courierProvider||'Courier'; }
   function sentOrders(){
-  return (window.orders||[]).filter(
+  return (Array.isArray(orders) ? orders : []).filter(
     o=>o.trackingDeleted!==true &&
     (
       o.status==='courier_sent' ||
