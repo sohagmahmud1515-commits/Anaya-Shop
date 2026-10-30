@@ -11011,8 +11011,10 @@ window.saveModerator=async function(){
   }
   function dsDeleted(){
     try{return (typeof loadDeletedOrderArchive==='function'?loadDeletedOrderArchive():[]).filter(dsInRange)}catch(e){return []}
+  }
   function dsActive(){return (Array.isArray(orders)?orders:[]).filter(o=>o.appDeleted!==true).filter(dsInRange)}
-    const icons={
+    function dsMetric(label,list,cls){
+  const icons={
       'All Orders':'📦',
       'Pending':'⏳',
       'Emergency':'🚨',
@@ -11129,7 +11131,21 @@ window.saveModerator=async function(){
   }
   function localKey(d=new Date()){const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')}
   function offset(days){const d=new Date();d.setDate(d.getDate()+days);return localKey(d)}
-  function orderKey(o){if(o?.createdDateKey)return String(o.createdDateKey).slice(0,10);const raw=o?.date||o?.createdAt||o?.courierSentAt||'';const d=new Date(raw);return isNaN(d.getTime())?'':localKey(d)}
+  function orderKey(o){
+  if(source()==='courier'){
+    if(o?.courierSentDateKey)
+      return String(o.courierSentDateKey).slice(0,10);
+
+    const d=new Date(o?.courierSentAt||'');
+    return isNaN(d.getTime())?'':localKey(d);
+  }
+
+  if(o?.createdDateKey)
+    return String(o.createdDateKey).slice(0,10);
+
+  const d=new Date(o?.date||o?.createdAt||'');
+  return isNaN(d.getTime())?'':localKey(d);
+  }
   function inRange(o){
     const k=orderKey(o);if(!k)return false;
     const r=window.__mayaDsRange||'today',end=localKey();
