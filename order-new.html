@@ -13902,5 +13902,123 @@ function closeDeleteRequestSuccess(){
 </script>
 
 <!-- ===== DELETE REQUEST SUCCESS POPUP END ===== --> 
+<!-- MAYA COURIER STATUS GROUPS PATCH - START -->
+<style id="maya-courier-status-groups-style">
+  #mayaCourierGroupTabs{display:flex;gap:8px;overflow-x:auto;padding:6px 1px 12px;scrollbar-width:thin;scroll-snap-type:x mandatory}
+  #mayaCourierGroupTabs button{flex:0 0 auto;border:1px solid #d7e2e2;background:#fff;color:#49616a;border-radius:24px;padding:9px 12px;font-size:12px;font-weight:800;cursor:pointer;scroll-snap-align:start}
+  #mayaCourierGroupTabs button.active{background:#079c8a;border-color:#079c8a;color:#fff}
+  #mayaCourierGroupTabs button span{display:inline-flex;min-width:20px;height:20px;align-items:center;justify-content:center;margin-left:4px;padding:0 4px;border-radius:10px;background:rgba(127,142,148,.14)}
+  #mayaCourierGroupTabs button.active span{background:rgba(255,255,255,.23)}
+  #courierTrackingList .cp-status.maya-entry{background:#f2f5f7;color:#526473;border-color:#cdd8de}
+  #courierTrackingList .cp-status.maya-approved{background:#e6f7f3;color:#087c6c;border-color:#aee1d6}
+  #courierTrackingList .cp-status.maya-partial{background:#fff4da;color:#956412;border-color:#f0d49a}
+  #courierTrackingList .cp-status.maya-cancelled{background:#fff0f1;color:#bb3343;border-color:#f0c3c8}
+  #courierTrackingList .cp-status.maya-delivered{background:#e8faee;color:#147c42;border-color:#b8e8c8}
+</style>
+<script id="maya-courier-status-groups-js">
+(function(){
+  'use strict';
+  if(window.__mayaCourierGroupsInstalled) return;
+  window.__mayaCourierGroupsInstalled=true;
+
+  const labels={all:'All',entry:'Entry',approved:'Approved',cancelled:'Cancelled',partial:'Partial',delivered:'Delivered'};
+  let selected='all';
+  const originalRender=window.renderCourierTrackingList;
+  const originalFilter=window.filterCourierTrackingList;
+
+  // A courier outcome awaiting approval is NOT a completed outcome.
+  function groupFor(o){
+    const s=String(o?.courierStatus||o?.deliveryStatus||o?.delivery_status||'in_review').trim().toLowerCase().replace(/[\s-]+/g,'_');
+    if(s.includes('approval_pending')) return 'approved';
+    if(s==='partial_delivered'||s==='partially_delivered'||s==='partial_delivery') return 'partial';
+    if(s==='delivered'||s==='complete'||s==='completed'||s==='success') return 'delivered';
+    if(['cancelled','canceled','returned','return','return_received','failed'].includes(s)) return 'cancelled';
+    if(['pending','approved','assigned','in_transit','out_for_delivery','picked_up','pickup_done','hold'].includes(s)) return 'approved';
+    return 'entry'; // in_review, unknown, or not-yet-synced
+  }
+  function badgeFor(o){
+    const s=String(o?.courierStatus||o?.deliveryStatus||'in_review').toLowerCase().replace(/[\s-]+/g,'_');
+    if(s.includes('approval_pending')) return s.replaceAll('_',' ') + ' (not final)';
+    if(s==='hold') return 'On Hold';
+    if(s==='in_review') return 'Entry / In Review';
+    if(s==='pending') return 'Courier Pending';
+    if(s==='partial_delivered') return 'Partial';
+    if(s==='delivered') return 'Delivered';
+    if(s==='cancelled'||s==='canceled') return 'Cancelled';
+    return s.replaceAll('_',' ') || 'Entry';
+  }
+  function getOrders(){
+    try{return Array.isArray(orders)?orders:[]}catch(e){return Array.isArray(window.orders)?window.orders:[]}
+  }
+  function ensureTabs(){
+    const list=document.getElementById('courierTrackingList');
+    if(!list)return null;
+    let tabs=document.getElementById('mayaCourierGroupTabs');
+    if(!tabs){
+      tabs=document.createElement('div');
+      tabs.id='mayaCourierGroupTabs';
+      tabs.setAttribute('aria-label','Courier status groups');
+      for(const [key,name] of Object.entries(labels)){
+        const button=document.createElement('button');
+        button.type='button';
+        button.dataset.group=key;
+        const nameEl=document.createTextNode(name+' ');
+        const num=document.createElement('span');num.textContent='0';
+        button.append(nameEl,num);
+        button.addEventListener('click',function(){selected=key;window.filterCourierTrackingList();});
+        tabs.appendChild(button);
+      }
+      list.parentNode.insertBefore(tabs,list);
+    }
+    return tabs;
+  }
+  function applyGroups(){
+    const box=document.getElementById('courierTrackingList');
+    const tabs=ensureTabs();if(!box||!tabs)return;
+    const map=new Map(getOrders().map(o=>[String(o.id),o]));
+    const counts={all:0,entry:0,approved:0,cancelled:0,partial:0,delivered:0};
+    let visible=0;
+    for(const card of box.querySelectorAll('.courier-track-card')){
+      const o=map.get(String(card.dataset.orderId||''));
+      const matchBase=card.style.display!=='none'; // Original search/date filter already applied
+      const group=groupFor(o);
+      card.dataset.courierGroup=group;
+      if(matchBase){counts.all++;counts[group]++;}
+      const show=!!o && matchBase && (selected==='all'||selected===group);
+      card.style.display=show?'':'none';
+      if(show)visible++;
+      const badge=card.querySelector('.cp-status');
+      if(badge && o){
+        badge.textContent=badgeFor(o);
+        badge.classList.remove('maya-entry','maya-approved','maya-cancelled','maya-partial','maya-delivered');
+        badge.classList.add('maya-'+group);
+      }
+    }
+    for(const b of tabs.querySelectorAll('button')){
+      const key=b.dataset.group;
+      b.classList.toggle('active',key===selected);
+      b.querySelector('span').textContent=String(counts[key]||0);
+      b.setAttribute('aria-pressed',key===selected?'true':'false');
+    }
+    const total=document.getElementById('courierParcelFoundCount');
+    if(total) total.textContent=String(visible);
+    const no=document.getElementById('courierTrackingNoResult');
+    if(no) no.style.display=visible?'none':'block';
+  }
+  window.filterCourierTrackingList=function(){
+    if(typeof originalFilter==='function') originalFilter();
+    applyGroups();
+  };
+  window.renderCourierTrackingList=function(){
+    if(typeof originalRender==='function') originalRender();
+    ensureTabs();
+    window.filterCourierTrackingList();
+  };
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',()=>window.renderCourierTrackingList(),{once:true});
+  }else{window.renderCourierTrackingList()}
+})();
+</script>
+<!-- MAYA COURIER STATUS GROUPS PATCH - END -->
 </body>
 </html>
