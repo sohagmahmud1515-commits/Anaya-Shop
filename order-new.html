@@ -7955,24 +7955,49 @@ function openDuplicatePreviousOrder(){
   }
 
   if(
-    typeof orders !== "undefined" &&
-    Array.isArray(orders)
-  ){
-    const index = orders.findIndex(
-      x => String(x.id) === String(o.id)
-    );
+  typeof orders !== "undefined" &&
+  Array.isArray(orders)
+){
+  const index = orders.findIndex(
+    x => String(x.id) === String(o.id)
+  );
 
-    if(index >= 0) orders[index] = o;
-    else orders.unshift(o);
-  }
+  if(index >= 0) orders[index] = o;
+  else orders.unshift(o);
+}
 
-  closeDuplicateOrderModal();
+closeDuplicateOrderModal();
 
-  if(typeof editOrder === "function"){
-    editOrder(String(o.id));
+const isEmergency =
+  o.emergency === true ||
+  o.status === "emergency";
+
+const pendingSearch =
+  document.getElementById("pendingSearchInput");
+const emergencySearch =
+  document.getElementById("emergencySearchInput");
+
+if(pendingSearch) pendingSearch.value = "";
+if(emergencySearch) emergencySearch.value = "";
+
+if(isEmergency){
+  openEmergency();
+}else{
+  openPending();
+}
+
+setTimeout(()=>{
+  const card = document.getElementById("order-card-" + o.id);
+
+  if(card){
+    card.scrollIntoView({
+      behavior:"smooth",
+      block:"center"
+    });
   }else{
-    alert("Order Edit screen পাওয়া যায়নি।");
+    alert("আগের অর্ডার কার্ডটি গ্রুপে পাওয়া যায়নি।");
   }
+},150);
 }
 
 function addCourierCallNote(orderId){
