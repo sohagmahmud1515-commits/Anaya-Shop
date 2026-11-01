@@ -11462,7 +11462,7 @@ window.saveModerator=async function(){
 
   window.dsRenderDailySummary=function(){
     const c=document.getElementById('dailySummaryContent');if(!c)return;
-    try{if(typeof setOrderHeaderTitle==='function')setOrderHeaderTitle('Summary Management');else{const h=document.getElementById('orderHeaderTitle');if(h)h.textContent='Summary Management'}}catch(e){}
+    
     const a=active(),d=deleted(),s=source();
     if(s==='courier'){
       const sent=a.filter(o=>o.courierSent||o.status==='courier_sent'||o.parcelId||o.trackingCode||o.trackingId),del=sent.filter(o=>status(o)==='delivered'),ret=sent.filter(o=>status(o)==='return'),pen=sent.filter(o=>status(o)==='pending');
