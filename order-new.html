@@ -4330,7 +4330,7 @@ function closeEmergencyPopup(){
       normalizeBanglaDigits(String(order.codAmount))
         .replace(/[^0-9.]/g,"")
     );
-    if(Number.isFinite(saved) && saved >= 0) return saved;
+    if(Number.isFinite(saved) && saved > 0) return saved;
   }
 
   const text = normalizeBanglaDigits(order.orderText || "");
@@ -4573,15 +4573,8 @@ function closeEmergencyPopup(){
     // পুরোনো Courier Send-এ আংশিক address save থাকলেও বর্তমান Order Details থেকে Full Address-কে অগ্রাধিকার দাও
     const parsedFullAddress = extractFullAddressFromOrderText(order.orderText || "");
     const stickerAddress = parsedFullAddress || recipient.address || order.steadfastRecipientAddress || order.address || "";
-    let cod = 0;
-    if(order.codAmount !== undefined && order.codAmount !== null && order.codAmount !== ""){
-      const n = Number(normalizeBanglaDigits(String(order.codAmount)).replace(/[^0-9.]/g,""));
-      if(Number.isFinite(n)) cod = n;
-    }else{
-      const parsed = extractCodAmountFromOrder(order);
-      if(parsed !== null && Number.isFinite(Number(parsed))) cod = Number(parsed);
-    }
-    const orderNo = String(order.serial || "").padStart(2,"0");
+const parsedCod = extractCodAmountFromOrder(order);
+const cod = parsedCod === null ? 0 : Number(parsedCod);const orderNo = String(order.serial || "").padStart(2,"0");
     const trackingValue = String(order.trackingCode || order.trackingId || parcelId);
 
     const win = window.open("", "_blank", "width=430,height=760");
@@ -4591,7 +4584,6 @@ function closeEmergencyPopup(){
     }
 
     const safeParcel = escapeHTML(parcelId);
-    const safeTracking = escapeHTML(trackingValue);
     const safeName = escapeHTML(stickerName || "—");
     const safePhone = escapeHTML(stickerPhone || "—");
     const safeAddress = escapeHTML(stickerAddress || "—");
@@ -4664,10 +4656,10 @@ body{min-height:100vh}
     <div class="customer">
       <div class="k">Name</div><div class="v">${safeName}</div>
       <div class="k">Phone</div><div class="v">${safePhone}</div>
-      <div class="k">Page</div><div class="v">${safePage}</div>
-      <div class="k">Date</div><div class="v">${safeDate}</div>
+      
+    
       <div class="k">Weight</div><div class="v">${safeWeight}</div>
-      <div class="k">Charge</div><div class="v">৳ ${chargeText}</div>
+      
     </div>
     <div class="address-title">Full Address</div>
     <div class="address-box">${safeAddress}</div>
