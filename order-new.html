@@ -780,59 +780,171 @@
   text-align:left !important;
 }
 
+/* Premium Duplicate Order Warning */
+
 .duplicate-modal{
-  display:none;position:fixed;inset:0;z-index:11000;
-  background:rgba(0,0,0,.48);align-items:center;justify-content:center;
-  padding:20px;
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:11000;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:rgba(11,28,26,.55);
+  backdrop-filter:blur(4px);
 }
-.duplicate-modal.active{display:flex}
+
+.duplicate-modal.active{
+  display:flex;
+}
+
 .duplicate-card{
-  width:100%;max-width:520px;background:#fff;border-radius:22px;
-  padding:18px;box-shadow:0 18px 45px rgba(0,0,0,.22);
+  width:min(100%,440px);
+  max-height:calc(100dvh - 32px);
+  overflow-y:auto;
+  background:#fff;
+  border:1px solid #e4eeea;
+  border-radius:23px;
+  padding:22px 19px;
+  box-shadow:0 22px 65px rgba(3,36,28,.22);
 }
-.duplicate-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+
+.duplicate-top{
+  text-align:center;
+  margin-bottom:15px;
+}
+
 .duplicate-icon{
-  width:46px;height:46px;border-radius:14px;background:#fff1e7;
-  display:flex;align-items:center;justify-content:center;font-size:24px;
+  width:52px;
+  height:52px;
+  margin:0 auto 10px;
+  border-radius:16px;
+  background:#e8f5ef;
+  color:#126747;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
 }
-.duplicate-title{font-size:19px;font-weight:900;color:#9b4d00}
-.duplicate-warning{
-  background:linear-gradient(135deg,#fff5e8,#fffaf4);
-  border:1px solid #f3d5ac;border-left:5px solid #ee8a00;
-  border-radius:13px;padding:12px 13px;color:#6b4a20;
-  font-size:13.5px;font-weight:700;line-height:1.5;
+
+.duplicate-title{
+  font-size:19px;
+  font-weight:900;
+  color:#193d32;
+  line-height:1.45;
 }
+
+.duplicate-subtitle{
+  font-size:13px;
+  line-height:1.6;
+  color:#74827a;
+  margin-top:6px;
+}
+
 .duplicate-info{
-  margin-top:10px;background:linear-gradient(135deg,#eefafa,#f7fbff);
-  border:1px solid #cce6e7;border-radius:13px;padding:12px 13px;
-  color:#24575b;line-height:1.65;font-size:14px;
+  border:1px solid #e1eae6;
+  background:#f7faf8;
+  border-radius:15px;
+  padding:7px 13px;
 }
-.duplicate-info b{color:#0d7478}
-.duplicate-ok{
-  width:100%;margin-top:14px;border:0;border-radius:12px;padding:13px;
-  background:#0f8f83;color:#fff;font-size:15px;font-weight:900;cursor:pointer;
+
+.duplicate-info-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:9px 0;
+  font-size:13px;
+}
+
+.duplicate-info-row+.duplicate-info-row{
+  border-top:1px solid #e4ebe7;
+}
+
+.duplicate-info-label{
+  color:#687a70;
+}
+
+.duplicate-info-value{
+  color:#1a3d31;
+  font-weight:800;
+  text-align:right;
+  overflow-wrap:anywhere;
+}
+
+.duplicate-group{
+  border-radius:999px;
+  background:#fff2d8;
+  color:#895d11;
+  padding:4px 9px;
+  font-size:11px;
+  font-weight:800;
 }
 
 .duplicate-note{
-  margin-top:10px;
-  background:linear-gradient(135deg,#eef8ff,#f7fbff);
-  border:1px solid #c8e2f1;
-  border-left:5px solid #2389b8;
-  border-radius:13px;
-  padding:11px 13px;
-  box-shadow:0 3px 10px rgba(35,137,184,.06);
+  margin-top:12px;
+  border:1px solid #f1dfc0;
+  background:#fdf7ed;
+  border-radius:14px;
+  padding:12px 13px;
 }
+
 .duplicate-note-title{
-  font-size:13.5px;
+  color:#795319;
+  font-size:13px;
   font-weight:900;
-  color:#17698f;
-  margin-bottom:5px;
+  margin-bottom:6px;
 }
+
 .duplicate-note-text{
+  color:#665643;
   font-size:12.5px;
-  line-height:1.55;
-  font-weight:650;
-  color:#4c606b;
+  line-height:1.7;
+}
+
+.duplicate-actions{
+  display:grid;
+  gap:9px;
+  margin-top:15px;
+}
+
+.duplicate-action{
+  width:100%;
+  border-radius:12px;
+  padding:13px 9px;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+  line-height:1.45;
+}
+
+.duplicate-action-primary{
+  background:#126747;
+  color:#fff;
+  border:1px solid #126747;
+}
+
+.duplicate-action-secondary{
+  background:#fff;
+  color:#486257;
+  border:1px solid #d6e2dc;
+}
+
+.duplicate-action:focus-visible{
+  outline:3px solid #95cdb8;
+  outline-offset:2px;
+}
+
+@media(max-width:360px){
+  .duplicate-card{
+    padding:17px 13px;
+  }
+  .duplicate-title{
+    font-size:17px;
+  }
+  .duplicate-action{
+    font-size:12px;
+  }
 }
 
 .order-search-wrap{
@@ -7749,19 +7861,119 @@ function formatOrderDate12h(value){
 </script>
 <script>
 
+let mayaDuplicateSelectedOrder = null;
+
 function showDuplicateOrderModal(order){
   if(!order) return;
 
-  document.getElementById("dupOrderNo").textContent =
-    String(order.serial || "").padStart(2,"0");
+  mayaDuplicateSelectedOrder = order;
 
-  document.getElementById("dupPageName").textContent =
-    order.pageName || "—";
+  const no = order.serial
+    ? String(order.serial).padStart(2,"0")
+    : "—";
 
-  document.getElementById("dupTakenBy").textContent =
-    order.createdBy || "Admin";
+  const group =
+    order.emergency === true ||
+    order.status === "emergency"
+      ? "Emergency Group"
+      : order.status === "website"
+        ? "Order by Website"
+        : "Pending Group";
 
-  document
+  const items = {
+    dupOrderNo: "#" + no,
+    dupGroupName: group,
+    dupPageName: order.pageName || "—",
+    dupPhoneNumber:
+      order.phone ||
+      (typeof extractPhone === "function"
+        ? extractPhone(order.orderText || "")
+        : "") ||
+      "—"
+  };
+
+  Object.entries(items).forEach(([id,value])=>{
+    const el = document.getElementById(id);
+    if(el) el.textContent = value;
+  });
+
+  document.getElementById("duplicateOrderModal")
+    ?.classList.add("active");
+}
+
+function closeDuplicateOrderModal(){
+  document.getElementById("duplicateOrderModal")
+    ?.classList.remove("active");
+}
+
+function openDuplicatePreviousOrder(){
+  const o = mayaDuplicateSelectedOrder;
+  if(!o) return;
+
+  let session = null;
+  try{
+    session = JSON.parse(
+      sessionStorage.getItem("mayaAuthSession") || "null"
+    );
+  }catch(e){}
+
+  if(!session){
+    alert("আগে Login করুন।");
+    return;
+  }
+
+  if(session.role !== "admin"){
+    const profile =
+      typeof window.mayaCurrentProfile === "function"
+        ? window.mayaCurrentProfile()
+        : null;
+
+    const pages = Array.isArray(profile?.pages)
+      ? profile.pages
+      : [];
+
+    if(!pages.includes(o.pageName || "")){
+      alert("এই Page-এর Order Edit করার অনুমতি নেই।");
+      return;
+    }
+
+    const group =
+      o.emergency === true || o.status === "emergency"
+        ? "Emergency"
+        : "Pending";
+
+    if(
+      typeof window.mayaCanGroup !== "function" ||
+      !(
+        window.mayaCanGroup(group) ||
+        window.mayaCanGroup("All Order")
+      )
+    ){
+      alert("এই Group-এর Order Edit করার অনুমতি নেই।");
+      return;
+    }
+  }
+
+  if(
+    typeof orders !== "undefined" &&
+    Array.isArray(orders)
+  ){
+    const index = orders.findIndex(
+      x => String(x.id) === String(o.id)
+    );
+
+    if(index >= 0) orders[index] = o;
+    else orders.unshift(o);
+  }
+
+  closeDuplicateOrderModal();
+
+  if(typeof editOrder === "function"){
+    editOrder(String(o.id));
+  }else{
+    alert("Order Edit screen পাওয়া যায়নি।");
+  }
+}
     .getElementById("duplicateOrderModal")
     .classList.add("active");
 }
@@ -8064,62 +8276,65 @@ function clearCourierTrackingSearch(){
 </script>
 <div id="duplicateOrderModal"
      class="duplicate-modal"
-     onclick="closeDuplicateOrderModal()">
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="duplicateModalHeading">
 
-  <div class="duplicate-card"
-       onclick="event.stopPropagation()">
+  <div class="duplicate-card">
 
-    <div class="duplicate-head">
-      <div class="duplicate-icon">⚠️</div>
-      <div class="duplicate-title">
-        Duplicate Order Warning
+    <div class="duplicate-top">
+      <div class="duplicate-icon">⚠</div>
+      <div class="duplicate-title" id="duplicateModalHeading">
+        আগের অর্ডার পাওয়া গেছে!
       </div>
-    </div>
-
-    <div class="duplicate-warning">
-      এই নাম্বারে আগের Order এখনো Courier Sent হয়নি।
+      <div class="duplicate-subtitle">
+        এই মোবাইল নম্বরে ইতিমধ্যে একটি অর্ডার রয়েছে।
+      </div>
     </div>
 
     <div class="duplicate-info">
-      <div>
-        Order:
-        <b id="dupOrderNo">—</b>
+      <div class="duplicate-info-row">
+        <span class="duplicate-info-label">অর্ডার নম্বর</span>
+        <span class="duplicate-info-value" id="dupOrderNo">—</span>
       </div>
-
-      <div>
-        Page:
-        <b id="dupPageName">—</b>
+      <div class="duplicate-info-row">
+        <span class="duplicate-info-label">গ্রুপ</span>
+        <span class="duplicate-group" id="dupGroupName">—</span>
       </div>
-
-      <div>
-        Taken By:
-        <b id="dupTakenBy">—</b>
+      <div class="duplicate-info-row">
+        <span class="duplicate-info-label">পেজ</span>
+        <span class="duplicate-info-value" id="dupPageName">—</span>
+      </div>
+      <div class="duplicate-info-row">
+        <span class="duplicate-info-label">মোবাইল</span>
+        <span class="duplicate-info-value" id="dupPhoneNumber">—</span>
       </div>
     </div>
 
     <div class="duplicate-note">
-
       <div class="duplicate-note-title">
-        💡 গুরুত্বপূর্ণ নোট
+        ◈ ডুপ্লিকেট অর্ডার প্রতিরোধ
       </div>
-
       <div class="duplicate-note-text">
-        এই কাস্টমারের ইতিপূর্বে একটি Order আছে।
-        পার্সেলটি এখনো Courier Sent হয়নি।
-        নতুন করে আরেকটি Order Submit করার আগে
-        কাস্টমারের সাথে পরিষ্কারভাবে কথা বলে নিশ্চিত হয়ে নিন।
-        কাস্টমার যদি Size, Color, Quantity বা কোনো Item
-        পরিবর্তন/যোগ করতে চান, তাহলে নতুন Order Submit না করে
-        আগের Order Number সার্চ করে সেটি Update করুন।
+        এই নম্বরে পূর্বে একটি অর্ডার সংরক্ষিত রয়েছে।
+        একই অর্ডার পুনরায় সাবমিট না করে,
+        প্রয়োজনীয় পরিবর্তনের জন্য আগের অর্ডারটি এডিট করুন।
       </div>
-
     </div>
 
-    <button
-      class="duplicate-ok"
-      onclick="closeDuplicateOrderModal()">
-      ঠিক আছে
-    </button>
+    <div class="duplicate-actions">
+      <button type="button"
+              class="duplicate-action duplicate-action-primary"
+              onclick="openDuplicatePreviousOrder()">
+        ✎ আগের অর্ডার দেখুন ও এডিট করুন
+      </button>
+
+      <button type="button"
+              class="duplicate-action duplicate-action-secondary"
+              onclick="closeDuplicateOrderModal()">
+        ← ফিরে যান
+      </button>
+    </div>
 
   </div>
 </div>
@@ -13266,101 +13481,329 @@ document.addEventListener('click',function(){setTimeout(function(){wire();accoun
     if(!r.ok) throw new Error("IMAGE: "+await r.text());
     return SB_URL+"/storage/v1/object/public/"+BUCKET+"/"+path;
   }
-  async function submit(){
-    var page=document.getElementById("pageName");
-    var txt=document.getElementById("orderText");
-    var inp=document.getElementById("productImage");
-    var pageName=page?String(page.value||"").trim():"";
-    var orderText=txt?String(txt.value||"").trim():"";
-    if(!pageName)return alert("পেজ সিলেক্ট করুন।");
-    if(!inp||!inp.files||!inp.files.length)return alert("ছবি যুক্ত করুন।");
-    if(inp.files.length>7)return alert("সর্বোচ্চ ৭টি ছবি দেওয়া যাবে।");
-    if(!orderText)return alert("কাস্টমারের সম্পূর্ণ অর্ডার লিখুন।");
-    var phone=normPhone(orderText);
-    if(!phone)return alert("অর্ডারে ইংরেজি সংখ্যায় মোবাইল নাম্বার দিন।");
-    if(!hasSize(orderText))return alert("অর্ডারে Size অবশ্যই উল্লেখ করুন।");
+  // Only orders not yet Courier Sent can block submission.
+  let mayaSubmitBusy = false;
 
-    var btn=document.getElementById("omSubmitOrderBtn");
-    if(btn){btn.disabled=true;btn.textContent="⏳ সাবমিট হচ্ছে...";}
+  function activeDuplicate(o, phone){
+    return !!o &&
+      normPhone(o.phone || o.orderText) === phone &&
+      o.status !== "courier_sent" &&
+      o.courierSent !== true &&
+      o.courierSent !== "true";
+  }
+
+  async function previousActiveOrder(phone){
+    var variants = [
+      phone,
+      "880" + phone.slice(1),
+      "+880" + phone.slice(1)
+    ];
+
+    var query = new URLSearchParams({
+      select:"id,serial,data",
+      limit:"100"
+    });
+
+    query.set(
+      "data->>phone",
+      "in.(" + variants.join(",") + ")"
+    );
+
+    var r = await fetch(
+      SB_URL + "/rest/v1/orders?" + query.toString(),
+      {headers:headers()}
+    );
+
+    if(!r.ok){
+      throw new Error(
+        "DUPLICATE_CHECK: " + await r.text()
+      );
+    }
+
+    var rows = await r.json();
+
+    if(!Array.isArray(rows)){
+      throw new Error(
+        "DUPLICATE_CHECK: invalid response"
+      );
+    }
+
+    var cloud = rows.map(x =>
+      x && x.data
+        ? Object.assign({}, x.data, {
+            id:x.data.id || x.id,
+            serial:x.data.serial || x.serial
+          })
+        : null
+    ).filter(Boolean);
+
+    var cached =
+      typeof orders !== "undefined" &&
+      Array.isArray(orders)
+        ? orders
+        : [];
+
+    return cloud.concat(cached)
+      .filter(o => activeDuplicate(o, phone))
+      .sort((a,b) =>
+        (Number(b.serial)||0) -
+        (Number(a.serial)||0)
+      )[0] || null;
+  }
+
+  async function submit(){
+    if(mayaSubmitBusy) return;
+
+    var page = document.getElementById("pageName");
+    var txt = document.getElementById("orderText");
+    var inp = document.getElementById("productImage");
+
+    var pageName = page
+      ? String(page.value || "").trim()
+      : "";
+
+    var orderText = txt
+      ? String(txt.value || "").trim()
+      : "";
+
+    if(!pageName)
+      return alert("পেজ সিলেক্ট করুন।");
+
+    if(!inp || !inp.files || !inp.files.length)
+      return alert("ছবি যুক্ত করুন।");
+
+    if(inp.files.length > 7)
+      return alert("সর্বোচ্চ ৭টি ছবি দেওয়া যাবে।");
+
+    if(!orderText)
+      return alert("কাস্টমারের সম্পূর্ণ অর্ডার লিখুন।");
+
+    var phone = normPhone(orderText);
+
+    if(!phone)
+      return alert("অর্ডারে ইংরেজি সংখ্যায় মোবাইল নাম্বার দিন।");
+
+    if(!hasSize(orderText))
+      return alert("অর্ডারে Size অবশ্যই উল্লেখ করুন।");
+
+    mayaSubmitBusy = true;
+
+    var btn = document.getElementById("omSubmitOrderBtn");
+
+    if(btn){
+      btn.disabled = true;
+      btn.textContent = "⏳ যাচাই চলছে...";
+    }
 
     try{
-      var id="MG-"+Date.now();
-      var urls=[];
-      for(var i=0;i<inp.files.length;i++) urls.push(await upload(inp.files[i],id,i));
+      var duplicate = await previousActiveOrder(phone);
 
-      var now=new Date();
-      var serialRes=await fetch(
-  SB_URL+"/rest/v1/rpc/next_order_serial",
-  {
-    method:"POST",
-    headers:headers({"Content-Type":"application/json"}),
-    body:"{}"
-  }
-);
+      if(duplicate){
+        showDuplicateOrderModal(duplicate);
+        return;
+      }
 
-if(!serialRes.ok){
-  throw new Error("SERIAL: "+await serialRes.text());
-}
+      if(btn) btn.textContent = "⏳ সাবমিট হচ্ছে...";
 
-var counter=Number(await serialRes.json());
+      var id = "MG-" + Date.now();
+      var urls = [];
 
-if(!Number.isFinite(counter) || counter<1){
-  throw new Error("SERIAL: invalid serial");
-}
-      var order={
-        id:id,serial:counter,pageName:pageName,orderText:orderText,phone:phone,
-        images:urls,image:urls[0]||"",status:"pending",emergency:false,
-        deleteRequested:false,deleteReason:"",deleteRequestedAt:"",
-        hiddenFromPending:false,hiddenFromEmergency:false,groupRemovedAt:"",
-        createdBy:(localStorage.getItem("mayaCurrentUser")||localStorage.getItem("employeeName")||"Admin"),
-        createdDateKey:now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0"),
+      for(var i=0;i<inp.files.length;i++){
+        urls.push(
+          await upload(inp.files[i],id,i)
+        );
+      }
+
+      // Check again before saving.
+      duplicate = await previousActiveOrder(phone);
+
+      if(duplicate){
+        showDuplicateOrderModal(duplicate);
+        return;
+      }
+
+      var now = new Date();
+
+      var serialRes = await fetch(
+        SB_URL + "/rest/v1/rpc/next_order_serial",
+        {
+          method:"POST",
+          headers:headers({"Content-Type":"application/json"}),
+          body:"{}"
+        }
+      );
+
+      if(!serialRes.ok){
+        throw new Error(
+          "SERIAL: " + await serialRes.text()
+        );
+      }
+
+      var counter = Number(await serialRes.json());
+
+      if(!Number.isFinite(counter) || counter < 1){
+        throw new Error("SERIAL: invalid serial");
+      }
+
+      var order = {
+        id:id,
+        serial:counter,
+        pageName:pageName,
+        orderText:orderText,
+        phone:phone,
+        images:urls,
+        image:urls[0] || "",
+        status:"pending",
+        emergency:false,
+        deleteRequested:false,
+        deleteReason:"",
+        deleteRequestedAt:"",
+        hiddenFromPending:false,
+        hiddenFromEmergency:false,
+        groupRemovedAt:"",
+        createdBy:(
+          localStorage.getItem("mayaCurrentUser") ||
+          localStorage.getItem("employeeName") ||
+          "Admin"
+        ),
+        createdDateKey:
+          now.getFullYear() + "-" +
+          String(now.getMonth()+1).padStart(2,"0") + "-" +
+          String(now.getDate()).padStart(2,"0"),
         date:now.toLocaleString()
       };
-      var row={id:id,serial:counter,data:order,updated_at:now.toISOString()};
-      var r=await fetch(SB_URL+"/rest/v1/orders?on_conflict=id",{
-        method:"POST",
-        headers:headers({"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"}),
-        body:JSON.stringify(row)
-      });
-      if(!r.ok) throw new Error("ORDER: "+await r.text());
 
-      try{localStorage.setItem("orderCounter",String(counter));}catch(e){}
-      // Cache only lightweight URL-based order data; never base64 images.
+      var row = {
+        id:id,
+        serial:counter,
+        data:order,
+        updated_at:now.toISOString()
+      };
+
+      var r = await fetch(
+        SB_URL + "/rest/v1/orders?on_conflict=id",
+        {
+          method:"POST",
+          headers:headers({
+            "Content-Type":"application/json",
+            "Prefer":"resolution=merge-duplicates,return=minimal"
+          }),
+          body:JSON.stringify(row)
+        }
+      );
+
+      if(!r.ok){
+        var orderError = await r.text();
+
+        if(r.status === 409 && orderError.includes("23505")){
+          var justSaved = await previousActiveOrder(phone);
+
+          if(justSaved){
+            showDuplicateOrderModal(justSaved);
+            return;
+          }
+        }
+
+        throw new Error("ORDER: " + orderError);
+      }
+
       try{
-        var list=JSON.parse(localStorage.getItem("mayaOrders")||"[]");
+        localStorage.setItem(
+          "orderCounter",
+          String(counter)
+        );
+      }catch(e){}
+
+      try{
+        var list = JSON.parse(
+          localStorage.getItem("mayaOrders") || "[]"
+        );
+
         list.unshift(order);
-        localStorage.setItem("mayaOrders",JSON.stringify(list));
-      }catch(e){ console.warn("Local cache skipped:",e); }
+
+        localStorage.setItem(
+          "mayaOrders",
+          JSON.stringify(list)
+        );
+      }catch(e){
+        console.warn("Local cache skipped:",e);
+      }
 
       try{
-        if(typeof orders!=="undefined"){
-          var oi=orders.findIndex(function(x){return String(x&&x.id)===String(order.id)});
-          if(oi>=0) orders[oi]=order; else orders.unshift(order);
+        if(typeof orders !== "undefined"){
+          var oi = orders.findIndex(
+            x => String(x && x.id) === String(order.id)
+          );
+
+          if(oi >= 0) orders[oi] = order;
+          else orders.unshift(order);
         }
       }catch(e){}
-    try{if(typeof renderAllOrders==="function")renderAllOrders()}catch(e){}      
-      if(txt)txt.value="";
-      if(inp)inp.value="";
-      try{if(typeof clearSelectedImagePreview==="function")clearSelectedImagePreview()}catch(e){}
-      try{if(typeof renderEverything==="function")renderEverything()}catch(e){}
-      try{if(typeof updateCounts==="function")updateCounts()}catch(e){}
-      try{if(typeof toggleNewOrderForm==="function")toggleNewOrderForm(false)}catch(e){}
+
+      try{
+        if(typeof renderAllOrders === "function")
+          renderAllOrders();
+      }catch(e){}
+
+      if(txt) txt.value = "";
+      if(inp) inp.value = "";
+
+      try{
+        if(typeof clearSelectedImagePreview === "function")
+          clearSelectedImagePreview();
+      }catch(e){}
+
+      try{
+        if(typeof renderEverything === "function")
+          renderEverything();
+      }catch(e){}
+
+      try{
+        if(typeof updateCounts === "function")
+          updateCounts();
+      }catch(e){}
+
+      try{
+        if(typeof toggleNewOrderForm === "function")
+          toggleNewOrderForm(false);
+      }catch(e){}
+
       showSubmitSuccessCard();
+
     }catch(err){
       console.error(err);
-      var m=String(err&&err.message||err);
-      if(m.indexOf("IMAGE:")===0) alert("ছবি Supabase Storage-এ আপলোড হয়নি। Storage policy চেক করতে হবে।");
-      else if(m.indexOf("ORDER:")===0) alert("Order Supabase table-এ save হয়নি। orders policy চেক করতে হবে।");
-      else alert(
-  "Submit সমস্যা\n\n" +
-  "Error: " + m +
-  "\n\nধাপ: IMAGE upload → SERIAL → ORDER save"
-);
+
+      var m = String(err && err.message || err);
+
+      if(m.indexOf("DUPLICATE_CHECK:") === 0){
+        alert(
+          "আগের অর্ডার যাচাই করা যায়নি। " +
+          "নিরাপত্তার জন্য নতুন অর্ডার সাবমিট বন্ধ রাখা হয়েছে। " +
+          "ইন্টারনেট ও Supabase Access পরীক্ষা করে আবার চেষ্টা করুন।"
+        );
+      }
+      else if(m.indexOf("IMAGE:") === 0){
+        alert("ছবি Supabase Storage-এ আপলোড হয়নি। Storage policy চেক করতে হবে।");
+      }
+      else if(m.indexOf("ORDER:") === 0){
+        alert("Order Supabase table-এ save হয়নি। orders policy চেক করতে হবে।");
+      }
+      else{
+        alert(
+          "Submit সমস্যা\n\n" +
+          "Error: " + m +
+          "\n\nধাপ: IMAGE upload → SERIAL → ORDER save"
+        );
+      }
     }finally{
-      if(btn){btn.disabled=false;btn.innerHTML="☑️ &nbsp; অর্ডার সাবমিট করুন";}
+      mayaSubmitBusy = false;
+
+      if(btn){
+        btn.disabled = false;
+        btn.innerHTML = "☑️ &nbsp; অর্ডার সাবমিট করুন";
+      }
     }
   }
-
   document.addEventListener("click",function(e){
     var b=e.target&&e.target.closest?e.target.closest("#omSubmitOrderBtn"):null;
     if(!b)return;
