@@ -7974,21 +7974,11 @@ function openDuplicatePreviousOrder(){
     alert("Order Edit screen পাওয়া যায়নি।");
   }
 }
-    .getElementById("duplicateOrderModal")
-    .classList.add("active");
-}
-
-
-function closeDuplicateOrderModal(){
-  document
-    .getElementById("duplicateOrderModal")
-    .classList.remove("active");
-}
-
 
 function addCourierCallNote(orderId){
 
   const order =
+    orders.find(o => o.id === orderId);
     orders.find(o => o.id === orderId);
 
   if(!order) return;
@@ -11636,7 +11626,7 @@ window.saveModerator=async function(){
   function timelineHTML(o){ return trackingEvents(o).map(x=>'<div class="pt-event '+(x.rider?'rider':'')+'"><div class="pt-event-dot">'+eventIcon(x.title,x.rider)+'</div><div class="pt-event-body"><div class="pt-event-title">'+e(x.title)+'</div><div class="pt-event-time">'+e(x.time||'')+'</div></div></div>').join(''); }
   function latestDelivery(o){ return (o.deliveryNotes||[])[0] || (o.moderatorNotes||[])[0] || null; }
   function latestRider(o){ return (o.riderNotes||[])[0] || null; }
-  fuption noteStatus(x){ if(!x)return ''; const s=x.sendStatus||''; if(s==='sent')return 'Courier accepted'; if(s==='queued')return 'Courier Send-এর সময় যাবে'; if(s==='failed')return 'Courier-এ পাঠানো যায়নি'; if(s==='not_supported')return 'App-এ Saved'; return ''; }
+  function noteStatus(x){ if(!x)return ''; const s=x.sendStatus||''; if(s==='sent')return 'Courier accepted'; if(s==='queued')return 'Courier Send-এর সময় যাবে'; if(s==='failed')return 'Courier-এ পাঠানো যায়নি'; if(s==='not_supported')return 'App-এ Saved'; return ''; }
   function orderAmount(o){ return o.codAmount ?? o.amount ?? o.totalAmount ?? o.orderAmount ?? o.price ?? 0; }
   function courierCharge(o){ return o.courierCharge ?? o.deliveryCharge ?? o.steadfastDeliveryCharge ?? 0; }
 
