@@ -3697,7 +3697,30 @@ padding:25px;">
     updateCounts();
     setTimeout(omSyncCurrentOrders, 50);
   }
+async function omPermanentlyDeleteOrder(order){
+  const deletedBy =
+    typeof getCurrentEmployee === "function"
+      ? getCurrentEmployee()
+      : "Admin";
 
+  const r = await fetch(
+    OM_SUPABASE_URL + "/rest/v1/rpc/approve_order_delete",
+    {
+      method: "POST",
+      headers: omHeaders({
+        "Content-Type": "application/json"
+      }),
+      body: JSON.stringify({
+        p_order_id: String(order.id),
+        p_deleted_by: String(deletedBy || "Admin")
+      })
+    }
+  );
+
+  if(!r.ok){
+    throw new Error(await r.text());
+  }
+  }
   setTimeout(omLoadCloudOrders, 500);
   setInterval(omLoadCloudOrders, 3000);
 
@@ -5057,22 +5080,7 @@ window.approveDelete = async function(id){
   )) return;
 
   try{
-    const r = await fetch(
-      OM_SUPABASE_URL +
-      '/rest/v1/' + OM_ORDERS_TABLE +
-      '?id=eq.' + encodeURIComponent(order.id),
-      {
-        method:'DELETE',
-        headers:omHeaders({
-          'Prefer':'return=minimal'
-        })
-      }
-    );
-
-    if(!r.ok){
-      throw new Error(await r.text());
-    }
-
+    await omPermanentlyDeleteOrder(order);
     const recipients = [
       order.createdBy || 'Admin',
       order.deleteRequestedBy || ''
@@ -9864,21 +9872,7 @@ window.canCall = canCall;
     ))return;
 
     try{
-      const r=await fetch(
-        OM_SUPABASE_URL+
-        '/rest/v1/'+OM_ORDERS_TABLE+
-        '?id=eq.'+encodeURIComponent(order.id),
-        {
-          method:'DELETE',
-          headers:omHeaders({
-            'Prefer':'return=minimal'
-          })
-        }
-      );
-
-      if(!r.ok){
-        throw new Error(await r.text());
-      }
+      await omPermanentlyDeleteOrder(order);
 
       const recipients=[
         order.createdBy||'Admin',
