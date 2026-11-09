@@ -7423,35 +7423,7 @@ if(newPhone){
 
     renderOrderNotifications();
 
-    let all =
-      getOrderNotifications();
-
-    let current =
-      getCurrentEmployee();
-
-    let changed = false;
-
-    all.forEach(n => {
-      if(
-        (n.recipient || "Admin") === current &&
-        !n.read
-      ){
-        n.read = true;
-        changed = true;
-      }
-    });
-
-    if(changed){
-      localStorage.setItem(
-        "mayaNotifications",
-        JSON.stringify(all)
-      );
-    }
-
-    setTimeout(
-      renderOrderNotifications,
-      50
-    );
+    setTimeout(renderOrderNotifications, 50);
 
     window.scrollTo(0,0);
     mayaPushGroupHistory("notifications");
@@ -13271,7 +13243,7 @@ bad + '</span>' +
     $('mayaShowPassword')?.addEventListener('click',function(){const p=$('mayaLoginPassword');if(!p)return;const show=p.type==='password';p.type=show?'text':'password';this.textContent=show?'Hide':'Show'});
     window.mayaLoginRole='admin';document.querySelectorAll('.maya-role-card').forEach(c=>c.addEventListener('click',function(){window.mayaLoginRole=this.dataset.role;document.querySelectorAll('.maya-role-card').forEach(x=>x.classList.toggle('active',x===this));$('mayaRoleText').textContent=this.dataset.role==='admin'?'Admin Login':'Moderator Login';$('mayaLoginName').focus()}));$('mayaLoginButton')?.addEventListener('click',login);$('mayaLoginPassword')?.addEventListener('keydown',e=>{if(e.key==='Enter')login()});$('mayaLoginName')?.addEventListener('keydown',e=>{if(e.key==='Enter')login()});
     install();setTimeout(install,150);session()?hideGate():showGate();
-    const logout=document.createElement('button');logout.type='button';logout.textContent='↪ Logout';logout.className='oc-menu-card';logout.style.cssText='width:100%;margin-top:10px;color:#b42318;font-weight:900';logout.onclick=window.mayaLogout;const host=document.querySelector('#ocSettings .oc-settings-body')||document.querySelector('#ocSettings');if(host&&!host.querySelector('.maya-logout-added')){logout.classList.add('maya-logout-added');host.appendChild(logout)}
+    const logout=document.createElemer('button');logout.type='button';logout.textContent='↪ Logout';logout.className='oc-menu-card';logout.style.cssText='width:100%;margin-top:10px;color:#b42318;font-weight:900';logout.onclick=window.mayaLogout;const host=document.querySelector('#ocSettings .oc-settings-body')||document.querySelector('#ocSettings');if(host&&!host.querySelector('.maya-logout-added')){logout.classList.add('maya-logout-added');host.appendChild(logout)}
   });
 })();
 </script>
@@ -13328,7 +13300,7 @@ bad + '</span>' +
   document.addEventListener('DOMContentLoaded',function(){
     const box=document.getElementById('mayaLiveNotificationBanner');
     box?.querySelector('.maya-live-close')?.addEventListener('click',e=>{e.stopPropagation();box.classList.remove('show')});
-    box?.addEventListener('click',function(e){if(e.target.closest('.maya-live-close'))return;this.classList.remove('show');try{if(typeof openOrderNotifications==='function')openOrderNotifications()}catch(err){}});
+    box?.addEventListener('click',function(e){if(e.target.closest('.maya-live-close'))return;const id=this.dataset.notificationId;this.classList.remove('show');try{if(id&&typeof window.openMayaNotification==='function')window.openMayaNotification(id);else if(typeof openOrderNotifications==='function')openOrderNotifications()}catch(err){}});
     tick();setInterval(tick,900);
   });
   window.addEventListener('storage',e=>{if(e.key==='mayaNotifications')setTimeout(tick,20)});
@@ -14456,5 +14428,246 @@ function closeDeleteRequestSuccess(){
 })();
 </script>
 <!-- MAYA COURIER STATUS GROUPS PATCH - END -->
+    <script id="maya-notification-and-courier-sync-final-fix">
+(function(){
+  'use strict';
+  const esc=v=>{try{return typeof escapeHTML==='function'?escapeHTML(String(v??'')):String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}catch(e){return String(v??'')}};
+  const arr=k=>{try{const v=JSON.parse(localStorage.getItem(k)||'[]');return Array.isArray(v)?v:[]}catch(e){return[]}};
+  const saveNoti=a=>localStorage.setItem('mayaNotifications',JSON.stringify(a));
+  const me=()=>{try{return String((typeof getCurrentEmployee==='function'&&getCurrentEmployee())||'Admin')}catch(e){return'Admin'}};
+
+  function pageRecipients(page){
+    const names=new Set();
+    arr('mayaAdmins').forEach(x=>{if(x?.name)names.add(String(x.name))});
+    if(!names.size)names.add('Admin');
+    arr('mayaModerators').forEach(x=>{if(x?.name&&Array.isArray(x.pages)&&x.pages.includes(page))names.add(String(x.name))});
+    return [...names];
+  }
+
+  function safeStatus(d){
+    const v=d?.delivery_status||d?.data?.delivery_status||
+      ((typeof d?.status==='string'&&!/^\d+$/.test(d.status))?d.status:'')||
+      ((typeof d?.data?.status==='string'&&!/^\d+$/.test(d.data.status))?d.data.status:'');
+    return String(v||'').trim();
+  }
+
+  function addStatusNotification(o,oldStatus,newStatus){
+    const all=arr('mayaNotifications');
+    const stamp=String(newStatus).toLowerCase();
+    const recipients=pageRecipients(o.pageName||'');
+    recipients.forEach(recipient=>{
+      const duplicate=all.some(n=>n.type==='courier_status'&&String(n.orderId)===String(o.id)&&String(n.statusKey||'')===stamp&&String(n.recipient)===String(recipient));
+      if(!duplicate)all.unshift({
+        id:'courier_status_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+        recipient,type:'courier_status',orderId:o.id,serial:o.serial,
+        pageName:o.pageName||'',oldStatus:String(oldStatus||''),
+        newStatus:String(newStatus),statusKey:stamp,
+        message:'কুরিয়ার স্ট্যাটাস আপডেট: '+String(newStatus),
+        at:new Date().toLocaleString(),
+        read:false,
+        orderSnapshot:{...o,images:Array.isArray(o.images)?o.images:(o.image?[o.image]:[])}
+      });
+    });
+    saveNoti(all);
+    try{if(typeof renderOrderNotifications==='function')renderOrderNotifications()}catch(e){}
+  }
+
+  function markRead(id){
+    const all=arr('mayaNotifications');
+    const n=all.find(x=>String(x.id)===String(id));
+    if(n&&!n.read){n.read=true;saveNoti(all)}
+    return n;
+  }
+
+  window.openMayaNotification=function(id){
+    const n=markRead(id);
+    try{if(typeof renderOrderNotifications==='function')renderOrderNotifications()}catch(e){}
+    if(n&&typeof window.openNotificationOrder==='function')window.openNotificationOrder(id);
+    else if(n&&typeof window.openNotificationOrder==='undefined')
+      alert('নোটিফিকেশনটি read হয়েছে। Order/parcel খুলতে app-এ পুনরায় চেষ্টা করুন।');
+  };
+
+  window.markAllMayaNotificationsRead=function(){
+    const meName=me(),all=arr('mayaNotifications');
+    let changed=false;
+    all.forEach(n=>{
+      if(String(n.recipient||'Admin')===meName&&!n.read){n.read=true;changed=true}
+    });
+    if(changed)saveNoti(all);
+    try{window.renderOrderNotifications()}catch(e){}
+  };
+
+  window.enablePhoneNotifications=async function(){
+    if(!('Notification' in window))return alert('এই ব্রাউজারে ফোনের Notification সুবিধা নেই।');
+    try{
+      const p=await Notification.requestPermission();
+      alert(p==='granted'
+        ?'✅ ফোনের Notification চালু হয়েছে। App খোলা থাকলে নতুন update-এর alert আসবে.'
+        :'Notification অনুমতি দেওয়া হয়নি.');
+    }catch(e){alert('Notification চালু করা যায়নি। Browser settings থেকে অনুমতি দিন।')}
+  };
+
+  let notificationFilter='all';
+  window.setMayaNotificationFilter=function(value){
+    notificationFilter=value;
+    window.renderOrderNotifications();
+  };
+
+  const oldRender=window.renderOrderNotifications;
+  window.renderOrderNotifications=function(){
+    const all=arr('mayaNotifications');
+    const mine=all.filter(n=>String(n.recipient||'Admin')===me());
+    const host=document.getElementById('orderNotificationList');
+    if(!host){if(typeof oldRender==='function')oldRender();return}
+
+    const parent=host.parentElement;
+    let controls=document.getElementById('maya-notification-controls');
+    if(!controls&&parent){
+      controls=document.createElement('div');
+      controls.id='maya-notification-controls';
+      controls.style.cssText='display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 12px';
+      parent.insertBefore(controls,host);
+    }
+
+    if(controls)controls.innerHTML=`<div style="display:flex;gap:6px;flex-wrap:wrap;width:100%;margin-bottom:3px">${[['all','সব'],['unread','না-দেখা'],['order','অর্ডার'],['courier','কুরিয়ার'],['rider','Rider Note']].map(([k,l])=>`<button onclick="setMayaNotificationFilter('${k}')" style="border:1px solid ${notificationFilter===k?'#0f8f83':'#dce7e5'};border-radius:999px;background:${notificationFilter===k?'#e8f7f4':'#fff'};color:${notificationFilter===k?'#087e72':'#526469'};padding:7px 10px;font-size:12px;font-weight:800">${l}</button>`).join('')}</div><button onclick="markAllMayaNotificationsRead()" style="border:0;border-radius:10px;background:#e8f7f4;color:#087e72;padding:10px 13px;font-weight:800">✓ সব Read</button><button onclick="enablePhoneNotifications()" style="border:0;border-radius:10px;background:#eef3ff;color:#315b9a;padding:10px 13px;font-weight:800">🔔 ফোনে Notification চালু</button><span style="font-size:12px;color:#617277">${mine.filter(n=>!n.read).length}টি না-দেখা</span>`;
+
+    const filtered=mine.filter(n=>
+      notificationFilter==='unread'?!n.read:
+      notificationFilter==='order'?(!['rider_note','delivery_note','courier_status'].includes(n.type)):
+      notificationFilter==='courier'?['courier_status','delivery_note'].includes(n.type):
+      notificationFilter==='rider'?n.type==='rider_note':true
+    );
+
+    if(!mine.length){
+      host.innerHTML='<div class="empty">কোনো Notification নেই।</div>';
+      const b=document.getElementById('orderNotificationBadge');
+      if(b){b.textContent='0';b.style.display='none'}
+      return;
+    }
+    if(!filtered.length){
+      host.innerHTML='<div class="empty">এই ধরনের কোনো Notification নেই।</div>';
+      return;
+    }
+
+    host.innerHTML=filtered.map(n=>{
+      const isUnread=!n.read;
+      const style=isUnread?'border:2px solid #0ca58d;background:#effbf8;':'border:1px solid #dfe8e7;background:#fff;';
+      const title=n.type==='rider_note'?'🏍️ Rider Note':
+        n.type==='delivery_note'?'📝 Delivery Note':
+        n.type==='courier_status'?'🚚 Courier Status Update':'🗑️ Order Delete হয়েছে';
+      const body=n.type==='rider_note'
+        ?`<b>${esc(n.rider||'Rider')}:</b> ${esc(n.riderNote||'')}`
+        :n.type==='delivery_note'?esc(n.deliveryNote||n.message||'')
+        :n.type==='courier_status'?`আগের অবস্থা: ${esc(n.oldStatus||'—')} → নতুন অবস্থা: <b>${esc(n.newStatus||'')}</b>`
+        :`কারণ: ${esc(n.reason||'—')}`;
+      const reply=n.type==='rider_note'
+        ?`<div class="noti-reply-box" onclick="event.stopPropagation()"><input id="reply-${esc(n.id)}" placeholder="Rider-এর জন্য Delivery Note দিন..."><button onclick="event.stopPropagation();saveRiderReply('${esc(n.id)}')">নোট দিন</button></div>`
+        :'';
+
+      return `<article onclick="openMayaNotification('${esc(n.id)}')" style="${style}border-radius:15px;padding:14px;margin:0 0 10px;cursor:pointer"><div style="display:flex;justify-content:space-between;gap:9px"><div><b>${title} • Order #${String(n.serial||'').padStart(2,'0')}</b><div style="font-size:12px;color:#0f6b73;font-weight:800;margin-top:4px">📄 ${esc(n.pageName||'')}</div></div><span style="font-size:11px;font-weight:800;color:${isUnread?'#d32f2f':'#13816f'}">${isUnread?'● না-দেখা':'✓ দেখা হয়েছে'}</span></div><div style="font-size:13px;line-height:1.5;margin-top:9px">${body}</div>${reply}<div style="font-size:11px;color:#7a858d;margin-top:8px">${esc(n.at||'')}</div><div style="font-size:11px;color:#118b7e;font-weight:800;margin-top:6px">অর্ডার/পার্সেল খুলতে চাপ দিন ›</div></article>`;
+    }).join('');
+
+    const unread=mine.filter(n=>!n.read).length;
+    const b=document.getElementById('orderNotificationBadge');
+    if(b){b.textContent=unread>99?'99+':String(unread);b.style.display=unread?'flex':'none'}
+  };
+
+  function pageConfig(o){
+    let store={};
+    try{store=JSON.parse(localStorage.getItem('mayaPageCourierConfigs')||'{}')}catch(e){}
+    const pc=store[o.pageName||''];
+    if(!pc)return null;
+    const provider=pc.activeCourier||o.courierName||'Steadfast';
+    if(provider!=='Steadfast')return null;
+    const c=pc.providers?.[provider]||{};
+    if(!c.apiKey||!(c.secret||c.secretKey))return null;
+    return{base:c.baseUrl||'https://portal.packzy.com/api/v1',apiKey:c.apiKey,secret:c.secret||c.secretKey};
+  }
+
+  let syncing=false;
+  async function syncAllCourierStatuses(silent=true){
+    if(syncing||typeof orders==='undefined'||!Array.isArray(orders))return;
+    syncing=true;
+    let updated=0,failed=0,missing=0;
+    try{
+      for(const o of orders){
+        if(!(o.courierSent||o.status==='courier_sent'||o.parcelId||o.trackingCode||o.trackingId))continue;
+        const code=o.trackingCode||o.trackingId||o.parcelId||o.consignmentId;
+        const cfg=pageConfig(o);
+        if(!cfg||!code){missing++;continue}
+        try{
+          const response=await fetch(String(cfg.base).replace(/\/$/,'')+'/status_by_trackingcode/'+encodeURIComponent(code),{
+            headers:{'Api-Key':cfg.apiKey,'Secret-Key':cfg.secret,'Accept':'application/json'}
+          });
+          if(!response.ok)throw new Error('HTTP '+response.status);
+          const data=await response.json(),status=safeStatus(data);
+          if(!status){failed++;continue}
+          const previous=String(o.courierStatus||o.deliveryStatus||'').trim();
+          if(previous.toLowerCase()!==status.toLowerCase()){
+            o.courierStatus=status;
+            o.courierUpdatedAt=new Date().toLocaleString();
+            updated++;
+            if(previous)addStatusNotification(o,previous,status);
+          }
+          const note=data?.rider_note||data?.data?.rider_note||data?.note||data?.data?.note;
+          if(note&&typeof window.receiveRiderNote==='function')
+            window.receiveRiderNote(o.id,String(note),data?.rider_name||data?.data?.rider_name||'Rider');
+        }catch(e){failed++}
+      }
+      if(updated||failed===0){try{if(typeof saveOrders==='function')saveOrders()}catch(e){}}
+      try{if(typeof renderCourierTrackingList==='function')renderCourierTrackingList()}catch(e){}
+      try{if(typeof window.dsRenderDailySummary==='function')window.dsRenderDailySummary()}catch(e){}
+    }finally{syncing=false}
+
+    if(!silent)alert(`Courier Sync শেষ: ${updated}টি status update, ${failed}টি ব্যর্থ, ${missing}টি Page API/Tracking ID নেই।`);
+    return{updated,failed,missing};
+  }
+
+  window.msSyncAllPageCourier=()=>syncAllCourierStatuses(false);
+  window.dsSyncCourier=()=>syncAllCourierStatuses(false);
+  window.syncCourierStatuses=()=>syncAllCourierStatuses(false);
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    try{window.renderOrderNotifications()}catch(e){}
+    let nativeReady=false;
+    const nativeSeen=new Set();
+
+    const nativeTick=()=>{
+      const current=arr('mayaNotifications').filter(n=>!n.read&&String(n.recipient||'Admin')===me());
+      if(!nativeReady){
+        current.forEach(n=>nativeSeen.add(String(n.id)));
+        nativeReady=true;
+        return;
+      }
+      const fresh=current.filter(n=>!nativeSeen.has(String(n.id)));
+      current.forEach(n=>nativeSeen.add(String(n.id)));
+      if('Notification' in window&&Notification.permission==='granted')
+        fresh.slice(0,3).forEach(n=>{
+          try{
+            const title=n.type==='rider_note'?'🏍️ নতুন Rider Note':
+              n.type==='courier_status'?'🚚 Courier Status Update':'🔔 নতুন Order Notification';
+            const notice=new Notification(title,{
+              body:(n.pageName||'')+' • Order #'+String(n.serial||'').padStart(2,'0')+' '+(n.riderNote||n.newStatus||n.reason||''),
+              tag:String(n.id||'')
+            });
+            notice.onclick=()=>{
+              window.focus();
+              window.openMayaNotification(n.id);
+              notice.close();
+            };
+          }catch(e){}
+        });
+    };
+
+    nativeTick();
+    setInterval(nativeTick,1200);
+    setTimeout(()=>syncAllCourierStatuses(true),2500);
+    setInterval(()=>{if(document.visibilityState==='visible')syncAllCourierStatuses(true)},5*60*1000);
+    document.addEventListener('visibilitychange',()=>{
+      if(document.visibilityState==='visible')syncAllCourierStatuses(true);
+    });
+  });
+})();
+    </script>
 </body>
 </html>
