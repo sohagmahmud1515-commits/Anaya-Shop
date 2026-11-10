@@ -14587,15 +14587,29 @@ function closeDeleteRequestSuccess(){
   };
 
   function pageConfig(o){
-    let store={};
-    try{store=JSON.parse(localStorage.getItem('mayaPageCourierConfigs')||'{}')}catch(e){}
-    const pc=store[o.pageName||''];
-    if(!pc)return null;
-    const provider=pc.activeCourier||o.courierName||'Steadfast';
-    if(provider!=='Steadfast')return null;
-    const c=pc.providers?.[provider]||{};
-    if(!c.apiKey||!(c.secret||c.secretKey))return null;
-    return{base:c.baseUrl||'https://portal.packzy.com/api/v1',apiKey:c.apiKey,secret:c.secret||c.secretKey};
+  let store={};
+  try{
+    store=JSON.parse(localStorage.getItem('mayaPageCourierConfigs')||'{}');
+  }catch(e){}
+
+  const pc=store[o.pageName||'']||{};
+  const provider=pc.activeCourier||o.courierName||'Steadfast';
+  if(provider!=='Steadfast') return null;
+
+  const c=pc.providers?.[provider]||{};
+  let apiKey=c.apiKey||'';
+  let secret=c.secret||c.secretKey||'';
+  let base=c.baseUrl||'https://portal.packzy.com/api/v1';
+
+  if((!apiKey||!secret)&&typeof getSteadfastSettings==='function'){
+    const old=getSteadfastSettings()||{};
+    apiKey=apiKey||old.apiKey||'';
+    secret=secret||old.secret||old.secretKey||'';
+    base=c.baseUrl||old.baseUrl||base;
+  }
+
+  if(!apiKey||!secret) return null;
+  return {base,apiKey,secret};
   }
 
   let syncing=false;
