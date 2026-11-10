@@ -10974,19 +10974,22 @@ window.saveModerator=async function(){
     saveNotifications(all);
   }
 
-  window.receiveRiderNote=function(orderId,note,rider='Rider'){
-    const order=(orders||[]).find(o=>String(o.id)===String(orderId));
-    note=String(note||'').trim();
-    if(!order||!note)return;
-    order.riderNotes=Array.isArray(order.riderNotes)?order.riderNotes:[];
-    if(!order.riderNotes.some(x=>String(x.text||'')===note)){
-      order.riderNotes.unshift({text:note,rider:rider||'Rider',at:new Date().toLocaleString()});
-      try{saveOrders()}catch(e){}
-    }
-    pushPageNotification(order,'rider_note',{note,rider,at:new Date().toLocaleString()});
-    try{renderOrderNotifications()}catch(e){}
-    try{renderCourierTrackingList()}catch(e){}
-  };
+  window.receiveRiderNote=function(orderId,note,rider='Rider',at=''){
+  const order=(orders||[]).find(o=>String(o.id)===String(orderId));
+  note=String(note||'').trim();
+  if(!order||!note)return;
+
+  const noteAt=String(at||new Date().toLocaleString());
+  order.riderNotes=Array.isArray(order.riderNotes)?order.riderNotes:[];
+  if(!order.riderNotes.some(x=>String(x.text||'')===note)){
+    order.riderNotes.unshift({text:note,rider:rider||'Rider',at:noteAt});
+    try{saveOrders()}catch(e){}
+  }
+
+  pushPageNotification(order,'rider_note',{note,rider,at:noteAt});
+  try{renderOrderNotifications()}catch(e){}
+  try{renderCourierTrackingList()}catch(e){}
+};
 
   async function dispatchDeliveryNote(order,rec){
     // Public Steadfast API documents note on create_order, but no public post-send note-update endpoint.
@@ -14445,10 +14448,21 @@ function closeDeleteRequestSuccess(){
   }
 
   function safeStatus(d){
-    const v=d?.delivery_status||d?.data?.delivery_status||
-      ((typeof d?.status==='string'&&!/^\d+$/.test(d.status))?d.status:'')||
-      ((typeof d?.data?.status==='string'&&!/^\d+$/.test(d.data.status))?d.data.status:'');
-    return String(v||'').trim();
+  const t=d?.tracking||d?.data?.tracking||{};
+  const candidates=[
+    t?.delivery_status,
+    t?.status,
+    d?.delivery_status,
+    d?.data?.delivery_status,
+    d?.data?.status,
+    d?.status
+  ];
+  const v=candidates.find(x=>
+    typeof x==='string' &&
+    x.trim() &&
+    !/^(ok|success|\d+)$/i.test(x.trim())
+  );
+  return String(v||'').trim();
   }
 
   function addStatusNotification(o,oldStatus,newStatus){
@@ -14609,9 +14623,41 @@ function closeDeleteRequestSuccess(){
             updated++;
             if(previous)addStatusNotification(o,previous,status);
           }
-          const note=data?.rider_note||data?.data?.rider_note||data?.note||data?.data?.note;
-          if(note&&typeof window.receiveRiderNote==='function')
-            window.receiveRiderNote(o.id,String(note),data?.rider_name||data?.data?.rider_name||'Rider');
+          const tracking=data?.tracking||data?.data?.tracking||data?.data||data;
+const steps=Array.isArray(tracking?.steps)
+  ? tracking.steps
+  : Array.isArray(tracking?.timeline)
+    ? tracking.timeline
+    : [];
+const rider=tracking?.rider_name||data?.rider_name||data?.data?.rider_name||'Rider';
+
+for(const step of steps){
+  const raw=String(step?.message||step?.note||step?.text||'').trim();
+  if(!/rider\s*note\s*:/i.test(raw))continue;
+
+  const note=raw
+    .replace(/^.*?rider\s*note\s*:\s*/i,'')
+    .replace(/^["']|["']$/g,'')
+    .trim();
+  const noteAt=[step?.date,step?.time].filter(Boolean).join(' ');
+
+  if(note&&typeof window.receiveRiderNote==='function'){
+    window.receiveRiderNote(o.id,note,step?.rider_name||rider,noteAt);
+  }
+}
+
+const directRaw=
+  tracking?.rider_note||tracking?.note||
+  data?.rider_note||data?.data?.rider_note||
+  data?.note||data?.data?.note;
+
+if(directRaw&&typeof window.receiveRiderNote==='function'){
+  const note=String(directRaw)
+    .replace(/^.*?rider\s*note\s*:\s*/i,'')
+    .replace(/^["']|["']$/g,'')
+    .trim();
+  if(note)window.receiveRiderNote(o.id,note,rider);
+}
         }catch(e){failed++}
       }
       if(updated||failed===0){try{if(typeof saveOrders==='function')saveOrders()}catch(e){}}
