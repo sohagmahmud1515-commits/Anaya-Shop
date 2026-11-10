@@ -9383,6 +9383,11 @@ function deleteCourierSuccessOrder(){
   <div class="oc-settings-wrap" id="ocSettingsHome">
     <button class="oc-menu-card" onclick="openOCAdminManagement()"><span class="oc-menu-icon">🛡️</span><span><b>Admin Management</b><small>Admin Add / Edit / Delete • Full Access</small></span><span class="oc-menu-arrow">›</span></button>
     <button class="oc-menu-card" onclick="openOCSummaryManagement()"><span class="oc-menu-icon">📊</span><span><b>Summary Management</b><small>App Summary + Courier Summary • Page / Moderator / Date</small></span><span class="oc-menu-arrow">›</span></button>
+    <button class="oc-menu-card" data-admin-only="1" onclick="openModeratorSalarySettings()">
+  <span class="oc-menu-icon">💼</span>
+  <span><b>Moderator Salary</b></span>
+  <span class="oc-menu-arrow">›</span>
+    </button>
     <button class="oc-menu-card" onclick="openOCPageManagement()"><span class="oc-menu-icon">📄</span><span><b>Page Management</b><small>Page Add / Edit / Delete</small></span><span class="oc-menu-arrow">›</span></button>
     <button class="oc-menu-card" onclick="openOCModeratorManagement()"><span class="oc-menu-icon">👥</span><span><b>Moderator Management</b><small>Page Access, Call Access, Courier Access</small></span><span class="oc-menu-arrow">›</span></button>
     <button class="oc-menu-card" onclick="openOCCourierSetup()"><span class="oc-menu-icon">🚚</span><span><b>Courier Setup</b><small>Select Courier → API Setup</small></span><span class="oc-menu-arrow">›</span></button>
@@ -14729,5 +14734,14 @@ if(directRaw&&typeof window.receiveRiderNote==='function'){
   });
 })();
     </script>
+  <script>
+window.openModeratorSalarySettings = function () {
+  if (typeof window.mayaIsAdmin === 'function' && !window.mayaIsAdmin()) {
+    alert('শুধু Admin Moderator Salary খুলতে পারবে।');
+    return;
+  }
+  window.location.href = './moderator-commission-payment-demo.html';
+};
+  </script>
 </body>
 </html>
