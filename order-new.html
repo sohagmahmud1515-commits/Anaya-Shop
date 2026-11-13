@@ -11538,7 +11538,7 @@ window.saveModerator=async function(){
   function isAdmin(){let u='Admin';try{u=getCurrentEmployee()||'Admin'}catch(e){}u=String(u).toLowerCase();if(u==='admin')return true;try{return JSON.parse(localStorage.getItem('mayaAdmins')||'[]').some(a=>String(a?.name||'').toLowerCase()===u)}catch(e){return false}}
   function roleOK(o){if(isAdmin())return true;let u='';try{u=getCurrentEmployee()||''}catch(e){}return String(o?.createdBy||'Admin')===String(u)}
   function rangeOK(o){const k=okey(o);if(!k)return false;const r=window.__mayaDsRange||'today',today=key();if(r==='today')return k===today;if(r==='yesterday')return k===off(-1);if(r==='3days')return k>=off(-2)&&k<=today;if(r==='week')return k>=off(-6)&&k<=today;if(r==='15days')return k>=off(-14)&&k<=today;if(r==='month')return k>=off(-29)&&k<=today;if(r==='custom'){const f=document.getElementById('dsFromDate')?.value||'',t=document.getElementById('dsToDate')?.value||'';if(f&&k<f)return false;if(t&&k>t)return false;return !!(f||t)}return true}
-  async function cfgFor(o){let store={};try{store=JSON.parse(localStorage.getItem('mayaPageCourierConfigs')||'{}')}catch(e){}const pc=store[o.pageName||'']||{},provider=pc.activeCourier||o.courierName||'Steadfast',cfg=pc.providers?.[provider]||{};if(provider!=='Steadfast')return null;let apiKey=cfg.apiKey||'',secret=cfg.secret||'',base=cfg.baseUrl||'https://portal.packzy.com/api/v1';if((!apiKey||!secret)&&typeof getSteadfastSettings==='function'){const old=getSteadfastSettings()||{};apiKey=apiKey||old.apiKey||'';secret=secret||old.secretKey||'';base=base||old.baseUrl||'https://portal.packzy.com/api/v1'}return apiKey&&secret?{apiKey,secret,base}:null}
+  async function cfgFor(o){let store={};try{store=JSON.parse(localStorage.getItem('mayaPageCourierConfigs')||'{}')}catch(e){}const pc=store[o.pageName||'']||{},provider=pc.activeCourier||o.courierName||'Steadfast',cfg=pc.providers?.[provider]||{};if(provider!=='Steadfast')return null;const apiKey=cfg.apiKey||'',secret=cfg.secret||cfg.secretKey||'',base=cfg.baseUrl||'https://portal.packzy.com/api/v1';return apiKey&&secret?{apiKey,secret,base}:null}
   window.dsSyncCourier=async function(){
     const sent=(Array.isArray(orders)?orders:[]).filter(o=>rangeOK(o)&&roleOK(o)&&(o.courierSent||o.status==='courier_sent'||o.parcelId||o.trackingCode||o.trackingId));
     if(!sent.length)return alert('এই সময়ের মধ্যে Courier Sent Order নেই।');
@@ -11656,7 +11656,7 @@ window.saveModerator=async function(){
         <div class="pt-note-help">যে Admin/Moderator নোট দেবে তার নাম ও সময় Saved থাকবে। Courier API note update support করলে Rider-এর কাছেও পাঠানো হবে।</div>
       </div>
 
-      <div class="pt-card"><div class="pt-card-head"><h3>Tracking</h3><span class="pt-card-badge">Live Timeline</span></div><div class="pt-timeline">${timelineHTML(o)}</div></div>
+      <div class="pt-card"><div class="pt-card-head"><h3>Tracking</h3><button id="trackingSyncButton" type="button" onclick="refreshTrackingNow('${e(o.id)}')" style="border:0;border-radius:10px;background:#078f80;color:#fff;padding:8px 11px;font-weight:800">↻ এখনই আপডেট</button></div><div id="trackingSyncMessage" style="font-size:12px;color:#60777c;margin:-5px 0 10px">${e(o.courierUpdatedAt?'শেষ আপডেট: '+o.courierUpdatedAt:'ট্র্যাকিং তথ্য দেখা হচ্ছে…')}</div><div class="pt-timeline">${timelineHTML(o)}</div></div>
 
       <div class="pt-card"><div class="pt-card-head"><h3>Customer Call Note</h3></div>
         <textarea id="trackingCallNote" class="track-note-box" placeholder="কাস্টমারের সাথে কথা হলে Note লিখুন..."></textarea>
@@ -11673,6 +11673,11 @@ ${(typeof window.mayaIsAdmin==='function' && window.mayaIsAdmin()) ? `
 ` : ''}
 `;
     document.getElementById('trackingModal')?.classList.add('active');
+    if(!window.__mayaTrackingSkipAuto){
+  const msg=document.getElementById('trackingSyncMessage');
+  if(msg)msg.textContent='⏳ Courier থেকে সর্বশেষ আপডেট নেওয়া হচ্ছে…';
+  setTimeout(()=>window.refreshTrackingNow?.(o.id),60);
+  }
   };
 })();
 </script>
