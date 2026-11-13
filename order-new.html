@@ -11648,7 +11648,7 @@ window.saveModerator=async function(){
         <div class="pt-meta-grid"><div class="pt-meta"><span>Booking date</span><b>${e(booking)}</b></div><div class="pt-meta"><span>Invoice</span><b>${e(invoice)}</b></div><div class="pt-meta"><span>Weight</span><b>${e(weight)}</b></div></div>
         <div class="pt-tracking-code">Parcel ID: <b>${e(courierTrackingId(o))}</b></div>
         <div class="pt-provider">🚚 ${e(provider)}</div>
-        <div class="pt-charge"><div><span>Delivery Charge</span><b>${money(courierCharge(o))}</b></div><span>Courier API হিসাব</span></div>
+       
       </div>
 
       <div class="pt-card"><div class="pt-card-head"><h3>Recipient Info</h3><span class="pt-card-badge">Order #${e(String(o.serial||'').padStart(2,'0'))}</span></div>
