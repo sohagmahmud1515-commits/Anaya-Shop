@@ -14659,75 +14659,168 @@ async function syncAllCourierStatuses(silent=true){
               addStatusNotification(o,previous,status);
             }
           }
-        }catch(e){}
-      }
-
-      if(invoice){
-        try{
-          const response=await fetch(
-            base+'/trackings_by_invoice/'+encodeURIComponent(invoice),
-            {headers}
-          );
-          if(!response.ok)throw new Error('HTTP '+response.status);
-
-          const history=await response.json();
-          let rawEvents=
-            history?.tracking||
-            history?.data?.tracking||
-            history?.data?.data?.tracking||
-            [];
-
-          if(!Array.isArray(rawEvents)&&Array.isArray(rawEvents?.data)){
-            rawEvents=rawEvents.data;
-          }
-
-          if(Array.isArray(rawEvents)&&rawEvents.length){
-            const events=rawEvents.map(x=>({
-              title:String(x?.text||x?.message||x?.status||'Tracking update'),
-              time:String(x?.created_at||x?.updated_at||x?.date||x?.time||'')
-            })).sort((a,b)=>{
-              const ta=Date.parse(a.time),tb=Date.parse(b.time);
-              return Number.isNaN(ta)||Number.isNaN(tb)?0:tb-ta;
-            });
-
-            o.trackingEvents=events;
-
-            const hubEvent=events.find(x=>/received at|arrived at/i.test(x.title))
-              ||events.find(x=>/sent to/i.test(x.title));
-            const hubMatch=hubEvent?.title.match(
-              /(?:received at|arrived at|sent to)\s+(.+?)(?:\.\s*|$)/i
-            );
-            if(hubMatch)o.courierLocation=hubMatch[1].trim();
-
-            const riderData=rawEvents.find(x=>x?.rider_name||x?.rider_phone);
-            if(riderData?.rider_name)o.riderName=String(riderData.rider_name);
-            if(riderData?.rider_phone)o.riderPhone=String(riderData.rider_phone);
-
-            gotData=true;
-          }
-        }catch(e){}
-      }else{
-        missing++;
-      }
-
-      if(gotData)updated++;
-      else failed++;
-    }
-
-    if(updated||failed===0){
-      try{if(typeof saveOrders==='function')saveOrders()}catch(e){}
-    }
-    try{if(typeof renderCourierTrackingList==='function')renderCourierTrackingList()}catch(e){}
-    try{if(typeof window.dsRenderDailySummary==='function')window.dsRenderDailySummary()}catch(e){}
-  }finally{
-    syncing=false;
+function pageConfig(o){
+    let store={};
+    try{store=JSON.parse(localStorage.getItem('mayaPageCourierConfigs')||'{}')}catch(e){}
+    const pc=store[o.pageName||'']||{};
+    const provider=pc.activeCourier||o.courierName||'Steadfast';
+    if(provider!=='Steadfast')return null;
+    const c=pc.providers?.[provider]||{};
+    const apiKey=c.apiKey||'';
+    const secret=c.secret||c.secretKey||'';
+    const base=c.baseUrl||'https://portal.packzy.com/api/v1';
+    if(!apiKey||!secret)return null;
+    return{base,apiKey,secret};
   }
 
-  if(!silent){
-    alert(`Courier Sync শেষ: ${updated}টি আপডেট, ${failed}টি ব্যর্থ, ${missing}টিতে API/Tracking ID/Invoice নেই।`);
+  function nestedValue(root,keys,depth=0){
+    if(!root||depth>6)return'';
+    const wanted=new Set(keys.map(k=>String(k).toLowerCase().replace(/[^a-z0-9]/g,'')));
+    if(Array.isArray(root)){
+      for(const item of root){const found=nestedValue(item,keys,depth+1);if(found)return found;}
+      return'';
+    }
+    if(typeof root!=='object')return'';
+    for(const[key,value]of Object.entries(root)){
+      const normalized=String(key).toLowerCase().replace(/[^a-z0-9]/g,'');
+      if(wanted.has(normalized)&&value!==null&&value!==undefined&&String(value).trim()&&typeof value!=='object')return String(value).trim();
+    }
+    for(const value of Object.values(root)){const found=nestedValue(value,keys,depth+1);if(found)return found;}
+    return'';
   }
-  return{updated,failed,missing};
+
+  function nestedObject(root,keys,depth=0){
+    if(!root||typeof root!=='object'||depth>6)return null;
+    const wanted=new Set(keys.map(k=>String(k).toLowerCase().replace(/[^a-z0-9]/g,'')));
+    for(const[key,value]of Object.entries(root)){
+      if(wanted.has(String(key).toLowerCase().replace(/[^a-z0-9]/g,''))&&value&&typeof value==='object')return value;
+    }
+    for(const value of Object.values(root)){const found=nestedObject(value,keys,depth+1);if(found)return found;}
+    return null;
+  }
+
+  function trackingEventsFrom(payload){
+    let list=payload?.tracking||payload?.data?.tracking||payload?.data?.data?.tracking||payload?.events||payload?.data?.events||[];
+    if(!Array.isArray(list)&&Array.isArray(list?.data))list=list.data;
+    return Array.isArray(list)?list:[];
+  }
+
+  function applyCourierContacts(order,payload){
+    const rider=nestedObject(payload,['rider','delivery_rider','delivery_boy','agent','assigned_rider']);
+    const hub=nestedObject(payload,['current_hub','hub','branch','warehouse','delivery_hub']);
+    const riderName=nestedValue(payload,['rider_name','riderName','delivery_rider_name','delivery_boy_name','agent_name'])||nestedValue(rider,['name','full_name','display_name']);
+    const riderPhone=nestedValue(payload,['rider_phone','riderPhone','delivery_rider_phone','delivery_boy_phone','agent_phone','rider_mobile','delivery_boy_mobile'])||nestedValue(rider,['phone','mobile','mobile_number','contact_number']);
+    const hubName=nestedValue(payload,['current_hub_name','hub_name','hubName','current_location','current_branch','branch_name','warehouse_name'])||nestedValue(hub,['name','title','location','branch_name']);
+    const hubPhone=nestedValue(payload,['current_hub_phone','hub_phone','hubPhone','branch_phone','warehouse_phone','hub_mobile','branch_mobile'])||nestedValue(hub,['phone','mobile','mobile_number','contact_number']);
+    if(riderName)order.riderName=riderName;
+    if(riderPhone)order.riderPhone=riderPhone;
+    if(hubName)order.courierLocation=hubName;
+    if(hubPhone)order.hubPhone=hubPhone;
+  }
+
+  let syncing=false;
+
+  async function syncCourierOrder(order){
+    if(!order)return{ok:false,message:'অর্ডার পাওয়া যায়নি।'};
+    const cfg=pageConfig(order);
+    if(!cfg)return{ok:false,message:'এই ডিভাইসে এই Page-এর Courier API সেট নেই। Admin Settings → Courier Setup থেকে সেট করুন।'};
+    const trackingCode=String(order.trackingCode||order.trackingId||'').trim();
+    const parcelId=String(order.consignmentId||order.parcelId||'').replace(/^CN#/i,'').trim();
+    const invoice=String(order.steadfastInvoice||order.invoice||order.invoiceId||order.merchantInvoice||'').trim();
+    if(!trackingCode&&!parcelId&&!invoice)return{ok:false,message:'Tracking Code / Parcel ID / Invoice পাওয়া যায়নি।'};
+
+    const base=String(cfg.base||'https://portal.packzy.com/api/v1').replace(/\/$/,'');
+    const headers={'Api-Key':cfg.apiKey,'Secret-Key':cfg.secret,'Accept':'application/json'};
+    let gotData=false,lastError='';
+
+    const path=trackingCode?'/status_by_trackingcode/'+encodeURIComponent(trackingCode):parcelId?'/status_by_cid/'+encodeURIComponent(parcelId):'/status_by_invoice/'+encodeURIComponent(invoice);
+    try{
+      const response=await fetch(base+path,{headers});
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok)throw new Error(data?.message||('HTTP '+response.status));
+      const status=safeStatus(data);
+      if(status){
+        const previous=String(order.courierStatus||order.deliveryStatus||'').trim();
+        order.courierStatus=status;
+        order.courierUpdatedAt=new Date().toLocaleString();
+        gotData=true;
+        if(previous&&previous.toLowerCase()!==status.toLowerCase())addStatusNotification(order,previous,status);
       }
+      applyCourierContacts(order,data);
+    }catch(e){lastError=e?.message||'Courier status আনতে সমস্যা হয়েছে।';}
+
+    if(invoice){
+      try{
+        const response=await fetch(base+'/trackings_by_invoice/'+encodeURIComponent(invoice),{headers});
+        const history=await response.json().catch(()=>({}));
+        if(!response.ok)throw new Error(history?.message||('HTTP '+response.status));
+        const rawEvents=trackingEventsFrom(history);
+        applyCourierContacts(order,history);
+        if(rawEvents.length){
+          const events=rawEvents.map(x=>({title:String(x?.text||x?.message||x?.status||'Tracking update'),time:String(x?.created_at||x?.updated_at||x?.date||x?.time||'')})).sort((a,b)=>{
+            const ta=Date.parse(a.time),tb=Date.parse(b.time);
+            return Number.isNaN(ta)||Number.isNaN(tb)?0:tb-ta;
+          });
+          order.trackingEvents=events;
+          const hubEvent=events.find(x=>/received at|arrived at|sent to/i.test(x.title));
+          const hubMatch=hubEvent?.title.match(/(?:received at|arrived at|sent to)\s+(.+?)(?:\.\s*|$)/i);
+          if(hubMatch)order.courierLocation=hubMatch[1].trim();
+          applyCourierContacts(order,rawEvents);
+        }
+        gotData=gotData||rawEvents.length>0||!!order.riderPhone||!!order.hubPhone;
+      }catch(e){if(!gotData)lastError=e?.message||lastError;}
+    }
+
+    if(gotData){
+      order.trackingSyncError='';
+      try{if(typeof saveOrders==='function')await saveOrders()}catch(e){console.error('Tracking save:',e)}
+      try{if(typeof renderCourierTrackingList==='function')renderCourierTrackingList()}catch(e){}
+      try{if(typeof window.dsRenderDailySummary==='function')window.dsRenderDailySummary()}catch(e){}
+      return{ok:true,message:'সর্বশেষ Courier API তথ্য আপডেট হয়েছে।'};
+    }
+    order.trackingSyncError=lastError||'এই চালানের নতুন তথ্য API থেকে পাওয়া যায়নি।';
+    return{ok:false,message:order.trackingSyncError};
+  }
+
+  async function syncAllCourierStatuses(silent=true){
+    if(syncing||typeof orders==='undefined'||!Array.isArray(orders))return;
+    syncing=true;
+    let updated=0,failed=0,missing=0;
+    try{
+      for(const order of orders){
+        if(!(order.courierSent||order.status==='courier_sent'||order.parcelId||order.trackingCode||order.trackingId))continue;
+        const result=await syncCourierOrder(order);
+        if(result.ok)updated++;
+        else if(!pageConfig(order)||!(order.trackingCode||order.trackingId||order.parcelId||order.consignmentId||order.invoice||order.steadfastInvoice))missing++;
+        else failed++;
+      }
+      try{if(typeof saveOrders==='function')await saveOrders()}catch(e){}
+      try{if(typeof renderCourierTrackingList==='function')renderCourierTrackingList()}catch(e){}
+    }finally{syncing=false;}
+    if(!silent)alert(`Courier Sync শেষ: ${updated}টি আপডেট, ${failed}টি ব্যর্থ, ${missing}টিতে Page API/Tracking ID/Invoice নেই।`);
+    return{updated,failed,missing};
+  }
+
+  window.refreshTrackingNow=async function(orderId){
+    const id=String(orderId||currentTrackingOrderId||'');
+    const order=(window.orders||orders||[]).find(x=>String(x.id)===id);
+    const message=document.getElementById('trackingSyncMessage');
+    const button=document.getElementById('trackingSyncButton');
+    if(message)message.textContent='⏳ Courier থেকে আপডেট নেওয়া হচ্ছে…';
+    if(button){button.disabled=true;button.textContent='⏳ আপডেট হচ্ছে';}
+    const result=await syncCourierOrder(order);
+    if(message)message.textContent=(result.ok?'✅ ':'⚠️ ')+result.message;
+    if(button){button.disabled=false;button.textContent='↻ এখনই আপডেট';}
+    if(result.ok&&document.getElementById('trackingModal')?.classList.contains('active')){
+      window.__mayaTrackingSkipAuto=true;
+      window.openTrackingModal(id);
+      window.__mayaTrackingSkipAuto=false;
+      const updatedMessage=document.getElementById('trackingSyncMessage');
+      if(updatedMessage)updatedMessage.textContent='✅ '+result.message;
+    }
+    return result;
+  };
+
   window.msSyncAllPageCourier=()=>syncAllCourierStatuses(false);
   window.dsSyncCourier=()=>syncAllCourierStatuses(false);
   window.syncCourierStatuses=()=>syncAllCourierStatuses(false);
