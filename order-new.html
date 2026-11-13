@@ -8367,22 +8367,10 @@ let currentTrackingOrderId = null;
 let selectedCallStatus = "";
 
 function courierTrackingId(order){
-
-  return (
-    order.trackingId ||
-    order.consignmentId ||
-    (
-      "CN#" +
-      String(
-        order.serial ||
-        order.id ||
-        ""
-      )
-      .replace(/\D/g,"")
-      .padStart(8,"0")
-    )
-  );
-}
+  const id = String(order.consignmentId || "").trim();
+  if (!id) return "Parcel ID পাওয়া যায়নি";
+  return id.toUpperCase().startsWith("CN#") ? id : "CN#" + id;
+  }
 
 
 function renderTimeline(order){
@@ -11641,7 +11629,7 @@ window.saveModerator=async function(){
       <div class="pt-overview">
         <div class="pt-overview-top"><div class="pt-status-line"><span class="pt-label">Status:</span><span class="pt-status ${statusClass(st)}">${e(st)}</span></div><div class="pt-cod">COD: ${money(orderAmount(o))}</div></div>
         <div class="pt-meta-grid"><div class="pt-meta"><span>Booking date</span><b>${e(booking)}</b></div><div class="pt-meta"><span>Invoice</span><b>${e(invoice)}</b></div><div class="pt-meta"><span>Weight</span><b>${e(weight)}</b></div></div>
-        <div class="pt-tracking-code">Tracking Code: <b>${e(o.trackingCode||o.trackingId||o.consignmentId||tid)}</b></div>
+        <div class="pt-tracking-code">Parcel ID: <b>${e(courierTrackingId(o))}</b></div>
         <div class="pt-provider">🚚 ${e(provider)}</div>
         <div class="pt-charge"><div><span>Delivery Charge</span><b>${money(courierCharge(o))}</b></div><span>Courier API হিসাব</span></div>
       </div>
