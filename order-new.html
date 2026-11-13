@@ -11573,7 +11573,7 @@ window.saveModerator=async function(){
 .pt-provider{display:inline-flex;align-items:center;gap:5px;background:#eaf8f5;color:#0e7d70;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:900;margin-top:8px}
 .pt-card{background:#fff;border:1px solid #d7e0e7;border-radius:16px;padding:15px;margin-bottom:12px;box-shadow:0 3px 12px rgba(26,63,77,.04)}
 .pt-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.pt-card-head h3{margin:0;font-size:17px;color:#1c2735}.pt-card-badge{font-size:10px;font-weight:900;color:#0b8978;background:#eaf8f5;border-radius:999px;padding:5px 8px}
-.pt-row{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:9px;padding:7px 0}.pt-row-icon{font-size:18px;color:#6d7b89;text-align:center}.pt-row-main{min-width:0;font-size:13px;color:#1f2c39;line-height:1.45;word-break:break-word}.pt-row-main small{display:block;color:#7f8b97;font-size:10.5px;margin-top:2px}.pt-mini-btn{border:0;background:#e7f8f4;color:#0aa48b;width:39px;height:39px;border-radius:10px;font-size:18px;display:flex;align-items:center;justify-content:center}.pt-copy-btn{border:0;background:transparent;color:#0aa48b;font-size:16px;padding:4px}
+.pt-row{display:griplate-columns:30px 1fr auto;align-items:center;gap:9px;padding:7px 0}.pt-row-icon{font-size:18px;color:#6d7b89;text-align:center}.pt-row-main{min-width:0;font-size:13px;color:#1f2c39;line-height:1.45;word-break:break-word}.pt-row-main small{display:block;color:#7f8b97;font-size:10.5px;margin-top:2px}.pt-mini-btn{border:0;background:#e7f8f4;color:#0aa48b;width:39px;height:39px;border-radius:10px;font-size:18px;display:flex;align-items:center;justify-content:center}.pt-copy-btn{border:0;background:transparent;color:#0aa48b;font-size:16px;padding:4px}
 .pt-note-current{background:#f7fafb;border:1px solid #e1e8ec;border-radius:11px;padding:10px 11px;font-size:12px;color:#33434d;line-height:1.5;margin-bottom:10px}.pt-note-current small{display:block;color:#7a8791;margin-top:5px}.pt-note-input{display:flex;gap:8px}.pt-note-input input{flex:1;min-width:0;border:1px solid #d7e0e5;border-radius:11px;padding:11px 12px;font-size:12px;background:#fff}.pt-note-input button{border:0;border-radius:11px;background:#0f9b89;color:#fff;font-weight:900;padding:0 14px;white-space:nowrap}.pt-note-help{font-size:9.8px;color:#7b888f;line-height:1.45;margin-top:7px}
 .pt-timeline{position:relative;padding:2px 0 0 6px}.pt-event{display:grid;grid-template-columns:42px 1fr;gap:10px;position:relative;padding-bottom:16px}.pt-event:not(:last-child):before{content:"";position:absolute;left:20px;top:37px;bottom:0;border-left:2px dashed #bdc9d2}.pt-event-dot{width:38px;height:38px;border-radius:50%;background:#e5f7f3;color:#08a68d;display:flex;align-items:center;justify-content:center;font-size:17px;z-index:1}.pt-event.rider .pt-event-dot{background:#eef5ff;color:#3a78dd}.pt-event-body{padding-top:2px}.pt-event-title{font-size:13px;color:#172434;font-weight:800;line-height:1.4}.pt-event-time{font-size:11px;color:#0ca58d;margin-top:3px;font-weight:700}
 .pt-call-history .call-note-item{margin-top:7px}.pt-call-controls{display:flex;gap:7px;flex-wrap:wrap}.pt-call-controls .call-status-chip{font-size:11px;padding:6px 9px}.pt-call-save{margin-left:auto;border:0;background:#0f9b89;color:#fff;border-radius:9px;padding:7px 12px;font-weight:900}
@@ -11594,6 +11594,23 @@ window.saveModerator=async function(){
     };
   }
   function statusClass(s){ s=String(s||'').toLowerCase(); if(/delivered|complete/.test(s))return 'delivered'; if(/return|cancel/.test(s))return 'returned'; return ''; }
+  function formatTrackingTime(value){
+  const raw=String(value??'').trim();
+  if(!raw)return '';
+  const date=new Date(raw);
+  if(Number.isNaN(date.getTime())){
+    return raw.replace(/\.0{3,}(?=Z|$)/,'');
+  }
+  return date.toLocaleString('en-US',{
+    timeZone:'Asia/Dhaka',
+    month:'short',
+    day:'numeric',
+    year:'numeric',
+    hour:'2-digit',
+    minute:'2-digit',
+    hour12:true
+  });
+  }
   function eventIcon(title,rider){ const s=String(title||'').toLowerCase(); if(rider)return '📝'; if(/deliver/.test(s))return '✓'; if(/rider|assign/.test(s))return '🛵'; if(/hub|warehouse|received/.test(s))return '🏢'; if(/sent|dispatch|transit/.test(s))return '🚚'; return '✓'; }
   function trackingEvents(o){
     const out=[];
@@ -11602,7 +11619,7 @@ window.saveModerator=async function(){
     if(!out.length) out.push({title:o.courierStatus||'Courier API update pending',time:o.courierUpdatedAt||o.courierSentAt||''});
     return out;
   }
-  function timelineHTML(o){ return trackingEvents(o).map(x=>'<div class="pt-event '+(x.rider?'rider':'')+'"><div class="pt-event-dot">'+eventIcon(x.title,x.rider)+'</div><div class="pt-event-body"><div class="pt-event-title">'+e(x.title)+'</div><div class="pt-event-time">'+e(x.time||'')+'</div></div></div>').join(''); }
+  function timelineHTML(o){ return trackingEvents(o).map(x=>'<div class="pt-event '+(x.rider?'rider':'')+'"><div class="pt-event-dot">'+eventIcon(x.title,x.rider)+'</div><div class="pt-event-body"><div class="pt-event-title">'+e(x.title)+'</div><div class="pt-event-time">'+e(formatTrackingTime(x.time)||'সময় পাওয়া যায়নি')+'</div></div></div>').join(''); }
   function latestDelivery(o){ return (o.deliveryNotes||[])[0] || (o.moderatorNotes||[])[0] || null; }
   function latestRider(o){ return (o.riderNotes||[])[0] || null; }
   function noteStatus(x){ if(!x)return ''; const s=x.sendStatus||''; if(s==='sent')return 'Courier accepted'; if(s==='queued')return 'Courier Send-এর সময় যাবে'; if(s==='failed')return 'Courier-এ পাঠানো যায়নি'; if(s==='not_supported')return 'App-এ Saved'; return ''; }
