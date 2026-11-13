@@ -136,6 +136,105 @@ function reportData(){const range=selectedRange(),mod=selectedMod(),mods=moderat
 window.printReport=()=>{const d=reportData(),modRows=d.mods.map(n=>{const x=periodCalc(n,d.range);return `<tr><td>${escapeText(n)}</td><td>${cash(x.salary)}</td><td>${x.sent}</td><td>${cash(x.earned)}</td><td>${cash(x.total)}</td><td>${cash(x.paid)}</td><td>${cash(Math.max(0,x.due))}${x.due<0?' (অগ্রিম '+cash(-x.due)+')':''}</td></tr>`}).join('')||'<tr><td colspan="7">কোনো মডারেটর নেই</td></tr>';const payRows=d.payments.map(p=>`<tr><td>${escapeText(p.mod)}</td><td>${dateText(p.paidDate)}</td><td>${escapeText(p.month)}</td><td>${cash(p.salary)}</td><td>${cash(p.commission)}</td><td><b>${cash(Number(p.salary)+Number(p.commission))}</b></td><td>${escapeText(p.method||'—')}</td><td>${escapeText(p.ref||'—')}</td></tr>`).join('')||'<tr><td colspan="8">এই সময়সীমায় পেমেন্ট রেকর্ড নেই</td></tr>';const w=window.open('','_blank');if(!w)return toast('Chrome-এ Pop-up অনুমতি দিন');const label=d.mod==='all'?'সব মডারেটর':escapeText(d.mod),period=`${escapeText(d.range.label)} (${dateText(d.range.from)}${d.range.from!==d.range.to?' – '+dateText(d.range.to):''})`;w.document.write(`<!doctype html><html lang="bn"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${label} • মডারেটর বেতন ও কমিশন রিপোর্ট</title><style>body{font-family:Arial,"Noto Sans Bengali",sans-serif;padding:0;color:#20343b;max-width:100%;margin:0 auto}.report-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}.report-tools button{background:#078f80;color:#fff;border:0;padding:11px 16px;border-radius:10px;font-weight:800;font-size:13px}.report-tools span{color:#60777c;font-size:11px}.hero{padding:16px;background:#087f77;color:white;border-radius:12px;margin-bottom:15px}.hero h1{margin:0 0 5px;font-size:22px}.hero p{margin:3px 0;font-size:12px}.totals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}.box{border:1px solid #d9e4e4;border-radius:10px;padding:10px}.box small{display:block;color:#60777c}.box b{font-size:16px;display:block;margin-top:4px}h2{font-size:16px;margin:18px 0 8px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #d9e4e4;padding:7px;text-align:left;font-size:10px}th{background:#edf7f4}.hint{font-size:10px;color:#60777c;margin:4px 0 10px}@page{size:A4 portrait;margin:12mm}@media print{html,body{width:100%;padding:0;margin:0}.no-print{display:none!important}.hero{-webkit-print-color-adjust:exact;print-color-adjust:exact;break-inside:avoid}.totals{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.box{padding:8px;break-inside:avoid}table{width:100%;table-layout:fixed;break-inside:auto}tr{break-inside:avoid;break-after:auto}th,td{overflow-wrap:anywhere;padding:5px;font-size:9px}.box,th{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style><body><div class="report-tools no-print"><button onclick="window.print()">📄 PDF ডাউনলোড</button><span>প্রিন্ট অপশনে “Save as PDF” বেছে নিন</span></div><div class="hero"><h1>মডারেটর বেতন ও কমিশন রিপোর্ট</h1><p>সময়কাল: <b>${period}</b></p><p>মডারেটর: <b>${label}</b></p><p>রিপোর্ট তৈরি: ${new Date().toLocaleString('bn-BD')}</p></div><div class="totals"><div class="box"><small>নির্বাচিত সময়ের মোট পাওনা</small><b>${cash(d.totals.payable)}</b></div><div class="box"><small>নির্বাচিত সময়ে মোট দেওয়া</small><b>${cash(d.totals.paid)}</b></div><div class="box"><small>এখনো বাকি</small><b>${cash(Math.max(0,d.totals.due))}${d.totals.due<0?' • অগ্রিম '+cash(-d.totals.due):''}</b></div></div><h2>মডারেটরভিত্তিক হিসাব</h2><p class="hint">পাওনা = নির্ধারিত মাসিক বেতন + নির্বাচিত সময়ে Courier Sent কমিশন। পেমেন্ট রেকর্ড নির্বাচিত সময়সীমা অনুযায়ী দেখানো হয়েছে।</p><table><thead><tr><th>মডারেটর</th><th>ফিক্সড বেতন</th><th>Courier Sent</th><th>কমিশন</th><th>মোট পাওনা</th><th>মোট দেওয়া</th><th>বাকি</th></tr></thead><tbody>${modRows}</tbody></table><h2>পেমেন্টের বিস্তারিত</h2><p class="hint">প্রতিটি রেকর্ডের তারিখ, কোন মাসের জন্য, বেতন ও কমিশন আলাদা করে দেখানো হয়েছে।</p><table><thead><tr><th>মডারেটর</th><th>টাকা দেওয়ার তারিখ</th><th>কোন মাসের হিসাব</th><th>বেতন</th><th>কমিশন</th><th>মোট দেওয়া</th><th>মাধ্যম</th><th>রেফারেন্স/নোট</th></tr></thead><tbody>${payRows}</tbody></table></body></html>`);w.document.close()};
 $('payMod').onchange=updatePaymentDetails;$('payMonth').onchange=updatePaymentDetails;
 fillModeratorSelects();render();
+(async function loadSalaryOrdersFromSupabase(){
+  const appMods = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('mayaModerators') || '[]')
+        .map(m => String(m?.name || '').trim())
+        .filter(Boolean);
+    } catch(e) {
+      return [];
+    }
+  })();
+
+  const oldSalaries = db.salaries || {};
+  const apiUrl = 'https://scfnwfkwusgzthnzesjw.supabase.co';
+  const apiKey = 'sb_publishable_d1-bjfKJkSWrs1dONuQrNA_BA4vJDGD';
+
+  db.orders = [];
+  db.payments = (db.payments || []).filter(p => ![1, 2, 3].includes(Number(p.id)));
+  db.salaries = Object.fromEntries(
+    appMods.map(name => [name, Number(oldSalaries[name] || 0)])
+  );
+  fillModeratorSelects();
+  render();
+
+  function dayKey(value) {
+    const text = String(value || '').trim();
+    if (!text) return '';
+    if (/^\d{4}-\d{2}-\d{2}/.test(text)) return text.slice(0, 10);
+    const date = new Date(text);
+    return Number.isNaN(date.getTime()) ? '' : localISO(date);
+  }
+
+  try {
+    const response = await fetch(
+      apiUrl + '/rest/v1/orders?select=id,serial,data,created_at&order=created_at.desc',
+      {
+        headers: {
+          apikey: apiKey,
+          Authorization: 'Bearer ' + apiKey
+        }
+      }
+    );
+
+    if (!response.ok) throw new Error(await response.text());
+
+    const rows = await response.json();
+
+    const mapped = rows.map(row => {
+      const order = row?.data || {};
+      const sent = !!(
+        order.courierSent === true ||
+        order.status === 'courier_sent' ||
+        order.parcelId ||
+        order.trackingCode ||
+        order.trackingId
+      );
+
+      const status = String(
+        order.courierStatus || order.deliveryStatus || order.status || ''
+      );
+
+      const cancelledBeforeSend =
+        !sent &&
+        (order.appDeleted === true || /cancel|delete|বাতিল/i.test(status));
+
+      if (cancelledBeforeSend) return null;
+
+      return {
+        id: String(order.id || row.id),
+        mod: String(order.createdBy || 'Admin'),
+        page: String(order.pageName || 'পেজ নির্ধারিত নয়'),
+        amount: Number(order.codAmount ?? order.amount ?? order.totalAmount ?? 0),
+        created: dayKey(order.createdDateKey || order.date || row.created_at),
+        sent: sent
+          ? dayKey(order.courierSentAt || order.createdDateKey || row.created_at)
+          : '',
+        status,
+        preCancel: false
+      };
+    }).filter(Boolean);
+
+    db.orders = mapped;
+
+    const realNames = [...new Set([
+      ...appMods,
+      ...mapped.map(order => order.mod)
+    ])].filter(name => name && name.toLowerCase() !== 'admin');
+
+    db.salaries = Object.fromEntries(
+      realNames.map(name => [name, Number(oldSalaries[name] || 0)])
+    );
+
+    fillModeratorSelects();
+    render();
+    save();
+  } catch(error) {
+    console.error('Moderator Salary order load:', error);
+    toast('Supabase থেকে অর্ডার আসেনি। ইন্টারনেট/API access দেখুন।');
+  }
+})();
 </script>
 </body>
 </html>
