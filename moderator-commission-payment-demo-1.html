@@ -64,6 +64,19 @@
  <section id="orderPane" hidden><div class="panel"><div class="section-head" style="margin:0"><div><h3>অর্ডারের বিস্তারিত</h3><p id="orderCaption">বাছাই করা সামারির অর্ডার</p></div><button class="btn ghost" onclick="resetOrderFilter()">সব অর্ডার</button></div><div class="filterbar" id="orderFilters"></div><div class="tablewrap"><table><thead><tr><th>অর্ডার</th><th>মডারেটর</th><th>অর্ডার তারিখ</th><th>অবস্থা</th><th>Courier Sent</th><th>কমিশন গণনা</th></tr></thead><tbody id="orderRows"></tbody></table></div></div></section>
  </div></div></dialog><div class="toast" id="toast"></div>
 <script>
+ const salaryAuth = (() => {
+  try {
+    return JSON.parse(sessionStorage.getItem('mayaAuthSession') || 'null');
+  } catch (e) {
+    return null;
+  }
+})();
+
+if (!salaryAuth || salaryAuth.role !== 'admin') {
+  alert('এই পেজটি শুধু Admin ব্যবহার করতে পারবেন।');
+  window.location.replace('./order-new.html');
+  throw new Error('Admin only');
+}
 const STORAGE_KEY='mayaModeratorCommissionDemoV2';
 const seed={rate:12,salaries:{'সুমি':12000,'রাফি':11000,'নীলা':10000},orders:[
  {id:'042',mod:'সুমি',page:'Black Beauty Abaya',amount:24000,created:'2026-11-10',sent:'2026-11-10',status:'Courier Sent • In Review'},
