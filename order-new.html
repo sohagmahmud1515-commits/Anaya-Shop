@@ -4347,51 +4347,76 @@ function closeEmergencyPopup(){
     return String(value || "").replace(/[০-৯]/g, d => map[d]);
   }
 
- function extractCodAmountFromOrder(order){
-  if(order.codAmount !== undefined && order.codAmount !== null && order.codAmount !== ""){
-    const saved = Number(
-      normalizeBanglaDigits(String(order.codAmount))
-        .replace(/[^0-9.]/g,"")
+ function extractCodAmountFromOrder(order) {
+  const amount = (value) => {
+    if (value === undefined || value === null || value === "")
+      return null;
+
+    const str = normalizeBanglaDigits(value)
+      .replace(/[৳,\s]/g, "");
+
+    if (!/^\d+(?:\.\d{1,2})?$/.test(str))
+      return null;
+
+    const num = Number(str);
+    return Number.isFinite(num) && num > 0 ? num : null;
+  };
+
+  const saved = amount(order?.codAmount);
+
+  if (
+    (order?.courierSent === true ||
+     order?.status === "courier_sent") &&
+    saved !== null
+  ) return saved;
+
+  const text = normalizeBanglaDigits(order?.orderText || "");
+  const lines = text.split(/\r?\n/)
+    .map(v => v.trim()).filter(Boolean);
+
+  for (const line of lines) {
+    if (!/(?:বিল|bill|cod|টোটাল|total|amount|মোট)/i.test(line))
+      continue;
+
+    if (
+      /(?:ডেলিভারি\s*চার্জ|delivery\s*charge|shipping\s*charge|courier\s*charge|কুরিয়ার\s*চার্জ)/i.test(line) &&
+      !/(?:মোট\s*বিল|সর্বমোট|grand\s*total)/i.test(line)
+    ) continue;
+
+    const lastTotal = line.match(
+      /=\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)\s*(?:টাকা|৳|tk|taka)?\s*$/i
     );
-    if(Number.isFinite(saved) && saved > 0) return saved;
-  }
 
-  const text = normalizeBanglaDigits(order.orderText || "");
-  const lines = text.split(/\r?\n/).map(v=>v.trim()).filter(Boolean);
+    if (lastTotal) {
+      const n = amount(lastTotal[1]);
+      if (n !== null) return n;
+    }
 
-  for(const line of lines){
-    const m=line.match(
-      /([0-9]+(?:\.[0-9]+)?)\s*\+\s*([0-9]+(?:\.[0-9]+)?)(?:\s*=\s*([0-9]+(?:\.[0-9]+)?))?/
-    );
+    let rest = line.replace(
+      /^.*?(?:মোট\s*বিল|সর্বমোট|grand\s*total|total\s*(?:bill|cod|amount)|cod\s*amount|বিল|bill|cod|টোটাল|total|amount|মোট)\s*[:：ঃ=\-]?\s*/i,
+      ""
+    ).replace(/\s*(?:টাকা|৳|tk|taka)\s*$/i, "").trim();
 
-    if(m){
-      const first=Number(m[1]);
-      const second=Number(m[2]);
-      const total=m[3]!==undefined ? Number(m[3]) : first+second;
-
-      if(Number.isFinite(total) && total>=0){
-        return total;
+    if (rest.includes("+")) {
+      if (/^\d[\d,]*(?:\.\d{1,2})?(?:\s*\+\s*\d[\d,]*(?:\.\d{1,2})?)+$/.test(rest)) {
+        return rest.split("+").reduce(
+          (sum, v) => sum + (amount(v.trim()) || 0), 0
+        );
       }
+      continue;
+    }
+
+    const simple = rest.match(
+      /^(?:৳\s*)?([0-9][0-9,]*(?:\.[0-9]{1,2})?)$/
+    );
+
+    if (simple) {
+      const n = amount(simple[1]);
+      if (n !== null) return n;
     }
   }
 
-  const patterns = [
-    /(?:বিল|bill|cod\s*amount|cod|টোটাল|total|amount|মোট)\s*[:：=-]?\s*(?:৳|tk|taka)?\s*([0-9]+(?:\.[0-9]+)?)/i,
-    /(?:৳|tk|taka)\s*([0-9]+(?:\.[0-9]+)?)/i
-  ];
-
-  for(const re of patterns){
-    const m=text.match(re);
-
-    if(m){
-      const n=Number(m[1]);
-      if(Number.isFinite(n) && n>=0){
-        return n;
-      }
-    }
-  }
-
-  return null;
+  return saved;
   }
 
   async function sendOrderToSteadfastOneTap(id, clickedButton){
@@ -4411,7 +4436,12 @@ function closeEmergencyPopup(){
     if(!/^01\d{9}$/.test(r.phone)){ alert("Order Details থেকে সঠিক ১১ সংখ্যার Phone পাওয়া যায়নি।"); return; }
     if(!r.address){ alert("Order Details থেকে Address পাওয়া যায়নি।"); return; }
     if(codAmount === null){ alert("Order Details থেকে বিল/COD Amount পাওয়া যায়নি। যেমন: বিল 500 লিখুন।"); return; }
-
+const confirmed = confirm(
+  "COD টাকা: ৳" + codAmount +
+  "\n\nটাকা সঠিক হলে OK চাপুন।" +
+  "\nভুল হলে Cancel চাপুন।"
+);
+if (!confirmed) return;
     const btn = clickedButton;
     const oldText = btn ? btn.textContent : "";
     if(btn){ btn.disabled = true; btn.textContent = "⏳ Sending..."; }
