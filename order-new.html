@@ -4436,12 +4436,7 @@ function closeEmergencyPopup(){
     if(!/^01\d{9}$/.test(r.phone)){ alert("Order Details থেকে সঠিক ১১ সংখ্যার Phone পাওয়া যায়নি।"); return; }
     if(!r.address){ alert("Order Details থেকে Address পাওয়া যায়নি।"); return; }
     if(codAmount === null){ alert("Order Details থেকে বিল/COD Amount পাওয়া যায়নি। যেমন: বিল 500 লিখুন।"); return; }
-const confirmed = confirm(
-  "COD টাকা: ৳" + codAmount +
-  "\n\nটাকা সঠিক হলে OK চাপুন।" +
-  "\nভুল হলে Cancel চাপুন।"
-);
-if (!confirmed) return;
+
     const btn = clickedButton;
     const oldText = btn ? btn.textContent : "";
     if(btn){ btn.disabled = true; btn.textContent = "⏳ Sending..."; }
