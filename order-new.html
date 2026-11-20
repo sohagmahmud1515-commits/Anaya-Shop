@@ -11997,6 +11997,7 @@ ${(typeof window.mayaIsAdmin==='function' && window.mayaIsAdmin()) ? `
     const q=alt?.value??baseInput?.value??'';
 let arr=(window.orders||orders||[])
   .filter(o=>o.appDeleted!==true)
+  .filter(o=>!o.groupRemovedAt)
   .filter(o=>group==='pending'
     ?(o.hiddenFromPending!==true&&o.emergency!==true)
     :(o.emergency===true&&o.hiddenFromEmergency!==true))
