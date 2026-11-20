@@ -3583,7 +3583,9 @@ padding:25px;">
   const OM_ORDERS_TABLE = "orders";
   const OM_IMAGE_BUCKET = "order-images";
   let omSyncBusy = false;
-
+let omCloudReady = false;
+const omCloudSnapshots = new Map();
+const omPendingOrderIds = new Set();
   function omHeaders(extra){
     return Object.assign({
       "apikey": OM_SUPABASE_KEY,
