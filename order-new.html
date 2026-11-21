@@ -3642,33 +3642,39 @@ const omPendingOrderIds = new Set();
     }
   }
 
-  async function omSyncCurrentOrders(){
-    if(omSyncBusy) return;
-    omSyncBusy = true;
-    try{
-      for(const order of orders){
-        const imgs = (order.images || [order.image]).filter(Boolean);
-        const needsUpload = imgs.some(x => String(x).startsWith("data:"));
-        if(needsUpload) await omSaveOrderToCloud(order);
-        else {
-          const row = {
-            id:String(order.id),
-            serial:Number(order.serial || 0),
-            data:order,
-            updated_at:new Date().toISOString()
-          };
-          await fetch(OM_SUPABASE_URL + "/rest/v1/" + OM_ORDERS_TABLE + "?on_conflict=id", {
-            method:"POST",
-            headers:omHeaders({"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"}),
-            body:JSON.stringify(row)
-          });
-        }
+async function omSyncCurrentOrders() {
+  if (omSyncBusy || !omCloudReady) return;
+  omSyncBusy = true;
+
+  try {
+    const changed = orders.filter(o => {
+      const id = String(o.id);
+      return omPendingOrderIds.has(id) ||
+        omCloudSnapshots.get(id) !== JSON.stringify(o);
+    });
+
+    for (const order of changed) {
+      const id = String(order.id);
+      const before = JSON.stringify(order);
+
+      await omSaveOrderToCloud(order);
+
+      const current = orders.find(
+        o => String(o.id) === id
+      );
+
+      if (current && JSON.stringify(current) === before) {
+        omCloudSnapshots.set(id, before);
+        omPendingOrderIds.delete(id);
+      } else {
+        omPendingOrderIds.add(id);
       }
-    }catch(e){
-      console.error("Supabase sync:", e);
-    }finally{
-      omSyncBusy = false;
     }
+  } catch (e) {
+    console.error("Supabase sync:", e);
+  } finally {
+    omSyncBusy = false;
+  }
   }
 
   async function omLoadCloudOrders(){
@@ -3683,9 +3689,34 @@ const omPendingOrderIds = new Set();
         if(!x || !x.data) return null;
         return Object.assign({},x.data,{id:x.data.id||x.id,serial:x.data.serial||x.serial});
       }).filter(Boolean);
-      orders = incoming.sort(
-  (a,b)=>(Number(b.serial)||0)-(Number(a.serial)||0)
+      incoming.forEach(o => {
+  omCloudSnapshots.set(
+    String(o.id),
+    JSON.stringify(o)
+  );
+});
+
+const pending = new Map(
+  orders
+    .filter(o => omPendingOrderIds.has(String(o.id)))
+    .map(o => [String(o.id), o])
 );
+
+orders = incoming.map(o =>
+  pending.get(String(o.id)) || o
+);
+
+for (const [id, o] of pending) {
+  if (!orders.some(x => String(x.id) === id)) {
+    orders.push(o);
+  }
+}
+
+orders.sort(
+  (a,b) => (Number(b.serial)||0) - (Number(a.serial)||0)
+);
+
+omCloudReady = true;
       localStorage.setItem("mayaOrders", JSON.stringify(orders));
       try{ renderEverything(); }catch(e){}
       try{ updateCounts(); }catch(e){}
@@ -4424,7 +4455,17 @@ function closeEmergencyPopup(){
   async function sendOrderToSteadfastOneTap(id, clickedButton){
     const order = orders.find(order => order.id === id);
     if(!order) return;
-    if(order.courierSent){ alert("✅ এই Order আগেই Courier Sent হয়েছে।"); return; }
+    if (
+  order.courierSent === true ||
+  order.status === "courier_sent" ||
+  !!order.consignmentId ||
+  !!order.parcelId ||
+  !!order.trackingId ||
+  !!order.trackingCode
+) {
+  alert("✅ এই অর্ডার আগেই কুরিয়ারে বুকিং হয়েছে।");
+  return;
+    }
 
     const cfg = getSteadfastSettings();
     if(!cfg.apiKey || !cfg.secretKey){
@@ -4483,7 +4524,17 @@ function closeEmergencyPopup(){
       order.steadfastRecipientName = r.name || "";
       order.steadfastRecipientPhone = r.phone || "";
       order.steadfastRecipientAddress = r.address || "";
-      saveOrders();
+      omPendingOrderIds.add(String(order.id));
+localStorage.setItem("mayaOrders", JSON.stringify(orders));
+
+try {
+  await omSaveOrderToCloud(order);
+  omCloudSnapshots.set(String(order.id), JSON.stringify(order));
+  omPendingOrderIds.delete(String(order.id));
+} catch (e) {
+  console.error("Courier cloud save failed:", e);
+  alert("⚠️ Steadfast-এ বুকিং হয়েছে, কিন্তু Supabase-এ সেভ নিশ্চিত হয়নি। আবার Send চাপবেন না।");
+        }
       renderEverything();
       showCourierSuccessCard(order);
     }catch(err){
@@ -4519,6 +4570,17 @@ function closeEmergencyPopup(){
     const order = orders.find(order => order.id === id);
 
     if(!order) return;
+    if (
+  order.courierSent === true ||
+  order.status === "courier_sent" ||
+  !!order.consignmentId ||
+  !!order.parcelId ||
+  !!order.trackingId ||
+  !!order.trackingCode
+) {
+  alert("✅ এই অর্ডার আগেই কুরিয়ারে বুকিং হয়েছে।");
+  return;
+    }
     if(!courierName){ alert("Courier সিলেক্ট করুন."); return; }
     if(codRaw === "" || Number(codRaw) < 0){ alert("সঠিক COD Amount লিখুন."); return; }
 
@@ -4770,7 +4832,7 @@ function deleteFromSourceGroup(){
       order.hiddenFromPending = true;
       order.groupRemovedAt = new Date().toLocaleString();
       order.groupRemovedFrom = "emergency";
-
+  omPendingOrderIds.add(String(order.id));
       saveOrders();
       renderEverything();
 
@@ -4782,6 +4844,7 @@ function deleteFromSourceGroup(){
     order.groupRemovedAt = new Date().toLocaleString();
     order.groupRemovedFrom = "pending";
 
+    omPendingOrderIds.add(String(order.id));
     saveOrders();
     renderEverything();
 
@@ -7798,7 +7861,7 @@ if(newPhone){
       order.lastEditedAt || ""
   }));
 
-  saveOrders();
+  localStorage.setItem("mayaOrders", JSON.stringify(orders));
   renderEverything();
   renderOrderNotifications();
 
