@@ -4641,7 +4641,20 @@ try {
       order.trackingId = c.tracking_code || c.consignment_id || "";
       order.trackingCode = c.tracking_code || "";
 
-      saveOrders();
+      omPendingOrderIds.add(String(order.id));
+localStorage.setItem("mayaOrders", JSON.stringify(orders));
+
+try {
+  await omSaveOrderToCloud(order);
+  omCloudSnapshots.set(
+    String(order.id),
+    JSON.stringify(order)
+  );
+  omPendingOrderIds.delete(String(order.id));
+} catch (e) {
+  console.error("Courier cloud save failed:", e);
+  alert("⚠️ কুরিয়ারে বুকিং হয়েছে, কিন্তু Supabase-এ সেভ নিশ্চিত হয়নি। আবার Send চাপবেন না।");
+  }
       closeCourierSendModal();
       renderEverything();
       showCourierSuccessCard(order);
@@ -4833,7 +4846,18 @@ function deleteFromSourceGroup(){
       order.groupRemovedAt = new Date().toLocaleString();
       order.groupRemovedFrom = "emergency";
   omPendingOrderIds.add(String(order.id));
-      saveOrders();
+      localStorage.setItem("mayaOrders", JSON.stringify(orders));
+
+omSaveOrderToCloud(order)
+  .then(() => {
+    omCloudSnapshots.set(String(order.id), JSON.stringify(order));
+    omPendingOrderIds.delete(String(order.id));
+  })
+  .catch(err => {
+    console.error("Remove sync failed:", err);
+    alert("⚠️ Delete Supabase-এ সেভ হয়নি। আবার সিঙ্ক করতে হবে।");
+    setTimeout(omSyncCurrentOrders, 2000);
+  });
       renderEverything();
 
       alert("✅ Emergency Group থেকে সরানো হয়েছে। All Order ও Courier Tracking record থাকবে।");
@@ -4845,7 +4869,18 @@ function deleteFromSourceGroup(){
     order.groupRemovedFrom = "pending";
 
     omPendingOrderIds.add(String(order.id));
-    saveOrders();
+    localStorage.setItem("mayaOrders", JSON.stringify(orders));
+
+omSaveOrderToCloud(order)
+  .then(() => {
+    omCloudSnapshots.set(String(order.id), JSON.stringify(order));
+    omPendingOrderIds.delete(String(order.id));
+  })
+  .catch(err => {
+    console.error("Remove sync failed:", err);
+    alert("⚠️ Delete-এর তথ্য Supabase-এ সেভ হয়নি। আবার সিঙ্ক করতে হবে।");
+    setTimeout(omSyncCurrentOrders, 2000);
+  });
     renderEverything();
 
     alert("✅ Pending Group থেকে সরানো হয়েছে। All Order ও Courier Tracking record থাকবে।");
