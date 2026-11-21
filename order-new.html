@@ -5565,8 +5565,13 @@ window.approveDelete = async function(id){
 
   function orderHTML(order, adminMode = false, viewMode = "all"){
     const isCourierSent =
-      order.status === "courier_sent" ||
-      order.courierSent === true;
+  order.status === "courier_sent" ||
+  order.courierSent === true ||
+  order.courierSent === "true" ||
+  !!order.consignmentId ||
+  !!order.parcelId ||
+  !!order.trackingId ||
+  !!order.trackingCode;
 
     const isDeletePending =
       order.deleteRequested === true;
@@ -7133,13 +7138,15 @@ if(newPhone){
   const pending =
     activeOrders.filter(order =>
       order.hiddenFromPending !== true &&
-      order.emergency !== true
+!order.groupRemovedAt &&
+order.emergency !== true
     ).length;
 
   const emergency =
     activeOrders.filter(order =>
       order.emergency === true &&
-      order.hiddenFromEmergency !== true
+      !order.groupRemovedAt &&
+order.hiddenFromEmergency !== true
     ).length;
 
   const courier =
