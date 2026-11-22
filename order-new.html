@@ -14939,5 +14939,285 @@ window.openModeratorSalarySettings = function () {
   window.location.href = './moderator-commission-payment-demo-1.html';
 };
   </script>
+<style id="mayaGroupModuleStyle">
+/* Maya Garments Group — isolated styles. */
+.oc-bottom-nav{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.oc-bottom-nav #ocNavGroup{position:relative}
+.oc-bottom-nav #ocNavGroup .mg-nav-unread{position:absolute;top:2px;left:calc(50% + 11px);font:800 10px Arial;min-width:18px;height:18px;display:grid;place-items:center;background:#e23b48;color:#fff;border-radius:14px;padding:0 4px;border:2px solid #fff}
+#mayaGroupChat{position:fixed;inset:0 0 calc(72px + env(safe-area-inset-bottom)) 0;z-index:21000;display:flex;flex-direction:column;background:#e8f0ec;color:#203a33;font-family:Arial,"Noto Sans Bengali","Hind Siliguri",sans-serif;overflow:hidden}
+#mayaGroupChat[hidden]{display:none!important}
+#mayaGroupChat *{box-sizing:border-box}#mayaGroupChat button,#mayaGroupChat textarea,#mayaGroupChat input,#mayaGroupChat select{font:inherit}
+#mayaGroupChat button{border:0;cursor:pointer}#mayaGroupChat .mg-top{display:flex;align-items:center;gap:11px;padding:12px 14px;background:#fff;border-bottom:1px solid #d5e4de;flex:none;min-height:74px}
+#mayaGroupChat .mg-logo{display:grid;place-items:center;width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#18a38b,#0b6c63);color:#fff;font-size:23px;flex:none}
+#mayaGroupChat .mg-title{flex:1;min-width:0}#mayaGroupChat .mg-title b{font-size:18px;color:#20483e;display:block}#mayaGroupChat .mg-title small{font-size:12px;color:#7b8e87;display:block;margin-top:3px}
+#mayaGroupChat .mg-icon{display:grid;place-items:center;width:36px;height:38px;border-radius:11px;background:#edf6f1;color:#0c8070;font-weight:bold;font-size:22px;flex:none}
+#mayaGroupChat .mg-announce{padding:10px 11px;background:#fff0d5;color:#98621e;border-radius:11px;font-size:13px;font-weight:800}
+
+#mayaGroupChat .mg-pin{display:flex;gap:10px;align-items:center;background:#fff8ed;border-bottom:1px solid #ecd5ae;padding:10px 14px;min-height:55px;flex:none}
+#mayaGroupChat .mg-pin span{flex:1;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;color:#885d25;font-size:13px}
+#mayaGroupChat .mg-pin button{background:#fff;color:#865515;border:1px solid #edd8af;border-radius:9px;padding:7px 10px;font-size:12px;font-weight:800}
+#mayaGroupChat .mg-search{padding:8px 14px;background:#fff;display:flex;gap:8px;border-bottom:1px solid #dfe9e5}
+#mayaGroupChat .mg-search input{width:100%;min-width:0;border:1px solid #ccdfd7;border-radius:11px;padding:10px 12px;outline:none}
+#mayaGroupChat .mg-search button{padding:7px 11px;background:#f1f6f3;color:#44675b;border-radius:9px}
+#mayaGroupChat .mg-messages{flex:1;overflow:auto;overscroll-behavior:contain;padding:15px 11px 20px;background-color:#e8f1ee;background-image:radial-gradient(circle at 25px 22px,#1e90680a 1px,transparent 1.5px);background-size:75px 75px}
+#mayaGroupChat .mg-day{display:table;padding:5px 12px;background:#fff;box-shadow:0 2px 8px #2e655013;border-radius:99px;font-size:11px;font-weight:800;color:#8a9a94;margin:4px auto 19px}
+#mayaGroupChat .mg-row{display:flex;align-items:flex-end;gap:8px;margin:12px 0;position:relative}#mayaGroupChat .mg-row.mine{flex-direction:row-reverse}
+#mayaGroupChat .mg-avatar{display:grid;place-items:center;width:27px;height:27px;border-radius:10px;background:#e1f0fb;color:#2e6390;font-size:11px;font-weight:900;flex:none}
+#mayaGroupChat .mg-bubble{position:relative;max-width:min(83%,570px);min-width:110px;border-radius:17px 17px 17px 5px;background:#fff;box-shadow:0 2px 7px #20483715;padding:10px 12px 8px;overflow-wrap:anywhere}
+#mayaGroupChat .mine .mg-bubble{border-radius:17px 17px 5px 17px;background:#d6f3e6}
+#mayaGroupChat .mg-row.mentioned .mg-bubble{box-shadow:0 0 0 2px #0f9684,0 2px 8px #20483719}
+#mayaGroupChat .mg-bubble-head{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:27px}
+#mayaGroupChat .mg-name{font-size:13px;color:#118475;font-weight:900;min-width:0}#mayaGroupChat .mg-more{font-size:20px;color:#5f8478;width:30px;height:29px;border-radius:8px;background:#edf5f2;flex:none}
+#mayaGroupChat .mine .mg-more{background:#c6eadd}
+#mayaGroupChat .mg-quote{display:flex;gap:8px;align-items:center;background:#e9f7ef;border-left:4px solid #12a18a;border-radius:8px;padding:8px;margin:5px 0 9px;cursor:pointer}
+#mayaGroupChat .mine .mg-quote{background:#c6ebdb}#mayaGroupChat .mg-quote img{width:45px;height:46px;object-fit:cover;border-radius:8px;flex:none}
+#mayaGroupChat .mg-quote div{min-width:0}#mayaGroupChat .mg-quote b{display:block;color:#087a69;font-size:12px}#mayaGroupChat .mg-quote span{font-size:12.5px;color:#5d7d71;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+#mayaGroupChat .mg-body{font-size:16px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere;color:#1e3b32}#mayaGroupChat .mg-tag{display:inline!important;font-family:inherit!important;font-size:inherit!important;line-height:inherit!important;letter-spacing:inherit!important;vertical-align:baseline!important;background:#b9ebd7;color:#086b5b;border-radius:3px;font-weight:800;padding:0 1px}
+#mayaGroupChat .mg-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin:6px 0 9px;max-width:420px}
+#mayaGroupChat .mg-photos.one{grid-template-columns:1fr}#mayaGroupChat .mg-photos img{display:block;width:100%;height:145px;object-fit:cover;border-radius:9px;cursor:zoom-in;background:#e6efe9}
+#mayaGroupChat .mg-photos.one img{height:auto;max-height:355px;object-fit:contain}
+#mayaGroupChat .mg-meta{display:flex;justify-content:flex-end;gap:6px;color:#7d958b;margin-top:6px;font-size:11px}#mayaGroupChat .mg-meta b{color:#12988d}
+#mayaGroupChat .mg-row.announce .mg-bubble{background:#fff1da;border:1px solid #ecd3a6}#mayaGroupChat .mg-ann-tag{font-size:13px;color:#ad6a1e;font-weight:900;margin:0 0 7px}
+#mayaGroupChat .mg-compose{position:relative;background:#fff;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid #d4e5dc;flex:none}
+#mayaGroupChat .mg-reply{background:#ecf7f1;border-left:4px solid #11a28a;border-radius:10px;margin:0 0 9px;display:flex;align-items:center;gap:9px;padding:8px}
+#mayaGroupChat .mg-reply img{height:45px;width:45px;object-fit:cover;border-radius:8px}#mayaGroupChat .mg-reply div{flex:1;min-width:0}#mayaGroupChat .mg-reply b{font-size:12px;color:#097561;display:block}#mayaGroupChat .mg-reply span{font-size:13px;color:#52766a;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block}
+#mayaGroupChat .mg-selected{display:flex;gap:7px;overflow-x:auto;margin:0 0 8px}#mayaGroupChat .mg-selected .mg-ph{position:relative;flex:none}#mayaGroupChat .mg-selected img{width:68px;height:68px;object-fit:cover;border-radius:9px}#mayaGroupChat .mg-selected button{position:absolute;top:0;right:0;background:#000a;color:#fff;border-radius:50%;width:22px;height:22px}
+#mayaGroupChat .mg-input-row{display:flex;align-items:flex-end;gap:9px}
+#mayaGroupChat .mg-input-row textarea{resize:none;flex:1;min-width:0;max-height:132px;min-height:48px;padding:13px 12px;border:1px solid #c7ddd2;border-radius:20px;outline:none;font-size:16px;line-height:1.4;background:#fbfefd}
+#mayaGroupChat .mg-input-row textarea:focus{border-color:#0e9782}#mayaGroupChat .mg-attach,#mayaGroupChat .mg-at{background:#ecf7f1;color:#168273;border-radius:15px;font-size:22px;height:47px;width:42px;flex:none}
+#mayaGroupChat .mg-send{background:#0f9b86;color:#fff;border-radius:15px;height:48px;width:48px;flex:none;font-size:22px}
+#mayaGroupChat .mg-menu,#mayaGroupChat .mg-mention-list{position:absolute;z-index:3;background:#fff;border:1px solid #dce7e1;border-radius:14px;box-shadow:0 10px 38px #0c43332a;padding:6px;min-width:180px;max-height:220px;overflow:auto}
+#mayaGroupChat .mg-menu button,#mayaGroupChat .mg-mention-list button{display:block;text-align:left;width:100%;padding:11px;border-radius:9px;background:#fff;color:#365f51;font-weight:700;font-size:14px}
+#mayaGroupChat .mg-menu button:hover,#mayaGroupChat .mg-mention-list button:hover{background:#edf7f2}#mayaGroupChat .mg-menu .danger{color:#c34248}
+#mayaGroupChat .mg-mention-list{left:8px;bottom:72px;min-width:min(280px,90%)}#mayaGroupChat .mg-mention-list button span{font-size:11px;color:#90a59b;display:block}
+#mayaGroupChat .mg-dialog-back{position:absolute;inset:0;z-index:8;background:#062e2b82;display:grid;place-items:center;padding:15px}
+#mayaGroupChat .mg-dialog{background:#fff;border-radius:19px;width:min(500px,100%);max-height:80dvh;overflow:auto;padding:19px;box-shadow:0 20px 60px #0003}
+#mayaGroupChat .mg-dialog h3{margin:0 0 14px;font-size:19px;color:#154d41}#mayaGroupChat .mg-dialog textarea{width:100%;min-height:120px;padding:13px;border-radius:11px;border:1px solid #cee0d5;resize:vertical;outline:none;font-size:16px}
+#mayaGroupChat .mg-dialog-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:13px}#mayaGroupChat .mg-dialog-actions button{padding:11px 14px;border-radius:10px;font-size:14px;font-weight:900;background:#eaf4ef;color:#1a6c5e}
+#mayaGroupChat .mg-dialog-actions button.primary{background:#0b9a84;color:#fff}
+#mayaGroupChat .mg-edit-pics{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}#mayaGroupChat .mg-edit-pics div{position:relative}#mayaGroupChat .mg-edit-pics img{width:75px;height:75px;object-fit:cover;border-radius:8px}#mayaGroupChat .mg-edit-pics button{position:absolute;top:0;right:0;width:22px;height:22px;border-radius:50%;color:#fff;background:#b53741}
+#mayaGroupChat .mg-toast{position:absolute;bottom:95px;left:50%;transform:translateX(-50%);background:#1d5245;color:#fff;padding:10px 14px;border-radius:12px;font-size:12px;z-index:10;text-align:center;max-width:90%;pointer-events:none}
+#mayaGroupChat .mg-viewer{position:absolute;inset:0;z-index:9;background:#0b1718ed;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:15px}
+#mayaGroupChat .mg-viewer img{max-width:98%;max-height:78%;object-fit:contain}#mayaGroupChat .mg-viewer button{padding:9px 15px;border-radius:9px;background:#fff;color:#124b40;font-weight:900}
+#mayaGroupChat .mg-empty{text-align:center;margin:20px;color:#78928a;font-size:13px}
+@media(min-width:800px){#mayaGroupChat .mg-top,#mayaGroupChat .mg-pin,#mayaGroupChat .mg-search,#mayaGroupChat .mg-compose{padding-left:max(18px,calc((100vw - 800px)/2));padding-right:max(18px,calc((100vw - 800px)/2))}#mayaGroupChat .mg-messages{padding-left:max(20px,calc((100vw - 800px)/2));padding-right:max(20px,calc((100vw - 800px)/2))}}
+@media(max-width:380px){#mayaGroupChat .mg-bubble{max-width:88%}#mayaGroupChat .mg-name{font-size:12px}#mayaGroupChat .mg-body{font-size:16px}#mayaGroupChat .mg-icon{height:35px;width:32px}}
+</style>
+<style id="mayaGroupHiddenFix">#mayaGroupChat [hidden], .oc-bottom-nav .mg-nav-unread[hidden]{display:none!important}</style>
+<!-- Maya Garments Group Chat: single-insert module -->
+<section id="mayaGroupChat" aria-label="Moderator Group Chat" hidden>
+ <header class="mg-top">
+  <div class="mg-logo">👥</div>
+  <div class="mg-title"><b>Moderator Group</b><small id="mgCount">Maya Garments · Group Chat</small></div>
+  <button class="mg-announce" id="mgAnnButton" type="button" title="অ্যাডমিন ঘোষণা">📣 ঘোষণা</button>
+  <button class="mg-icon" id="mgSearchButton" type="button" aria-label="সার্চ">⌕</button>
+  <button class="mg-icon" id="mgMentionInbox" type="button" aria-label="আমাকে মেনশন করেছে">@</button>
+ </header>
+ <div class="mg-pin" id="mgPinned" hidden><span id="mgPinText"></span><button id="mgPinJump" type="button">দেখুন</button></div>
+ <div class="mg-search" id="mgSearch" hidden><input type="search" id="mgSearchText" placeholder="মেসেজ খুঁজুন"><button id="mgSearchClose" type="button">বন্ধ</button></div>
+ <div id="mgMessages" class="mg-messages" aria-live="polite"></div>
+ <div class="mg-compose">
+  <div class="mg-reply" id="mgReplyBar" hidden><img id="mgReplyImg" alt="রিপ্লাই ছবি" hidden><div><b id="mgReplySender"></b><span id="mgReplyText"></span></div><button class="mg-icon" id="mgReplyCancel" aria-label="রিপ্লাই বাতিল">×</button></div>
+  <div class="mg-selected" id="mgSelected" hidden></div>
+  <div class="mg-mention-list" id="mgMentionList" hidden></div>
+  <div class="mg-input-row">
+   <button type="button" class="mg-attach" id="mgAttach" title="ছবি বা স্ক্রিনশট">📎</button>
+   <button type="button" class="mg-at" id="mgAt" title="কাউকে মেনশন">@</button>
+   <textarea id="mgText" rows="1" placeholder="মেসেজ লিখুন..."></textarea>
+   <button type="button" class="mg-send" id="mgSend" title="মেসেজ পাঠান">➤</button>
+  </div>
+  <input id="mgFiles" type="file" accept="image/*" multiple hidden>
+ </div>
+ <div class="mg-menu" id="mgMenu" hidden></div>
+ <div class="mg-dialog-back" id="mgDialogBack" hidden><div class="mg-dialog"><h3 id="mgDialogTitle"></h3><textarea id="mgDialogText"></textarea><div class="mg-edit-pics" id="mgEditPics"></div><button id="mgEditAdd" type="button" style="background:#e6f5ed;color:#0c7969;border-radius:10px;padding:8px 12px;margin-top:10px;font-size:13px;font-weight:bold">📎 ছবি যোগ করুন</button><input type="file" id="mgEditFiles" accept="image/*" multiple hidden><div class="mg-dialog-actions"><button id="mgDialogCancel" type="button">বাতিল</button><button id="mgDialogSave" class="primary" type="button">সেভ করুন</button></div></div></div>
+ <div class="mg-viewer" id="mgViewer" hidden><img id="mgViewerImage" alt="ছবি"><button id="mgViewerClose" type="button">বন্ধ করুন</button></div>
+ <div class="mg-toast" id="mgToast" hidden></div>
+</section>
+<script id="mayaGroupModuleScript">
+(()=>{
+'use strict';
+if(window.__mayaGroupModuleInstalled)return;
+window.__mayaGroupModuleInstalled=true;
+const $=id=>document.getElementById(id);
+const host=$('mayaGroupChat');if(!host)return;
+const DEMO=document.body.dataset.mgDemo==='1';
+const DB_NAME=DEMO?'maya_group_preview_final_v5':'maya_group_local_v1';
+const bc=('BroadcastChannel' in window)?new BroadcastChannel(DB_NAME):null;
+const fmt=new Intl.DateTimeFormat('bn-BD',{hour:'numeric',minute:'2-digit',hour12:true});
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const userDemo=[
+ {id:'a:admin1',name:'Admin 1',role:'admin'},
+ {id:'a:admin2',name:'Admin 2',role:'admin'},
+ {id:'m:rima',name:'রিমা',role:'moderator'},
+ {id:'m:sumi',name:'সুমি',role:'moderator'},
+ {id:'m:mim',name:'মিম',role:'moderator'},
+ {id:'m:nipa',name:'নিপা',role:'moderator'},
+ {id:'m:sadia',name:'সাদিয়া',role:'moderator'}
+];
+const mkId=()=>`${Date.now()}-${(crypto?.randomUUID?.()||Math.random().toString(36).slice(2))}`;
+const tryArr=k=>{try{const x=JSON.parse(localStorage.getItem(k)||'[]');return Array.isArray(x)?x:[]}catch{return[]}};
+function roster(){
+ if(DEMO)return userDemo;
+ const all=[...tryArr('mayaAdmins').map(u=>({id:'a:'+u.id,name:String(u.name||'Admin'),role:'admin'})),...tryArr('mayaModerators').map(u=>({id:'m:'+u.id,name:String(u.name||'Moderator'),role:'moderator'}))];
+ const ids=new Set();return all.filter(u=>{if(!u.id||ids.has(u.id))return false;ids.add(u.id);return true});
+}
+function active(){
+ if(DEMO)return userDemo.find(x=>x.id===demoActive)||userDemo[0];
+ try{const s=JSON.parse(sessionStorage.getItem('mayaAuthSession')||'null');return s?{id:(s.role==='admin'?'a:':'m:')+s.id,name:String(s.name||''),role:s.role}:null}catch{return null}
+}
+let demoActive='a:admin1',shown=false,replyId=null,selectedImages=[],menuId=null,searchTerm='',dialogMode='',editId=null,editImages=[],isSending=false,viewTarget=null;
+let messageCache=[],reads={},mentionReads={},dbPromise=null;
+function db(){
+ if(dbPromise)return dbPromise;
+ dbPromise=new Promise((resolve,reject)=>{
+  const r=indexedDB.open(DB_NAME,1);
+  r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('messages'))d.createObjectStore('messages',{keyPath:'id'});if(!d.objectStoreNames.contains('prefs'))d.createObjectStore('prefs',{keyPath:'key'})};
+  r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);
+ });return dbPromise;
+}
+async function getAll(store){const d=await db();return new Promise((resolve,reject)=>{const r=d.transaction(store,'readonly').objectStore(store).getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error)})}
+async function put(store,value){const d=await db();return new Promise((resolve,reject)=>{const tx=d.transaction(store,'readwrite');tx.objectStore(store).put(value);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)})}
+async function del(store,key){const d=await db();return new Promise((resolve,reject)=>{const tx=d.transaction(store,'readwrite');tx.objectStore(store).delete(key);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)})}
+async function load(){
+ try{
+  messageCache=(await getAll('messages')).sort((a,b)=>a.time-b.time);
+  const prefs=await getAll('prefs');reads=Object.fromEntries(prefs.filter(p=>p.key.startsWith('r:')).map(p=>[p.key.slice(2),p.value]));
+  mentionReads=Object.fromEntries(prefs.filter(p=>p.key.startsWith('m:')).map(p=>[p.key.slice(2),p.value]));
+  if(DEMO&&!messageCache.length)await seed();
+  render();badge();if(shown)markRead();
+ }catch(e){console.error('Maya Group local storage:',e);toast('চ্যাট স্টোরেজ খোলা যাচ্ছে না।')}
+}
+async function seed(){
+ const now=Date.now()-600000;
+ const samples=[
+  {id:'demo-1',uid:'m:sumi',name:'সুমি',role:'moderator',text:'এই বোরকাটির দাম কত হবে?',images:window.__mayaGroupSampleImage?[{name:'abaya.jpg',src:window.__mayaGroupSampleImage}]:[],replyTo:null,kind:'normal',time:now,edited:false,mentions:[]},
+  {id:'demo-2',uid:'a:admin1',name:'Admin 1',role:'admin',text:'এই ডিজাইনের দাম ৪৫০ টাকা।',images:[],replyTo:'demo-1',kind:'normal',time:now+70000,edited:false,mentions:[]},
+  {id:'demo-3',uid:'m:rima',name:'রিমা',role:'moderator',text:'@Admin 1 এই অর্ডারটি একটু দেখে দেবেন?',images:[],replyTo:null,kind:'normal',time:now+110000,edited:false,mentions:['a:admin1']}
+ ];
+ for(const m of samples)await put('messages',m);
+ messageCache=samples;
+}
+function myUnread(){const me=active();if(!me)return 0;const seen=Number(reads[me.id]||0);return messageCache.filter(m=>m.uid!==me.id&&m.time>seen).length}
+function myMentions(){const me=active();if(!me)return[];const seen=Number(mentionReads[me.id]||0);return messageCache.filter(m=>m.uid!==me.id&&(m.mentions||[]).includes(me.id)&&m.time>seen)}
+function badge(){
+ const n=shown?0:myUnread();const b=$('mgNavUnread');if(b){b.hidden=!n;b.textContent=n>99?'99+':String(n)}
+ const m=myMentions().length;const b2=$('mgMentionInbox');if(b2){b2.textContent=m?'@'+(m>9?'9+':m):'@';b2.title=m?m+'টি নতুন মেনশন':'আমার মেনশন'}
+ const me=active();$('mgCount').textContent=`${roster().length} জন সদস্য · Maya Garments`;
+ if(DEMO){$('mgCount').textContent=`${me?.name||'নেই'} ▾ · ${roster().length} জন সদস্য`;$('mgCount').title='ডেমো সদস্য বদলাতে এখানে চাপুন';$('mgCount').style.cursor='pointer'}
+}
+async function markRead(){const me=active();if(!me)return;const t=Math.max(Date.now(),...messageCache.map(x=>x.time||0));reads[me.id]=t;await put('prefs',{key:'r:'+me.id,value:t});badge()}
+async function markMentions(){const me=active();if(!me)return;const t=Math.max(Date.now(),...messageCache.map(x=>x.time||0));mentionReads[me.id]=t;await put('prefs',{key:'m:'+me.id,value:t});badge()}
+function currentName(uid,fallback){return roster().find(u=>u.id===uid)?.name||fallback||'সদস্য'}
+function resolveMentions(text){const me=active();const all=roster().filter(u=>u.id!==me?.id);const ids=all.filter(u=>text.includes('@'+u.name)).map(u=>u.id);if(me?.role==='admin'&&text.includes('@সবাই'))all.forEach(u=>ids.push(u.id));return [...new Set(ids)]}
+function tagged(text){let s=esc(text);const names=[...roster().map(u=>u.name),'সবাই'].sort((a,b)=>b.length-a.length);for(const name of names){const token=esc('@'+name);s=s.split(token).join('<span class="mg-tag">'+token+'</span>')}return s}
+function imgSrc(src){return /^data:image\/(?:jpeg|png|webp|gif);base64,/i.test(String(src))?src:''}
+function quoteHTML(m){if(!m)return '';const thumb=m.images?.[0]&&imgSrc(m.images[0].src);return `<div class="mg-quote" data-quote="${esc(m.id)}">${thumb?`<img alt="রিপ্লাই ছবি" src="${thumb}">`:''}<div><b>${esc(currentName(m.uid,m.name))}</b><span>${esc(m.text|| (thumb?'🖼️ ছবি':'মেসেজ'))}</span></div></div>`}
+function msgHTML(m){
+ const me=active(), mine=m.uid===me?.id;const parent=messageCache.find(x=>x.id===m.replyTo);
+ const photos=(m.images||[]).filter(x=>imgSrc(x.src));const pic=photos.length?`<div class="mg-photos ${photos.length===1?'one':''}">${photos.map((x,i)=>`<img data-photo-id="${esc(m.id)}" data-photo-index="${i}" alt="গ্রুপের ছবি" src="${imgSrc(x.src)}">`).join('')}</div>`:'';
+ const mentioned=(m.mentions||[]).includes(me?.id)?' mentioned':'';
+ return `<div class="mg-row ${mine?'mine':''}${mentioned}${m.kind==='announce'?' announce':''}" id="mg-message-${esc(m.id)}" data-id="${esc(m.id)}">${mine?'':`<span class="mg-avatar">${esc((m.name||'?').slice(0,1))}</span>`}<div class="mg-bubble"><div class="mg-bubble-head"><span class="mg-name">${esc(currentName(m.uid,m.name))}</span><button class="mg-more" aria-label="মেসেজ অপশন" data-menu="${esc(m.id)}">⋮</button></div>${m.kind==='announce'?'<div class="mg-ann-tag">📣 অ্যাডমিন ঘোষণা</div>':''}${quoteHTML(parent)}${pic}${m.text?`<div class="mg-body">${tagged(m.text)}</div>`:''}<div class="mg-meta">${m.reactions&&Object.values(m.reactions).filter(Boolean).length?'❤️ '+Object.values(m.reactions).filter(Boolean).length:''} ${m.edited?'✏️ এডিট করা':''} ${fmt.format(new Date(m.time))}${mine?'<b>✓✓</b>':''}</div></div></div>`
+}
+function render(keepScroll=false){
+ const list=$('mgMessages');const oldTop=list.scrollTop,oldHeight=list.scrollHeight;
+ const data=messageCache.filter(x=>!searchTerm||(x.text||'').toLocaleLowerCase().includes(searchTerm)||currentName(x.uid,x.name).toLocaleLowerCase().includes(searchTerm));
+ const sections=[];let day='';for(const m of data){const d=new Date(m.time).toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'});if(day!==d){day=d;sections.push(`<div class="mg-day">${esc(d)}</div>`)}sections.push(msgHTML(m))}
+ list.innerHTML=sections.join('')||'<div class="mg-empty">এখনো কোনো মেসেজ নেই</div>';
+ if(!keepScroll)list.scrollTop=list.scrollHeight;else list.scrollTop=oldTop+list.scrollHeight-oldHeight;
+ $('mgAnnButton').hidden=active()?.role!=='admin';
+ const pin=[...messageCache].reverse().find(m=>m.pinned||m.kind==='announce'&&m.pinned!==false);$('mgPinned').hidden=!pin;
+ if(pin){$('mgPinText').textContent='📌 '+(pin.text||'ছবি');$('mgPinJump').dataset.target=pin.id}
+ badge();
+}
+function toast(s){const el=$('mgToast');el.textContent=String(s);el.hidden=false;clearTimeout(toast.id);toast.id=setTimeout(()=>el.hidden=true,2200)}
+function jump(id){const el=$('mg-message-'+id);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.outline='2px solid #0f987e';setTimeout(()=>{el.style.outline=''},1300)}else toast('মেসেজ খুঁজে পাওয়া যায়নি')}
+function dismissMenu(){menuId=null;$('mgMenu').hidden=true}
+function openMenu(id,button){const m=messageCache.find(x=>x.id===id),me=active();if(!m||!me)return;
+ const mine=m.uid===me.id,admin=me.role==='admin';menuId=id;
+ const opts=[['reply','↩ উত্তর দিন'],['react','❤️ রিঅ্যাক্ট'],['copy','📋 কপি করুন']];
+ if(mine)opts.push(['edit','✏️ এডিট করুন']);
+ if(admin)opts.push(['pin',m.pinned?'📌 আনপিন করুন':'📌 পিন করুন']);
+ if(mine||admin)opts.push(['delete','🗑️ ডিলিট করুন']);
+ $('mgMenu').innerHTML=opts.map(([a,label])=>`<button type="button" data-choice="${a}" class="${a==='delete'?'danger':''}">${label}</button>`).join('');
+ const root=host.getBoundingClientRect(),rect=button.getBoundingClientRect(),box=$('mgMenu');box.hidden=false;
+ const w=195,h=opts.length*43+16;box.style.left=Math.min(Math.max(8,rect.left-root.left-145),root.width-w-8)+'px';box.style.top=Math.min(Math.max(8,rect.bottom-root.top),root.height-h-10)+'px';
+}
+function clearReply(){replyId=null;$('mgReplyBar').hidden=true}
+function startReply(m){replyId=m.id;$('mgReplySender').textContent=currentName(m.uid,m.name);$('mgReplyText').textContent=m.text||'🖼️ ছবি';const im=m.images?.[0]&&imgSrc(m.images[0].src);$('mgReplyImg').hidden=!im;if(im)$('mgReplyImg').src=im;$('mgReplyBar').hidden=false;$('mgText').focus()}
+function showSelected(){const target=$('mgSelected');target.hidden=!selectedImages.length;target.innerHTML=selectedImages.map((img,i)=>`<div class="mg-ph"><img src="${img.src}" alt="নির্বাচিত ছবি"><button data-remove-photo="${i}" aria-label="ছবি বাদ">×</button></div>`).join('')}
+async function fileToImage(file){if(!file.type.startsWith('image/'))throw Error('শুধু ছবি দেওয়া যাবে');if(file.size>10*1024*1024)throw Error('একটি ছবি ১০MB-এর বেশি হতে পারবে না');
+ return new Promise((resolve,reject)=>{const url=URL.createObjectURL(file),im=new Image();im.onload=()=>{try{const max=1400,scale=Math.min(1,max/Math.max(im.width,im.height)),can=document.createElement('canvas');can.width=Math.max(1,Math.round(im.width*scale));can.height=Math.max(1,Math.round(im.height*scale));can.getContext('2d').drawImage(im,0,0,can.width,can.height);const src=can.toDataURL('image/jpeg',.78);URL.revokeObjectURL(url);resolve({name:file.name,src})}catch(e){URL.revokeObjectURL(url);reject(e)}};im.onerror=()=>{URL.revokeObjectURL(url);reject(Error('ছবি পড়া যায়নি'))};im.src=url})
+}
+async function addPhotos(files,toEdit=false){let all=toEdit?editImages:selectedImages;const room=Math.max(0,6-all.length);if(files.length>room)toast('এক মেসেজে সর্বোচ্চ ৬টি ছবি');for(const f of Array.from(files).slice(0,room)){try{all.push(await fileToImage(f))}catch(e){toast(e.message)}}if(toEdit)renderEditPhotos();else showSelected()}
+function renderEditPhotos(){$('mgEditPics').innerHTML=editImages.map((im,i)=>`<div><img src="${imgSrc(im.src)}" alt="ছবি"><button data-edit-remove="${i}" aria-label="ছবি বাদ">×</button></div>`).join('')}
+async function writeMessage(o){await put('messages',o);messageCache.push(o);messageCache.sort((a,b)=>a.time-b.time);bc?.postMessage('changed');render();if(shown)await markRead()}
+async function send(kind='normal',announcement=''){
+ const me=active();if(!me){toast('আগে অ্যাপে লগইন করুন');return}if(isSending)return;
+ const text=kind==='announce'?announcement.trim():$('mgText').value.trim();const imgs=kind==='announce'?[]:selectedImages;
+ if(kind==='announce'&&me.role!=='admin')return toast('শুধু Admin ঘোষণা দিতে পারবেন');
+ if(!text&&!imgs.length)return toast('মেসেজ বা ছবি দিন');isSending=true;$('mgSend').disabled=true;
+ try{
+  const m={id:mkId(),uid:me.id,name:me.name,role:me.role,kind,text,images:[...imgs],replyTo:kind==='normal'?replyId:null,time:Date.now(),mentions:resolveMentions(text),edited:false,pinned:kind==='announce'};
+  await writeMessage(m);if(kind==='normal'){$('mgText').value='';selectedImages=[];showSelected();clearReply();$('mgMentionList').hidden=true}
+  if(m.mentions.length)toast('মেনশনসহ মেসেজ পাঠানো হয়েছে (লোকাল ডেমো)');
+ }catch(e){console.error(e);toast('মেসেজ সেভ হয়নি')}finally{isSending=false;$('mgSend').disabled=false}
+}
+function openDialog(mode,m){dialogMode=mode;editId=m?.id||null;editImages=m?structuredClone(m.images||[]):[];$('mgDialogTitle').textContent=mode==='announce'?'📣 অ্যাডমিন ঘোষণা':'✏️ মেসেজ এডিট';$('mgDialogText').value=m?.text||'';$('mgEditPics').hidden=mode!=='edit';$('mgEditAdd').hidden=mode!=='edit';renderEditPhotos();$('mgDialogBack').hidden=false;$('mgDialogText').focus()}
+async function applyDialog(){const me=active(),txt=$('mgDialogText').value.trim();if(dialogMode==='announce'){if(!txt)return toast('ঘোষণা লিখুন');if(me?.role!=='admin')return toast('শুধু Admin ঘোষণা দিতে পারবেন');$('mgDialogBack').hidden=true;return send('announce',txt)}
+ const m=messageCache.find(x=>x.id===editId);if(!m||m.uid!==me?.id)return toast('শুধু নিজের মেসেজ এডিট করা যাবে');if(!txt&&!editImages.length)return toast('মেসেজ খালি রাখা যাবে না');m.text=txt;m.images=[...editImages];m.mentions=resolveMentions(txt);m.edited=true;m.editedAt=Date.now();try{await put('messages',m);bc?.postMessage('changed');$('mgDialogBack').hidden=true;render(true)}catch{toast('এডিট সেভ হয়নি')}
+}
+function showMentionList(){const me=active(),users=roster().filter(u=>u.id!==me?.id);let names=[...users.map(u=>({name:u.name,role:u.role}))];if(me?.role==='admin')names.unshift({name:'সবাই',role:'সবাইকে মেনশন'});$('mgMentionList').innerHTML=names.map(u=>`<button data-mention="${esc(u.name)}">@${esc(u.name)}<span>${u.role==='admin'?'Admin':u.role==='moderator'?'Moderator':'সবাই'}</span></button>`).join('');$('mgMentionList').hidden=false}
+function insertMention(name){const input=$('mgText'),v=input.value;const pos=input.selectionStart??v.length;const pre=v.slice(0,pos),aft=v.slice(pos);const at=pre.lastIndexOf('@');const start=at>=0?at:pos;input.value=v.slice(0,start)+'@'+name+' '+aft;$('mgMentionList').hidden=true;input.focus();input.setSelectionRange(start+name.length+2,start+name.length+2)}
+async function menuAction(a){const m=messageCache.find(x=>x.id===menuId),me=active();dismissMenu();if(!m||!me)return;
+ if(a==='reply')return startReply(m);
+ if(a==='react'){m.reactions=m.reactions||{};m.reactions[me.id]=!m.reactions[me.id];await put('messages',m);bc?.postMessage('changed');render(true);return}
+ if(a==='copy'){try{await navigator.clipboard.writeText(m.text||'');toast('কপি হয়েছে')}catch{toast('কপি করতে পারেনি')}return}
+ if(a==='edit'&&m.uid===me.id)return openDialog('edit',m);
+ if(a==='pin'&&me.role==='admin'){m.pinned=!m.pinned;await put('messages',m);bc?.postMessage('changed');render(true);return}
+ if(a==='delete'&&(m.uid===me.id||me.role==='admin')){if(!confirm('এই মেসেজটি ডিলিট করতে চান?'))return;await del('messages',m.id);messageCache=messageCache.filter(x=>x.id!==m.id);bc?.postMessage('changed');render(true)}
+}
+function showViewer(src){$('mgViewerImage').src=src;$('mgViewer').hidden=false}
+function installNav(){const nav=document.querySelector('.oc-bottom-nav');if(!nav)return false;
+ let btn=$('ocNavGroup');if(!btn){btn=document.createElement('button');btn.type='button';btn.id='ocNavGroup';btn.innerHTML='<span class="ico">💬</span>Group<span id="mgNavUnread" class="mg-nav-unread" hidden>0</span>';const settings=$('ocNavSettings');if(settings)nav.insertBefore(btn,settings);else nav.appendChild(btn)}
+ btn.addEventListener('click',openGroup);
+ for(const name of ['ocNavOrders','ocNavCourier','ocNavSettings']){$(name)?.addEventListener('click',()=>{closeGroup()},true)}return true;
+}
+function openGroup(){const me=active();if(!me){toast('আগে লগইন করুন');return}document.getElementById('ocSettings')?.classList.remove('active');document.querySelectorAll('.oc-subpage.active').forEach(x=>x.classList.remove('active'));host.hidden=false;shown=true;
+ ['ocNavOrders','ocNavCourier','ocNavSettings'].forEach(id=>$(id)?.classList.remove('active'));$('ocNavGroup')?.classList.add('active');render();markRead();$('mgMessages').scrollTop=$('mgMessages').scrollHeight;
+}
+function closeGroup(){if(!shown)return;shown=false;host.hidden=true;$('ocNavGroup')?.classList.remove('active');dismissMenu();$('mgMentionList').hidden=true;badge()}
+window.mayaGroupOpen=openGroup;window.mayaGroupClose=closeGroup;
+// User can explicitly @mention others. Ordinary group messages do not trigger push alerts.
+$('mgAnnButton').addEventListener('click',()=>{if(active()?.role==='admin')openDialog('announce')});
+$('mgSearchButton').addEventListener('click',()=>{$('mgSearch').hidden=!$('mgSearch').hidden;$('mgSearchText').focus()});
+$('mgSearchClose').addEventListener('click',()=>{searchTerm='';$('mgSearchText').value='';$('mgSearch').hidden=true;render()});
+$('mgSearchText').addEventListener('input',e=>{searchTerm=e.target.value.trim().toLocaleLowerCase();render(true)});
+$('mgMentionInbox').addEventListener('click',async()=>{const mentions=myMentions();if(!mentions.length)return toast('নতুন @ মেনশন নেই');const last=mentions[mentions.length-1];await markMentions();jump(last.id)});
+$('mgPinJump').addEventListener('click',()=>jump($('mgPinJump').dataset.target));
+$('mgAttach').addEventListener('click',()=>{$('mgFiles').click()});
+$('mgAt').addEventListener('click',()=>{$('mgMentionList').hidden=!$('mgMentionList').hidden;if(!$('mgMentionList').hidden)showMentionList()});
+$('mgFiles').addEventListener('change',async e=>{await addPhotos(e.target.files);e.target.value=''});
+$('mgReplyCancel').addEventListener('click',clearReply);
+$('mgSend').addEventListener('click',()=>send());
+$('mgText').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}if(e.key==='Escape'){$('mgMentionList').hidden=true}});
+$('mgText').addEventListener('input',()=>{if(/@$/.test($('mgText').value))showMentionList()});
+$('mgSelected').addEventListener('click',e=>{const b=e.target.closest('[data-remove-photo]');if(!b)return;selectedImages.splice(Number(b.dataset.removePhoto),1);showSelected()});
+$('mgMentionList').addEventListener('click',e=>{const b=e.target.closest('[data-mention]');if(b)insertMention(b.dataset.mention)});
+$('mgMessages').addEventListener('click',e=>{const b=e.target.closest('[data-menu]'),im=e.target.closest('[data-photo-id]'),q=e.target.closest('[data-quote]');if(b)return openMenu(b.dataset.menu,b);if(im){const m=messageCache.find(x=>x.id===im.dataset.photoId);const src=m?.images?.[Number(im.dataset.photoIndex)]?.src;if(imgSrc(src))showViewer(src);return}if(q)jump(q.dataset.quote);else dismissMenu()});
+$('mgMenu').addEventListener('click',e=>{const b=e.target.closest('[data-choice]');if(b)menuAction(b.dataset.choice)});
+$('mgDialogCancel').addEventListener('click',()=>{$('mgDialogBack').hidden=true});
+$('mgDialogSave').addEventListener('click',applyDialog);
+$('mgEditPics').addEventListener('click',e=>{const b=e.target.closest('[data-edit-remove]');if(b){editImages.splice(Number(b.dataset.editRemove),1);renderEditPhotos()}});
+$('mgEditAdd').addEventListener('click',()=>$('mgEditFiles').click());
+$('mgEditFiles').addEventListener('change',async e=>{await addPhotos(e.target.files,true);e.target.value=''});
+$('mgViewerClose').addEventListener('click',()=>{$('mgViewer').hidden=true});
+$('mgCount').addEventListener('click',()=>{if(!DEMO)return;const u=userDemo.findIndex(x=>x.id===demoActive);demoActive=userDemo[(u+1)%userDemo.length].id;selectedImages=[];clearReply();showSelected();dismissMenu();render();markRead();toast('এখন '+active().name+' হিসেবে চ্যাট করছেন')});
+if(bc)bc.addEventListener('message',()=>{load()});
+window.addEventListener('storage',e=>{if(['mayaAdmins','mayaModerators'].includes(e.key)){render();badge()}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){load();if(shown)markRead()}});
+if(!installNav()){document.addEventListener('DOMContentLoaded',installNav,{once:true})}
+load();
+})();
+  </script>
 </body>
 </html>
