@@ -10342,7 +10342,56 @@ window.deleteAdminV2=async function(i){
   function pages(){try{return Array.isArray(managedPages)?managedPages:[]}catch(e){return []}}
   function pageCfg(page){return getPageCourierStore()[page]||{};}
   function renderPageSelect(){const s=document.getElementById('ocCourierPageSelect');if(!s)return;const old=s.value;s.innerHTML='<option value="">Page সিলেক্ট করুন</option>'+pages().map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');if(pages().includes(old))s.value=old;renderPageStatus();}
-  function renderPageStatus(){const el=document.getElementById('ocPageCourierStatusList');if(!el)return;const st=getPageCourierStore();el.innerHTML=pages().map(p=>{const c=st[p]||{};const ok=!!(c.activeCourier&&c.providers?.[c.activeCourier]?.apiKey&&c.providers?.[c.activeCourier]?.secret);return `<div class="oc-setup-row"><div style="min-width:0;flex:1"><b>${esc(p)}</b><small>${ok?esc(c.activeCourier)+' API saved':'Courier API setup করা হয়নি'}</small></div><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end"><span class="${ok?'oc-setup-ok':'oc-setup-no'}">${ok?'✅ Setup Complete':'⚠️ Not Setup'}</span><button type="button" class="oc-btn" style="padding:7px 10px;min-width:auto" onclick="openPageCourierEditor('${esc(p).replace(/'/g,"&#39;")}')">${ok?'✏️ Edit':'⚙️ Setup'}</button></div></div>`}).join('')||'<div class="oc-muted">আগে Page Management থেকে Page যোগ করুন।</div>';}
+ let omPageListSyncBusy = false;
+
+async function omSyncManagedPages(){
+  if(omPageListSyncBusy) return;
+  omPageListSyncBusy = true;
+
+  try{
+    const r = await fetch(
+      OM_SUPABASE_URL +
+      '/rest/v1/maya_managed_pages?select=page_name&order=sort_order.asc,page_name.asc',
+      {headers:omHeaders(), cache:'no-store'}
+    );
+
+    if(!r.ok) throw new Error(await r.text());
+
+    const rows = await r.json();
+    if(!Array.isArray(rows)) return;
+
+    managedPages = rows.map(x => x.page_name);
+
+    localStorage.setItem(
+      'mayaManagedPages',
+      JSON.stringify(managedPages)
+    );
+
+    renderManagedPages();
+    refreshPageSelects();
+
+    if(typeof window.ocRenderPages === 'function')
+      window.ocRenderPages();
+
+    renderPageSelect();
+
+    if(typeof window.ocPageCourierChanged === 'function')
+      window.ocPageCourierChanged();
+
+  }catch(e){
+    console.error('Page list sync:', e);
+  }finally{
+    omPageListSyncBusy = false;
+  }
+}
+
+document.addEventListener(
+  'DOMContentLoaded', omSyncManagedPages
+);
+
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden) omSyncManagedPages();
+});tion renderPageStatus(){const el=document.getElementById('ocPageCourierStatusList');if(!el)return;const st=getPageCourierStore();el.innerHTML=pages().map(p=>{const c=st[p]||{};const ok=!!(c.activeCourier&&c.providers?.[c.activeCourier]?.apiKey&&c.providers?.[c.activeCourier]?.secret);return `<div class="oc-setup-row"><div style="min-width:0;flex:1"><b>${esc(p)}</b><small>${ok?esc(c.activeCourier)+' API saved':'Courier API setup করা হয়নি'}</small></div><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end"><span class="${ok?'oc-setup-ok':'oc-setup-no'}">${ok?'✅ Setup Complete':'⚠️ Not Setup'}</span><button type="button" class="oc-btn" style="padding:7px 10px;min-width:auto" onclick="openPageCourierEditor('${esc(p).replace(/'/g,"&#39;")}')">${ok?'✏️ Edit':'⚙️ Setup'}</button></div></div>`}).join('')||'<div class="oc-muted">আগে Page Management থেকে Page যোগ করুন।</div>';}
   window.openPageCourierEditor=function(page){const sel=document.getElementById('ocCourierPageSelect');if(sel)sel.value=page;const card=document.getElementById('ocCourierChoiceCard');if(card)card.style.display='block';const c=pageCfg(page);const cs=document.getElementById('ocCourierSelect');if(cs)cs.value=c.activeCourier||'Steadfast';ocRefreshSelectedCourier();if((cs?.value||''))ocOpenSelectedCourierConfig();};
   window.openOCCourierSetup=function(){document.getElementById('ocCourierManager')?.classList.add('active');renderPageSelect();document.getElementById('ocCourierChoiceCard').style.display='none';};
   window.ocPageCourierChanged=function(){const p=document.getElementById('ocCourierPageSelect')?.value||'';const card=document.getElementById('ocCourierChoiceCard');if(card)card.style.display=p?'block':'none';const c=pageCfg(p);const sel=document.getElementById('ocCourierSelect');if(sel)sel.value=c.activeCourier||'';ocRefreshSelectedCourier();};
