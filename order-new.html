@@ -4664,12 +4664,7 @@ try {
       if(btn){ btn.disabled = false; btn.textContent = oldText || "✅ Confirm & Send"; }
     }
   }
-  .topmeta .box{
-  border:2px solid #000 !important;
-  border-radius:1.5mm !important;
-  -webkit-print-color-adjust:exact;
-  print-color-adjust:exact;
-  }
+
 
   // পুরনো function name রাখলাম, যাতে অন্য কোনো জায়গা থেকে call হলেও modal-ই খোলে।
   function markCourierSent(id){
@@ -4812,7 +4807,7 @@ body{min-height:100vh}
     <div class="topmeta">
       <div class="box"><div class="lab">Order No</div><div class="val">${safeOrderNo}</div></div>
 <div class="box"><div class="lab">Merchant ID</div><div class="val">${safeMerchantId}</div></div>
-    /div>
+    </div>
 
     <div class="hr"></div>
     <div class="customer">
@@ -10395,7 +10390,8 @@ window.ocOpenSelectedCourierConfig = async function(){
 
   document.getElementById('ocCourierConfigModal')
     ?.classList.add('active');
-};window.saveCourierConfig = async function()
+  };
+window.saveCourierConfig = async function(){
   const page = localStorage.getItem('mayaCourierSetupPage') ||
     document.getElementById('ocCourierPageSelect')?.value || '';
 
@@ -10453,6 +10449,7 @@ window.ocOpenSelectedCourierConfig = async function(){
     window.omMerchantSaving = false;
   }
 };
+  window.omReadMerchantId = async function(page, courier){
   const q = new URLSearchParams({
     select: "merchant_id",
     page_name: "eq." + page,
