@@ -4664,6 +4664,12 @@ try {
       if(btn){ btn.disabled = false; btn.textContent = oldText || "✅ Confirm & Send"; }
     }
   }
+  .topmeta .box{
+  border:2px solid #000 !important;
+  border-radius:1.5mm !important;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+  }
 
   // পুরনো function name রাখলাম, যাতে অন্য কোনো জায়গা থেকে call হলেও modal-ই খোলে।
   function markCourierSent(id){
@@ -4675,14 +4681,19 @@ try {
       id:'__TEST_STICKER__', serial:'01', consignmentId:'TEST-123456789', parcelId:'TEST-123456789',
       trackingCode:'TRK-123456789', trackingId:'TRK-123456789', steadfastRecipientName:'Test Customer',
       steadfastRecipientPhone:'01700000000', steadfastRecipientAddress:'Dhaka, Bangladesh - Full Address Test',
-      codAmount:1250, customerName:'Test Customer', phone:'01700000000', address:'Dhaka, Bangladesh - Full Address Test'
+      codAmount:1250,
+customerName:'Test Customer',
+phone:'01700000000',
+address:'Dhaka, Bangladesh - Full Address Test',
+pageName:document.getElementById('ocCourierPageSelect')?.value || '',
+courierName:document.getElementById('ocCourierSelect')?.value || 'Steadfast'
     };
     orders.push(demo);
     try{ printCourierSticker(demo.id); }
     finally{ orders=orders.filter(o=>o.id!==demo.id); }
   }
 
-  function printCourierSticker(id){
+  async function printCourierSticker(id){
     const order = orders.find(order => order.id === id);
     if(!order) return;
 
@@ -4714,7 +4725,27 @@ const cod = parsedCod === null ? 0 : Number(parsedCod);const orderNo = String(or
     const safeAddress = escapeHTML(stickerAddress || "—");
     const safeOrderNo = escapeHTML(orderNo || "—");
     const safePage = escapeHTML(order.pageName || order.page || "—");
-    const safeCourier = escapeHTML(order.courierName || order.provider || "Steadfast");
+    const merchantPage = order.pageName || order.page || "";
+const merchantCourier =
+  order.courierName || order.provider || "Steadfast";
+
+let merchantId = "";
+
+if(order.id === "__TEST_STICKER__" && !merchantPage){
+  merchantId = "1148516";
+}else if(merchantPage){
+  try{
+    merchantId = await window.omReadMerchantId(
+      merchantPage,
+      merchantCourier
+    );
+  }catch(e){
+    console.error(e);
+    alert("Merchant ID Server থেকে পাওয়া যায়নি।");
+  }
+}
+
+const safeMerchantId = escapeHTML(merchantId || "—");
     const safeWeight = escapeHTML(String(order.weight || order.parcelWeight || order.steadfastWeight || "—"));
     const rawCharge = Number(order.courierCharge ?? order.deliveryCharge ?? order.steadfastDeliveryCharge ?? 0) || 0;
     const safeDate = escapeHTML(String(order.courierDate || order.sentAt || order.updatedAt || order.createdAt || order.date || new Date().toLocaleDateString('en-GB')));
@@ -4741,7 +4772,7 @@ body{min-height:100vh}
 .parcel{text-align:center;font-size:19px;font-weight:900;line-height:1.05;margin:.7mm 0 1.4mm;word-break:break-all}
 .hr{border-top:1px dashed #777;margin:1.2mm 0}
 .topmeta{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm;font-size:9.5px;line-height:1.2}
-.topmeta .box{border:1px solid #bbb;border-radius:1.5mm;padding:1.2mm;min-width:0}
+.topmeta .box{border:2px solid #000;border-radius:1.5mm;padding:1.2mm;min-width:0}
 .topmeta .lab{font-size:8px;color:#666;font-weight:800;text-transform:uppercase}
 .topmeta .val{font-size:9.5px;font-weight:900;word-break:break-word;margin-top:.4mm}
 .customer{display:grid;grid-template-columns:13mm 1fr;gap:1.2mm 1.5mm;font-size:9.3px;line-height:1.15;margin-top:.3mm}
@@ -4762,6 +4793,12 @@ body{min-height:100vh}
 @media print{
   html,body{width:3in;height:3in;overflow:hidden}
   .controls,.hint{display:none!important}
+  .topmeta .box{
+  border:2px solid #000 !important;
+  border-radius:1.5mm !important;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+}
   .wrap{width:3in;height:3in;padding:1.8mm}
   .label{border:0;border-radius:0;padding:2.3mm}
 }
@@ -4774,8 +4811,8 @@ body{min-height:100vh}
 
     <div class="topmeta">
       <div class="box"><div class="lab">Order No</div><div class="val">${safeOrderNo}</div></div>
-      <div class="box"><div class="lab">Courier</div><div class="val">${safeCourier}</div></div>
-    </div>
+<div class="box"><div class="lab">Merchant ID</div><div class="val">${safeMerchantId}</div></div>
+    /div>
 
     <div class="hr"></div>
     <div class="customer">
@@ -9609,6 +9646,15 @@ function deleteCourierSuccessOrder(){
     <input type="hidden" id="ocCourierBaseUrl" value="https://portal.packzy.com/api/v1">
     <div class="oc-field"><label>API Key</label><input id="ocCourierApiKey" type="password" autocomplete="off" placeholder="API Key"></div>
     <div class="oc-field"><label>Secret Key / Token</label><input id="ocCourierSecret" type="password" autocomplete="off" placeholder="Secret / Token"></div>
+    <div class="oc-field">
+  <label>Merchant ID</label>
+  <input
+    id="ocCourierMerchantId"
+    type="text"
+    inputmode="numeric"
+    autocomplete="off"
+    placeholder="Enter Merchant ID">
+    </div>
     <div class="oc-muted">নিরাপত্তার জন্য production app-এ Secret backend/server-এ রাখা উচিত। এখানে test/config সুবিধার জন্য local device storage ব্যবহার হচ্ছে।</div>
     <div class="oc-row"><button class="oc-btn secondary" onclick="setActiveCourier(document.getElementById('ocCourierName').value)">Set Active</button><button class="oc-btn" onclick="saveCourierConfig()">Save</button></div>
   </div>
@@ -10307,9 +10353,145 @@ window.deleteAdminV2=async function(i){
   window.ocPageCourierChanged=function(){const p=document.getElementById('ocCourierPageSelect')?.value||'';const card=document.getElementById('ocCourierChoiceCard');if(card)card.style.display=p?'block':'none';const c=pageCfg(p);const sel=document.getElementById('ocCourierSelect');if(sel)sel.value=c.activeCourier||'';ocRefreshSelectedCourier();};
   window.ocCourierSelectionChanged=function(){ocRefreshSelectedCourier();};
   window.ocRefreshSelectedCourier=function(){const p=document.getElementById('ocCourierPageSelect')?.value||'',name=document.getElementById('ocCourierSelect')?.value||'',info=document.getElementById('ocSelectedCourierInfo'),btn=document.getElementById('ocOpenCourierSetupBtn');if(!info||!btn)return;if(!p){info.textContent='আগে Page নির্বাচন করুন।';btn.disabled=true;return}if(!name){info.textContent='Courier নির্বাচন করুন।';btn.disabled=true;return}const cfg=pageCfg(p)?.providers?.[name]||{};const configured=!!(cfg.apiKey&&cfg.secret);info.innerHTML=`<b>${esc(p)}</b> → <b>${esc(name)}</b><br>${configured?'✅ API Configured':'⚠️ API Setup করা হয়নি'}${pageCfg(p).activeCourier===name?' • ACTIVE':''}`;btn.disabled=false;};
-  window.ocOpenSelectedCourierConfig=function(){const page=document.getElementById('ocCourierPageSelect')?.value||'',name=document.getElementById('ocCourierSelect')?.value||'';if(!page||!name)return;localStorage.setItem('mayaCourierSetupPage',page);const cfg=pageCfg(page)?.providers?.[name]||{};document.getElementById('ocCourierName').value=name;document.getElementById('ocCourierConfigTitle').textContent='⚙️ '+page+' → '+name+' API Setup';document.getElementById('ocCourierBaseUrl').value=cfg.baseUrl|| (name==='Steadfast'?'https://portal.packzy.com/api/v1':'');document.getElementById('ocCourierApiKey').value=cfg.apiKey||'';document.getElementById('ocCourierSecret').value=cfg.secret||'';document.getElementById('ocCourierConfigModal')?.classList.add('active');};
-  window.saveCourierConfig=function(){const page=localStorage.getItem('mayaCourierSetupPage')||document.getElementById('ocCourierPageSelect')?.value||'',name=document.getElementById('ocCourierName')?.value||'',cfg={baseUrl:(document.getElementById('ocCourierBaseUrl')?.value||'').trim(),apiKey:(document.getElementById('ocCourierApiKey')?.value||'').trim(),secret:(document.getElementById('ocCourierSecret')?.value||'').trim()};if(!page)return alert('Page নির্বাচন করুন।');if(!name)return alert('Courier নির্বাচন করুন।');if(!cfg.apiKey||!cfg.secret)return alert('API Key এবং Secret দিন।');const st=getPageCourierStore();st[page]=st[page]||{providers:{}};st[page].providers=st[page].providers||{};st[page].providers[name]=cfg;st[page].activeCourier=name;savePageCourierStore(st);if(name==='Steadfast'){localStorage.setItem('mayaSteadfastApiKey',cfg.apiKey);localStorage.setItem('mayaSteadfastSecretKey',cfg.secret);}document.getElementById('ocCourierConfigModal')?.classList.remove('active');renderPageStatus();ocRefreshSelectedCourier();alert('✅ '+page+' → '+name+' API Setup Complete');};
+window.ocOpenSelectedCourierConfig = async function(){
+  const page =
+    document.getElementById('ocCourierPageSelect')?.value || '';
 
+  const name =
+    document.getElementById('ocCourierSelect')?.value || '';
+
+  if(!page || !name) return;
+
+  const cfg = pageCfg(page)?.providers?.[name] || {};
+
+  let merchantId = '';
+
+  try{
+    merchantId = await window.omReadMerchantId(page, name);
+  }catch(e){
+    console.error(e);
+    return alert('Merchant ID Server থেকে পাওয়া যায়নি।');
+  }
+
+  localStorage.setItem('mayaCourierSetupPage', page);
+
+  document.getElementById('ocCourierName').value = name;
+
+  document.getElementById('ocCourierConfigTitle').textContent =
+    '⚙️ ' + page + ' → ' + name + ' API Setup';
+
+  document.getElementById('ocCourierBaseUrl').value =
+    cfg.baseUrl || (name === 'Steadfast'
+      ? 'https://portal.packzy.com/api/v1' : '');
+
+  document.getElementById('ocCourierApiKey').value =
+    cfg.apiKey || '';
+
+  document.getElementById('ocCourierSecret').value =
+    cfg.secret || '';
+
+  document.getElementById('ocCourierMerchantId').value =
+    merchantId;
+
+  document.getElementById('ocCourierConfigModal')
+    ?.classList.add('active');
+};window.saveCourierConfig = async function()
+  const page = localStorage.getItem('mayaCourierSetupPage') ||
+    document.getElementById('ocCourierPageSelect')?.value || '';
+
+  const name =
+    document.getElementById('ocCourierName')?.value || '';
+
+  const cfg = {
+    baseUrl: (document.getElementById('ocCourierBaseUrl')?.value || '').trim(),
+    apiKey: (document.getElementById('ocCourierApiKey')?.value || '').trim(),
+    secret: (document.getElementById('ocCourierSecret')?.value || '').trim(),
+    merchantId: (document.getElementById('ocCourierMerchantId')?.value || '').trim()
+  };
+
+  if(!page) return alert('Page নির্বাচন করুন।');
+  if(!name) return alert('Courier নির্বাচন করুন।');
+
+  if(!cfg.apiKey || !cfg.secret)
+    return alert('API Key এবং Secret দিন।');
+
+  if(cfg.merchantId && !/^\d+$/.test(cfg.merchantId))
+    return alert('সঠিক Merchant ID দিন।');
+
+  if(window.omMerchantSaving) return;
+  window.omMerchantSaving = true;
+
+  try{
+    await window.omSaveMerchantId(page, name, cfg.merchantId);
+
+    const st = getPageCourierStore();
+
+    st[page] = st[page] || {providers:{}};
+    st[page].providers = st[page].providers || {};
+    st[page].providers[name] = cfg;
+    st[page].activeCourier = name;
+
+    savePageCourierStore(st);
+
+    if(name === 'Steadfast'){
+      localStorage.setItem('mayaSteadfastApiKey', cfg.apiKey);
+      localStorage.setItem('mayaSteadfastSecretKey', cfg.secret);
+    }
+
+    document.getElementById('ocCourierConfigModal')
+      ?.classList.remove('active');
+
+    renderPageStatus();
+    ocRefreshSelectedCourier();
+
+    alert('✅ ' + page + ' → ' + name + ' Settings Saved');
+
+  }catch(e){
+    console.error(e);
+    alert('❌ Merchant ID Server-এ সেভ হয়নি।');
+  }finally{
+    window.omMerchantSaving = false;
+  }
+};
+  const q = new URLSearchParams({
+    select: "merchant_id",
+    page_name: "eq." + page,
+    courier_name: "eq." + courier
+  });
+
+  const r = await fetch(
+    OM_SUPABASE_URL +
+    "/rest/v1/page_merchant_ids?" + q.toString(),
+    {headers: omHeaders()}
+  );
+
+  if(!r.ok) throw new Error(await r.text());
+
+  const rows = await r.json();
+  return String(rows[0]?.merchant_id || "");
+};
+
+window.omSaveMerchantId = async function(page, courier, merchantId){
+  const r = await fetch(
+    OM_SUPABASE_URL +
+    "/rest/v1/page_merchant_ids?on_conflict=page_name,courier_name",
+    {
+      method: "POST",
+      headers: omHeaders({
+        "Content-Type": "application/json",
+        "Prefer": "resolution=merge-duplicates,return=minimal"
+      }),
+      body: JSON.stringify({
+        page_name: page,
+        courier_name: courier,
+        merchant_id: merchantId
+      })
+    }
+  );
+
+  if(!r.ok) throw new Error(await r.text());
+};
+  
   function applyPageCourier(order){if(!order)return true;const pc=pageCfg(order.pageName||'');const name=pc.activeCourier;const cfg=pc.providers?.[name];if(!name||!cfg?.apiKey||!cfg?.secret){alert('⚠️ '+(order.pageName||'এই Page')+'-এর Courier API Setup করা হয়নি। Settings → Courier Setup থেকে সেট করুন।');return false;}order.courierName=name;if(name==='Steadfast'){localStorage.setItem('mayaSteadfastApiKey',cfg.apiKey);localStorage.setItem('mayaSteadfastSecretKey',cfg.secret);return true;}alert(name+' Live API mapping এখনো যোগ করা হয়নি।');return false;}
   if(typeof window.sendOrderToSteadfastOneTap==='function'){const orig=window.sendOrderToSteadfastOneTap;window.sendOrderToSteadfastOneTap=async function(id,btn){const o=orders.find(x=>x.id===id);if(!applyPageCourier(o))return;return orig(id,btn);};}
   if(typeof window.markCourierSent==='function'){const orig2=window.markCourierSent;window.markCourierSent=function(id){const o=orders.find(x=>x.id===id);if(!applyPageCourier(o))return;return orig2(id);};}
