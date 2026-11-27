@@ -231,7 +231,7 @@ fillModeratorSelects();render();
       if (cancelledBeforeSend) return null;
 
       return {
-        id: String(order.id || row.id),
+        id: String(row.serial || order.serial || order.id || row.id),
         mod: String(order.createdBy || 'Admin'),
         page: String(order.pageName || 'পেজ নির্ধারিত নয়'),
         amount: Number(order.codAmount ?? order.amount ?? order.totalAmount ?? 0),
